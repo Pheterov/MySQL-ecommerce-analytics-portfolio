@@ -1,6 +1,6 @@
 # sql-ecommerce-analytics-portfolio
 > *"The goal is not to write SQL. The goal is to answer business questions."*
-# SQL Analytics Portfolio — Supersales
+# SQL Analytics Portfolio — Supersales modified by KajoData
 
 **Business-focused SQL analysis project built on an e-commerce dataset.**  
 This repository presents a collection of SQL solutions for real-world analytical problems related to sales performance, customer behavior, retention, promotions, and product analytics.
@@ -15,7 +15,7 @@ The goal of this project is not only to show SQL syntax proficiency, but also to
 
 ## Project Overview
 
-This portfolio is based on the **Supersales** dataset and simulates the type of work performed by a **Data Analyst / BI Analyst / E-commerce Analyst** in a real business environment.
+This portfolio is based on the **Supersales modified by KajoData** dataset and simulates the type of work performed by a **Data Analyst / BI Analyst / E-commerce Analyst** in a real business environment.
 
 The analyses focus on questions such as:
 - How is revenue changing over time?
