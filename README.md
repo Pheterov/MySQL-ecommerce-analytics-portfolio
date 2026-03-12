@@ -164,8 +164,7 @@ Prioritize business meaning over unnecessary complexity
 - This project was built as part of a structured preparation path
 for Junior / Junior+ Data Analyst roles and evolved into a portfolio.
 
-### The key objective was to move beyond:
-writing queries that “work”, and toward writing queries that are:
+### The key objective was to move beyond writing queries that “work”, and toward writing queries that are:
 
 - correct,
 - explainable,
