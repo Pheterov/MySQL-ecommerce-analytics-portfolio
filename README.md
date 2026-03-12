@@ -143,6 +143,7 @@ orders ──── order_positions ──── products ──── product_g
 - impact of discounts on order value
 - monthly percentage of discounted orders
 - Example Analytical Approach
+
 ---
 
 ### The SQL in this repository follows a consistent analytical structure:
