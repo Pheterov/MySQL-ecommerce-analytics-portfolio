@@ -2,6 +2,7 @@
 ===============================================================================
 Project: SQL Analytics Portfolio — Supersales (Set 2)
 Database: supersales modified by KajoData
+Author: Piotr Rzepka
 Description: Advanced SQL exercises focused on delivery performance, customer
              spending behavior, discount analysis, and value segmentation.
 ===============================================================================
