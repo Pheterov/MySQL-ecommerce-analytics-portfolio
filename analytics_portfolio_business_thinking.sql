@@ -1,9 +1,8 @@
 /*
 ===============================================================================
-Project: SQL Analytics Portfolio — Supersales (Set 3)
-Module:  Advanced Analytics
-Author:  Piotr Rzepka
-Database: supersales modified by KajoData MySQL 8.0+
+Project: E-commerce Analytics SQL Portfolio
+Database: supersales - modified by KajoData MySQL 8.0+
+Author: Piotr Rzepka
 Description: Rolling metrics, Pareto analysis, cumulative sums.
              This is standard production code used in real business analytics.
 ===============================================================================
