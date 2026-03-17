@@ -1,21 +1,18 @@
-/*
-===============================================================================
-Project: E-commerce Analytics SQL Portfolio
-Database: supersales - modified by KajoData MySQL 8.0+
-Author: Piotr Rzepka
-Description: Collection of SQL queries solving real-world business problems.
-             Focus on customer retention, revenue analysis, and product performance.
-===============================================================================
-*/
+################################################################################
+# 🎯 Project: E-commerce Analytics SQL Portfolio
+# 🛠️ Database: supersales - modified by KajoData MySQL 8.0+
+# 👤 Author: Piotr Rzepka
+# 📝 Description: SQL-driven analytics portfolio solving real-world e-commerce business problems.
+# 🔍 Focus: Customer retention, revenue analysis, product & category performance
+################################################################################
 
-/*
-================================================================================
-Task 1: Monthly Business Performance Metrics
-Business Objective:
-Provide management with a high-level view of monthly performance.
-Key metrics: total revenue, unique customers, order count, and average order value (AOV).
-================================================================================
-*/
+/*================================================================================
+1️⃣ Monthly Business Performance Metrics
+🎯 Goal: High-level monthly KPIs for management
+🛠️ Stack: SQL
+📈 Metrics: revenue, unique customers, order count, avg order value (AOV)
+💡 Impact: Tracks trends, enables informed decision-making
+================================================================================*/
 SELECT
     DATE_FORMAT(o.order_date, '%Y-%m-01')										month
     ,ROUND(SUM(op.item_quantity*p.product_price*(1-op.position_discount)), 2) 	revenue
@@ -30,14 +27,13 @@ JOIN products p ON op.product_id = p.product_id
 GROUP BY month
 ORDER BY month;
 
-/*
-================================================================================
-Task 2: Product Category Performance (Units Sold)
-Business Objective:
-Identify which product categories drive the highest volume sales.
-Used for inventory planning and category management.
-================================================================================
-*/
+/*================================================================================
+2️⃣ Product Category Performance (Units Sold)
+🎯 Goal: Identify top-selling product categories
+🛠️ Stack: SQL
+📈 KPI: total_units_sold per category
+💡 Impact: Supports inventory planning and category prioritization
+================================================================================*/
 SELECT
     pg.category
     ,SUM(op.item_quantity) 														total_units_sold
@@ -47,19 +43,13 @@ JOIN product_groups pg ON p.group_id = pg.group_id
 GROUP BY pg.category
 ORDER BY total_units_sold DESC;
 
-/*
-================================================================================
-Task 3: Top 5 Products by Sales Volume
-Business Objective:
-Identify best-selling products to focus marketing and stock allocation.
-Methodology:
-- Aggregates total units sold per product.
-- Uses DENSE_RANK to handle ties (multiple products with same sales volume).
-- Returns exactly 5 products.
-- Could've been also done by turning this below SELECT
-  to a CTE and then filtered by WHERE in final select.
-================================================================================
-*/
+/*================================================================================
+3️⃣ Top 5 Products by Sales Volume
+🎯 Goal: Highlight best-sellers for marketing focus & stock allocation
+🛠️ Stack: SQL (DENSE_RANK)
+📈 KPI: total_units_sold, sales_rank
+💡 Impact: Prioritizes top-performing products to drive revenue
+================================================================================*/
 SELECT
     p.product_name
     ,SUM(op.item_quantity) 														total_units_sold
@@ -71,30 +61,25 @@ GROUP BY p.product_name
 ORDER BY sales_rank
 LIMIT 5;
 
-/*
-================================================================================
-Task 4: Average Shipping Time Analysis
-Business Objective:
-Measure operational efficiency by calculating average days between order and shipping.
-Note: This is a baseline metric. Further segmentation by product/category is recommended.
-================================================================================
-*/
+/*================================================================================
+4️⃣ Average Shipping Time Analysis
+🎯 Goal: Measure operational efficiency
+🛠️ Stack: SQL
+📈 KPI: avg_shipping_days
+💡 Impact: Baseline metric for delivery performance, identifies areas for improvement
+================================================================================*/
 SELECT
     ROUND(AVG(
     	DATEDIFF(o.shipping_date, o.order_date)), 2)							avg_shipping_days
 FROM orders o;
 
-/*
-================================================================================
-Task 5: Monthly Top 3 Products by Revenue
-Business Objective:
-Identify highest-revenue generating products each month for performance tracking.
-Methodology:
-- Revenue calculated with position-level discounts applied.
-- DENSE_RANK used within each month partition to handle revenue ties.
-- Returns top 3 products per month.
-================================================================================
-*/
+/*================================================================================
+5️⃣ Monthly Top 3 Products by Revenue
+🎯 Goal: Identify top-revenue products per month
+🛠️ Stack: SQL (CTE + DENSE_RANK)
+📈 KPI: revenue, revenue_rank
+💡 Impact: Supports sales strategy, focuses on high-revenue items
+================================================================================*/
 WITH monthly_product_revenue AS 
 (
 SELECT
@@ -119,16 +104,13 @@ FROM monthly_product_revenue
 WHERE revenue_rank <= 3
 ORDER BY month, revenue_rank;
 
-/*
-================================================================================
-Task 6: Customer Revenue Ranking
-Business Objective:
-Segment customers by their total lifetime revenue for targeted marketing.
-Methodology:
-- Calculates total revenue per customer (with discounts applied).
-- Uses DENSE_RANK to assign positions, handling revenue ties appropriately.
-================================================================================
-*/
+/*================================================================================
+6️⃣ Customer Revenue Ranking
+🎯 Goal: Segment customers by total lifetime revenue
+🛠️ Stack: SQL (DENSE_RANK)
+📈 KPI: total_revenue, revenue_rank
+💡 Impact: Identifies top contributors, enables targeted loyalty strategies
+================================================================================*/
 SELECT
     o.customer_id
     ,ROUND(SUM(op.item_quantity*p.product_price*(1-op.position_discount)), 2)	total_revenue
@@ -141,17 +123,13 @@ JOIN products p ON op.product_id = p.product_id
 GROUP BY o.customer_id
 ORDER BY total_revenue DESC;
 
-/*
-================================================================================
-Task 7: Month-over-Month Revenue Growth
-Business Objective:
-Track revenue trends and identify growth/decline patterns.
-Methodology:
-- Calculates monthly revenue.
-- Uses LAG window function to compare with previous month.
-- Shows both absolute and percentage change.
-================================================================================
-*/
+/*================================================================================
+7️⃣ Month-over-Month Revenue Growth
+🎯 Goal: Track revenue trends & growth patterns
+🛠️ Stack: SQL (LAG)
+📈 KPI: revenue_change, revenue_change_pct
+💡 Impact: Provides insights into revenue fluctuations; informs strategy
+================================================================================*/
 WITH monthly_revenue AS
 (
 SELECT
@@ -175,16 +153,13 @@ SELECT
 FROM monthly_revenue
 ORDER BY month;
 
-/*
-================================================================================
-Task 8: New vs Returning Customer Analysis (Monthly)
-Business Objective:
-Understand customer acquisition vs retention dynamics.
-Methodology:
-- First identifies each customer's first order month using MIN() OVER().
-- Classifies each monthly appearance as "new" (first month) or "returning" (subsequent months).
-================================================================================
-*/
+/*================================================================================
+8️⃣ New vs Returning Customer Analysis
+🎯 Goal: Analyze customer acquisition vs retention dynamics
+🛠️ Stack: SQL (MIN() OVER)
+📈 KPI: new_customers, returning_customers
+💡 Impact: Tracks retention trends; informs engagement strategy
+================================================================================*/
 WITH customer_months AS
 (
 SELECT DISTINCT
@@ -213,17 +188,13 @@ FROM customer_first_month
 GROUP BY month
 ORDER BY month;
 
-/*
-================================================================================
-Task 9: One-Time Customer Analysis
-Business Objective:
-Measure customer loyalty by analyzing percentage of customers who purchase only once
-and their contribution to total revenue.
-Methodology:
-- Identifies customers with exactly one order.
-- Calculates their share of total customer base and total revenue.
-================================================================================
-*/
+/*================================================================================
+9️⃣ One-Time Customer Analysis
+🎯 Goal: Quantify customer loyalty via one-time purchases
+🛠️ Stack: SQL
+📈 KPI: one_time_customers_pct, one_time_customers_revenue_pct
+💡 Impact: Identifies churn risk and revenue concentration from single-purchase customers
+================================================================================*/
 WITH customer_stats AS 
 (
 SELECT
@@ -244,18 +215,13 @@ SELECT
         SUM(total_revenue), 2) 													one_time_customers_revenue_pct
 FROM customer_stats;
 
-/*
-================================================================================
-Task 10: Month+1 Customer Retention Rate
-Business Objective:
-Measure customer loyalty by calculating what percentage of active customers
-in a given month return to purchase in the following month.
-Methodology:
-- Deduplicates customer-month activity.
-- Uses LEAD() to find next purchase month.
-- Compares with calendar next month to identify retention.
-================================================================================
-*/
+/*================================================================================
+🔟 Month+1 Customer Retention Rate
+🎯 Goal: Calculate next-month retention
+🛠️ Stack: SQL (LEAD)
+📈 KPI: retention_rate_pct
+💡 Impact: Key loyalty metric; measures retention effectiveness
+================================================================================*/
 WITH customer_month_activity AS (
 SELECT DISTINCT
 	customer_id
@@ -287,24 +253,13 @@ FROM customer_next_purchase
 GROUP BY month
 ORDER BY month;
 
-/*
-================================================================================
-Task 11: Growth Analysis - New vs Existing Customers
-Business Objective:
-Determine whether company growth is driven by acquiring new customers
-or increasing revenue from existing customers.
-Methodology:
-1. Aggregates revenue to customer-month level.
-2. Identifies each customer's first purchase month.
-3. Classifies revenue as "new" (first month) or "returning" (subsequent months).
-4. Tracks monthly trend of revenue share from both segments.
-
-Analytical Insight:
-Data shows 2018 was primarily an acquisition phase (new customer revenue dominant).
-From 2019 onward, the company entered a retention phase where returning customers
-generate the majority of revenue, indicating successful customer relationship building.
-================================================================================
-*/
+/*================================================================================
+1️⃣1️⃣ Growth Analysis: New vs Existing Customers
+🎯 Goal: Determine revenue growth drivers: new vs returning customers
+🛠️ Stack: SQL (CTE + window functions)
+📈 KPI: new_customer_revenue_pct, returning_customer_revenue_pct
+💡 Insight: 2018 = acquisition-focused, 2019+ = retention-driven; informs long-term strategy
+================================================================================*/
 WITH customer_monthly_revenue AS 
 (
 SELECT
@@ -342,4 +297,5 @@ SELECT
         SUM(revenue), 2)														returning_customer_revenue_pct
 FROM customer_first_month
 GROUP BY month
+ORDER BY month;
 ORDER BY month;
