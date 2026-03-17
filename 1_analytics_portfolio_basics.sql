@@ -42,11 +42,11 @@ ORDER BY month;
 📈 KPI: total_units_sold per category
 💡 Impact: Supports inventory planning, category prioritization
 📊 Example KPI:
-| Category     | Units Sold |
-|-------------|------------|
-| Electronics | 15,200     |
-| Home        | 10,450     |
-| Sports      | 8,700      |
+| Category     	  | Units Sold |
+|-----------------|------------|
+| Office Supplies |  22,906    |
+| Furniture       |   8,028    |
+| Technology      |   6,939    |
 ================================================================================*/
 SELECT
     pg.category
