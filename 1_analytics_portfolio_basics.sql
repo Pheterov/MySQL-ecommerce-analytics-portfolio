@@ -509,8 +509,7 @@ SELECT
 FROM order_positions op
 JOIN products p ON op.product_id = p.product_id
 GROUP BY p.product_id, p.product_name
-),
-ranked_products AS
+), ranked_products AS
 (
 SELECT
     product_id
@@ -521,9 +520,12 @@ SELECT
 FROM product_revenue
 )
 SELECT
-    ROUND(SUM(CASE WHEN decile = 1 THEN revenue END),2)                        	top_10pct_revenue
-    ,ROUND(SUM(revenue),2)                                                     	total_revenue
+    ROUND(SUM(CASE WHEN decile = 1 THEN revenue END), 2)                        top_10pct_revenue
+    ,ROUND(SUM(revenue), 2)                                                     total_revenue
     ,ROUND(
-        SUM(CASE WHEN decile = 1 THEN revenue END) * 100.0 /
-        SUM(revenue),2)                                                        	top_10pct_revenue_pct
+        SUM(CASE
+			WHEN decile = 1
+			THEN revenue
+		END) * 100.0 /
+        SUM(revenue), 2)                                                        top_10pct_revenue_pct
 FROM ranked_products;
