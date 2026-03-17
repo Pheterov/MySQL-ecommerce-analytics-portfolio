@@ -190,22 +190,26 @@ ORDER BY product_category, shipping_type, discounted_flag DESC;
 📈 KPI: revenue, revenue_rank
 💡 Impact: Focuses attention on revenue drivers
 📊 Example KPI:
-| Month   | Product Name       | Revenue   | Rank |
-|---------|------------------|-----------|------|
-| 2018-01 | Wireless Mouse    | 25,200.50 | 1    |
-| 2018-01 | Bluetooth Speaker | 18,400.75 | 2    |
-| 2018-01 | Laptop Stand      | 12,500.00 | 3    |
+| month   	 | product_name       |	revenue	  	  | revenue_rank |
+|------------|--------------------|---------------|--------------|
+| 2018-01-01 | SAFCO-Boltless     |    272,74 	  |		  1    	 |
+| 2018-01-01 | Avery-Hi-Liter     |     19,54 	  | 	  2    	 |
+| 2018-01-01 | Message-Book       |     16,45 	  |		  3		 |
+| 2018-02-01 | Global-Deluxe      |   2573,82 	  |		  1    	 |
+| 2018-02-01 | Tennsco6--and-18   |   1325,85 	  | 	  2    	 |
+| 2018-02-01 | Hon-4700-Series    |   1067,94 	  |		  3		 |
 ====================================================================================================*/
 WITH monthly_product_revenue AS 
 (
 SELECT
 	DATE_FORMAT(o.order_date, '%Y-%m-01') 										month
 	,p.product_name
-	,SUM(op.item_quantity * p.product_price * (1 - op.position_discount))		revenue
+	,SUM(op.item_quantity*COALESCE(p.product_price, 0)*
+    	(1 - COALESCE(op.position_discount, 0)))								revenue
 	,DENSE_RANK() OVER (
 		PARTITION BY DATE_FORMAT(o.order_date, '%Y-%m-01')
-		ORDER BY SUM(op.item_quantity*p.product_price*(1-op.position_discount)) DESC
-	)																			revenue_rank
+		ORDER BY SUM(op.item_quantity*COALESCE(p.product_price, 0)*
+    	(1 - COALESCE(op.position_discount, 0))) DESC)							revenue_rank
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
