@@ -18,6 +18,7 @@
 | 2018-02-01 | 14 470,88 | 		  		  32 |	   		 32 |		   452,22 |
 | 2018-03-01 |  8 552,10 | 		  		  38 |	   		 40 |		   213,80 |	
 ====================================================================================================*/
+	
 SELECT
     DATE_FORMAT(o.order_date, '%Y-%m-01')										month
     ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price, 0)*
@@ -47,6 +48,7 @@ ORDER BY month;
 | Furniture       |   	 	   8,028 |
 | Technology      |   	 	   6,939 |
 ====================================================================================================*/
+
 SELECT
     pg.category
     ,SUM(op.item_quantity) 														total_units_sold
@@ -114,6 +116,7 @@ ORDER BY product_category, month;
 | Staples-in-misc.		|      	   		86 |     	  4 |
 | Logitech P710e-Mobile |      	   		75 |     	  5 |
 ====================================================================================================*/
+
 SELECT
     p.product_name
     ,SUM(op.item_quantity) 														total_units_sold
@@ -158,34 +161,25 @@ FROM orders o;
 ============================================================================================================================================*/
 
 SELECT
-    pg.category                                 								product_category
-    ,o.shipping_mode                              								shipping_type
-    ,'Discounted'                                 								discounted_flag
-    ,ROUND(AVG(DATEDIFF(o.shipping_date, o.order_date)), 2) 					avg_shipping_days
-    ,ROUND(MIN(DATEDIFF(o.shipping_date, o.order_date)), 2) 					min_shipping_days
-    ,ROUND(MAX(DATEDIFF(o.shipping_date, o.order_date)), 2) 					max_shipping_days
-    ,COUNT(DISTINCT o.order_id)                    								orders_count
+    pg.category                                          AS product_category
+    ,o.shipping_mode                                      AS shipping_type
+    ,CASE 
+        WHEN COALESCE(op.position_discount, 0) > 0 THEN 'Discounted' 
+        ELSE 'Full Price' 
+    END                                                  AS discounted_flag
+    ,ROUND(AVG(DATEDIFF(o.shipping_date, o.order_date)), 2) AS avg_shipping_days
+    ,MIN(DATEDIFF(o.shipping_date, o.order_date))           AS min_shipping_days
+    ,MAX(DATEDIFF(o.shipping_date, o.order_date))           AS max_shipping_days
+    ,COUNT(DISTINCT o.order_id)                             AS orders_count
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
 JOIN product_groups pg ON p.group_id = pg.group_id
-WHERE op.position_discount > 0
-GROUP BY pg.category, o.shipping_mode
-UNION ALL
-SELECT
-    pg.category                                 								product_category
-    ,o.shipping_mode                              								shipping_type
-    ,'Full Price'                                 								discounted_flag
-    ,ROUND(AVG(DATEDIFF(o.shipping_date, o.order_date)), 2) 					avg_shipping_days
-    ,ROUND(MIN(DATEDIFF(o.shipping_date, o.order_date)), 2) 					min_shipping_days
-    ,ROUND(MAX(DATEDIFF(o.shipping_date, o.order_date)), 2) 					max_shipping_days
-    ,COUNT(DISTINCT o.order_id)                    								orders_count
-FROM orders o
-JOIN order_positions op ON o.order_id = op.order_id
-JOIN products p ON op.product_id = p.product_id
-JOIN product_groups pg ON p.group_id = pg.group_id
-WHERE op.position_discount = 0
-GROUP BY pg.category, o.shipping_mode
+WHERE o.shipping_date >= o.order_date
+GROUP BY 
+    pg.category, 
+    o.shipping_mode,
+    CASE WHEN COALESCE(op.position_discount, 0) > 0 THEN 'Discounted' ELSE 'Full Price' END
 ORDER BY product_category, shipping_type, discounted_flag DESC;
 
 /*===================================================================================================
@@ -204,6 +198,7 @@ ORDER BY product_category, shipping_type, discounted_flag DESC;
 | 2018-02-01 | Tennsco6--and-18   |   	 1 325,85 | 	  	   2 |
 | 2018-02-01 | Hon-4700-Series    |   	 1 067,94 |		  	   3 |
 ====================================================================================================*/
+
 WITH monthly_product_revenue AS 
 (
 SELECT
@@ -241,6 +236,7 @@ ORDER BY month, revenue_rank;
 | 	  	  644 |   	15 117,34 |    2 |
 | 	   	   29 |   	14 602,49 |    3 |
 ====================================================================================================*/
+
 SELECT
     o.customer_id
     ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price, 0)*
@@ -266,6 +262,7 @@ ORDER BY total_revenue DESC;
 | 2018-02-01 | 14 470,88 |	 	  		   324,04 |   	 14 146,84 |	  	   4 365,72 |
 | 2018-02-01 |  8 552,10 |	 	  		14 470,88 |   	 -5 918,79 |	  		 -40,90 |
 ====================================================================================================*/
+
 WITH monthly_revenue AS
 (
 SELECT
@@ -303,6 +300,7 @@ ORDER BY month;
 | 2018-02-01 |            32 | 				  	 0 |
 | 2018-03-01 |            35 | 				  	 3 |
 ====================================================================================================*/
+
 WITH customer_months AS
 (
 SELECT DISTINCT
@@ -341,6 +339,7 @@ ORDER BY month;
 |------------------------|--------------------------------|
 |                	1,51 | 						     0,26 |
 ====================================================================================================*/
+
 WITH customer_stats AS 
 (
 SELECT
@@ -374,6 +373,7 @@ FROM customer_stats;
 | 2018-02-01 |       		 32 | 		           3 | 				 9,38 |
 | 2018-03-01 |       		 38 | 		           5 | 				13,16 |
 ====================================================================================================*/
+
 WITH customer_month_activity AS (
 SELECT DISTINCT
 	customer_id
@@ -420,6 +420,7 @@ ORDER BY month;
 | 2018-04-01 | 			  39 682,17 |       		   	1 150,89 | 					  97,18 | 	   	 					2,82 |
 | 2018-05-01 | 			  23 230,08 |       		   	3 270,22 | 					  87,66 | 	   					   12,34 |
 ==============================================================================================================================*/
+
 WITH customer_monthly_revenue AS 
 (
 SELECT
