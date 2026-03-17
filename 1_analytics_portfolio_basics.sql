@@ -332,19 +332,19 @@ ORDER BY month;
 9️⃣ One-Time Customer Analysis
 🎯 Goal: Quantify customer loyalty via one-time purchases
 🛠️ Stack: SQL
-📈 KPI: one_time_customers_pct, one_time_customers_revenue_pct
 💡 Impact: Identifies churn risk and revenue concentration
 📊 Example KPI:
-| One-time Customers % | Revenue % |
-|---------------------|-----------|
-| 22.5                | 9.8       |
+| one_time_customers_pct | one_time_customers_revenue_pct |
+|------------------------|--------------------------------|
+|                	1,51 | 						     0,26 |
 ====================================================================================================*/
 WITH customer_stats AS 
 (
 SELECT
 	o.customer_id
 	,COUNT(DISTINCT op.order_id) AS order_count
-	,SUM(op.item_quantity * p.product_price * (1 - op.position_discount))		total_revenue
+	,SUM(op.item_quantity*COALESCE(p.product_price,0) * 
+		(1-COALESCE(op.position_discount,0)))									total_revenue
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
