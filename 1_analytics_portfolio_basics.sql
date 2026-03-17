@@ -6,8 +6,29 @@
 # 🔍 Focus: customer retention, revenue analysis, product & category performance
 #####################################################################################################
 
-"shipping_date validation applies only to shipping-time metrics;
-revenue is based on order_date regardless of shipping completeness."
+# EXPLICIT ASSUMPTIONS
+-------------------------------------------------------------------------------
+# All queries are based on the following conscious, documented assumptions:
+
+1.  Revenue is calculated at order_date, regardless of shipping status
+2.  position_discount is a multiplier between 0 and 1 (0 = no discount, 1 = 100% discount)
+3.  NULL values in position_discount or product_price are treated as 0
+4.  Orders with shipping_date < order_date are considered data entry errors
+    and are excluded only from shipping-time related metrics
+5.  A customer is considered "new" in the calendar month of their first order
+
+-------------------------------------------------------------------------------
+# KNOWN LIMITATIONS
+-------------------------------------------------------------------------------
+These are conscious tradeoffs for readability and portfolio clarity:
+
+1.  Shipping time per category is calculated at the order line level. For
+    orders containing multiple categories, this will weight the average by
+    number of line items, not by number of orders.
+2.  Retention is defined as Month+1 retention, not 30 day rolling retention.
+3.  All metrics use calendar months, not 4/4/5 or fiscal months.
+
+-------------------------------------------------------------------------------
 
 /*===================================================================================================
 1️⃣ Monthly Business Performance Metrics
