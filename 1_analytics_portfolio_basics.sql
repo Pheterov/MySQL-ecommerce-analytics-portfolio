@@ -146,9 +146,9 @@ FROM orders o;
 📊 Example KPI:
 | product_category       | shipping_type    | discounted_flag | avg_shipping_days | min_shipping_days | max_shipping_days | orders_count |
 | Furniture				 |Standard Class	|Full Price		  |			5.06	  |			4		  |			7		  |		 445	 |
-| Furniture				 |First Class		|Discounted		  |			4.92	  |			3		  |			7		  |		 626	 |
-| Furniture				 |Same Day			|Full Price		  |			2.18	  |			1		  |			3		  |		 300	 |
-| Furniture				 |Same Day			|Discounted		  |			2.22	  |			1		  |			4		  |		 326	 |
+| Furniture				 |Standard Class	|Discounted		  |			4.92	  |			3		  |			7		  |		 626	 |
+| Office Supplies		 |First Class		|Full Price		  |			2.18	  |			1		  |			3		  |		 300	 |
+| Office Supplies		 |First Class		|Discounted		  |			2.22	  |			1		  |			4		  |		 326	 |
 ============================================================================================================================================*/
 
 SELECT
