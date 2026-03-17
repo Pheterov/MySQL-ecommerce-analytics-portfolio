@@ -227,22 +227,22 @@ ORDER BY month, revenue_rank;
 /*===================================================================================================
 6️⃣ Customer Revenue Ranking
 🎯 Goal: Segment customers by total lifetime revenue
-🛠️ Stack: SQL (DENSE_RANK)
-📈 KPI: total_revenue, revenue_rank
+🛠️ Stack: SQL
 💡 Impact: Identifies top contributors; enables targeted loyalty campaigns
 📊 Example KPI:
-| Customer ID | Total Revenue | Rank |
-|------------|---------------|------|
-| CUST_102   | 12,500.50     | 1    |
-| CUST_215   | 11,200.75     | 2    |
-| CUST_078   | 10,900.00     | 3    |
+| customer_id | total_revenue | Rank |
+|-------------|---------------|------|
+| 	  764     |	  19 265,82   |   1  |
+| 	  644     |   15 117,34   |   2  |
+| 	   29     |   14 602,49   |   3  |
 ====================================================================================================*/
 SELECT
     o.customer_id
-    ,ROUND(SUM(op.item_quantity*p.product_price*(1-op.position_discount)), 2)	total_revenue
+    ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price, 0)*
+    	(1 - COALESCE(op.position_discount, 0))), 2) 							total_revenue
     ,DENSE_RANK() OVER (
-        ORDER BY SUM(op.item_quantity*p.product_price*(1-op.position_discount)) DESC
-    ) 																			revenue_rank
+        ORDER BY SUM(op.item_quantity*COALESCE(p.product_price, 0)*
+    	(1 - COALESCE(op.position_discount, 0))) DESC) 							revenue_rank
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
