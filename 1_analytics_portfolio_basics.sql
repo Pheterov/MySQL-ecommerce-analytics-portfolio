@@ -185,18 +185,18 @@ WHERE o.shipping_date >= o.order_date;
 ============================================================================================================================================*/
 
 SELECT
-    pg.category                                          					product_category
-    ,o.shipping_mode                                      					shipping_type
+    pg.category                                          						product_category
+    ,o.shipping_mode                                      						shipping_type
     ,CASE 
         WHEN COALESCE(op.position_discount, 0) > 0 
 		THEN 'Discounted' 
         ELSE 'Full Price' 
-    END                                                  					discounted_flag
+    END                                                  						discounted_flag
     ,ROUND(AVG(
-		DATEDIFF(o.shipping_date, o.order_date)), 2) 						avg_shipping_days
-    ,MIN(DATEDIFF(o.shipping_date, o.order_date))           				min_shipping_days
-    ,MAX(DATEDIFF(o.shipping_date, o.order_date))           				max_shipping_days
-    ,COUNT(DISTINCT o.order_id)                             				orders_count
+		DATEDIFF(o.shipping_date, o.order_date)), 2) 							avg_shipping_days
+    ,MIN(DATEDIFF(o.shipping_date, o.order_date))           					min_shipping_days
+    ,MAX(DATEDIFF(o.shipping_date, o.order_date))           					max_shipping_days
+    ,COUNT(DISTINCT o.order_id)                             					orders_count
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
