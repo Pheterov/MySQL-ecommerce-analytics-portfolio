@@ -402,24 +402,28 @@ FROM customer_next_purchase
 GROUP BY month
 ORDER BY month;
 
-/*===================================================================================================
+/*=============================================================================================================================
 1️⃣1️⃣ Growth Analysis: New vs Existing Customers
 🎯 Goal: Determine revenue growth drivers: new vs returning customers
 🛠️ Stack: SQL (CTE + window functions)
 📈 KPI: new_customer_revenue_pct, returning_customer_revenue_pct
 💡 Insight: 2018 = acquisition-focused, 2019+ = retention-driven
 📊 Example KPI:
-| Month   | New Revenue | Returning Revenue | New % | Returning % |
-|---------|------------|-----------------|-------|-------------|
-| 2018-01 | 25,000     | 95,000          | 20.8  | 79.2        |
-| 2018-02 | 24,500     | 100,900         | 19.5  | 80.5        |
-====================================================================================================*/
+| month   	 | new_customer_revenue | returning_customer_revenue | new_customer_revenue_pct | returning_customer_revenue_pct |
+|------------|----------------------|----------------------------|--------------------------|--------------------------------|
+| 2018-01-01 | 				 324,04 | 					  [NULL] |					    100 | 	   					  [NULL] |
+| 2018-02-01 | 			  14 470,88 | 		        	  [NULL] | 						100 | 	   					  [NULL] |
+| 2018-03-01 | 			   8 326,86 |       		   	  225,23 | 					  97,37 | 	   	 					2,63 |
+| 2018-04-01 | 			  39 682,17 |       		   	1 150,89 | 					  97,18 | 	   	 					2,82 |
+| 2018-05-01 | 			  23 230,08 |       		   	3 270,22 | 					  87,66 | 	   					   12,34 |
+==============================================================================================================================*/
 WITH customer_monthly_revenue AS 
 (
 SELECT
 	o.customer_id
 	,DATE_FORMAT(o.order_date, '%Y-%m-01') 										month
-	,SUM(op.item_quantity * p.product_price * (1 - op.position_discount))		revenue
+	,SUM(op.item_quantity*COALESCE(p.product_price,0) * 
+		(1-COALESCE(op.position_discount,0)))									revenue
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
