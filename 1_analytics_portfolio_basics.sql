@@ -15,9 +15,7 @@
 | Month     | Revenue    | Unique Customers | Orders | Avg Order Value |
 |-----------|-----------|-------------------|--------|-----------------|
 | 2018-01   |   324.04	| 		   3       	|	 3   |		108.01     |
-|-----------|-----------|-------------------|--------|-----------------|
 | 2018-02   | 14470.88	| 		  32        |	32   |		452.22     |
-|-----------|-----------|-------------------|--------|-----------------|
 | 2018-03   |  8552.10	| 		  38        |	40   |		213.80     |	
 ================================================================================*/
 SELECT
@@ -56,6 +54,49 @@ JOIN product_groups pg ON p.group_id = pg.group_id
 GROUP BY pg.category
 ORDER BY total_units_sold DESC;
 
+/*================================================================================
+# 🎯 Goal: Show difference between baseline metric vs enhanced insight
+# 🛠️ Stack: SQL
+# 💡 Business Insight:
+#    - Baseline total units sold per category lacks temporal context
+#    - Enhanced metric: month-over-month comparison, numeric + percentage change
+#    - Negative change shown as minus, highlights decreasing performance
+📊 Example KPI:
+|		month		|		 product_category     | total_units_sold | units_change | units_change_pct |
+|-------------------|-----------------------------|------------------|--------------|------------------|
+| 	  2018-02-01	|  			Furniture    	  |			70		 |		  [NULL]|			 [NULL]|
+| 	  2018-03-01	|  			Furniture    	  |			54		 |		  	 -16|			 -22.86|
+| 	  2018-03-01	|  			Furniture    	  |		   103		 |		  	  49|			  90.74|
+================================================================================*/
+
+WITH monthly_category_sales AS
+(
+SELECT
+	DATE_FORMAT(o.order_date, '%Y-%m-01')                  						month
+	,pg.category                                         						product_category
+	,SUM(op.item_quantity)                               						total_units_sold
+FROM order_positions op
+JOIN orders o ON o.order_id = op.order_id
+JOIN products p ON op.product_id = p.product_id
+JOIN product_groups pg ON p.group_id = pg.group_id
+GROUP BY month, pg.category
+)
+SELECT
+    month
+    ,product_category
+    ,total_units_sold
+    ,total_units_sold - LAG(total_units_sold) OVER (
+        PARTITION BY product_category
+        ORDER BY month)                                        					units_change
+    ,ROUND(
+        (total_units_sold - LAG(total_units_sold) OVER (
+			PARTITION BY product_category
+			ORDER BY month)) * 100.0 /
+		NULLIF(LAG(total_units_sold) OVER (
+			PARTITION BY product_category
+			ORDER BY month),0), 2)												units_change_pct
+FROM monthly_category_sales
+ORDER BY product_category, month;
 /*================================================================================
 3️⃣ Top 5 Products by Sales Volume
 🎯 Goal: Highlight best-sellers for marketing & stock allocation
