@@ -290,14 +290,15 @@ ORDER BY month;
 /*===================================================================================================
 8️⃣ New vs Returning Customer Analysis
 🎯 Goal: Analyze acquisition vs retention
-🛠️ Stack: SQL (MIN() OVER)
+🛠️ Stack: SQL
 📈 KPI: new_customers, returning_customers
 💡 Impact: Tracks retention trends; informs engagement strategy
 📊 Example KPI:
-| Month   | New Customers | Returning Customers |
-|---------|---------------|------------------|
-| 2018-01 | 300           | 900              |
-| 2018-02 | 280           | 920              |
+| month   	 | new_customers | returning_customers |
+|------------|---------------|---------------------|
+| 2018-01-01 |             3 | 				  	 0 |
+| 2018-02-01 |            32 | 				  	 0 |
+| 2018-03-01 |            35 | 				  	 3 |
 ====================================================================================================*/
 WITH customer_months AS
 (
