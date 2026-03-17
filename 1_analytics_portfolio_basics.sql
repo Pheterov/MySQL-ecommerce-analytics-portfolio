@@ -6,9 +6,9 @@
 # 🔍 Focus: customer retention, revenue analysis, product & category performance
 #####################################################################################################
 
-# EXPLICIT ASSUMPTIONS
+EXPLICIT ASSUMPTIONS
 -------------------------------------------------------------------------------
-# All queries are based on the following conscious, documented assumptions:
+All queries are based on the following conscious, documented assumptions:
 
 1.  Revenue is calculated at order_date, regardless of shipping status
 2.  position_discount is a multiplier between 0 and 1 (0 = no discount, 1 = 100% discount)
@@ -18,7 +18,7 @@
 5.  A customer is considered "new" in the calendar month of their first order
 
 -------------------------------------------------------------------------------
-# KNOWN LIMITATIONS
+KNOWN LIMITATIONS
 -------------------------------------------------------------------------------
 These are conscious tradeoffs for readability and portfolio clarity:
 
