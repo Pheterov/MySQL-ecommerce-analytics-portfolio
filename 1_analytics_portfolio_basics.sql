@@ -299,3 +299,42 @@ FROM customer_first_month
 GROUP BY month
 ORDER BY month;
 ORDER BY month;
+
+################################################################################
+# 🎯 Task 1: Monthly Business Performance Metrics (Ultra Jef Castello Level+)
+# 🛠️ Stack: SQL
+# 💡 Goal: Provide management with high-level monthly KPIs
+# 🔍 Focus: revenue, unique customers, order count, avg order value (AOV)
+################################################################################
+
+/*================================================================================
+📊 Mini KPI Dashboard (Example Data)
+Month     | Revenue    | Unique Customers | Orders | Avg Order Value
+----------|-----------|----------------|--------|----------------
+2018-01   | 120,500   | 1,200           | 1,350  | 89.26
+2018-02   | 125,400   | 1,250           | 1,400  | 89.57
+2018-03   | 130,800   | 1,300           | 1,450  | 90.20
+
+📈 Revenue Trend (ASCII Sparkline)
+2018-01 ████████████ 120,500
+2018-02 █████████████ 125,400
+2018-03 ██████████████ 130,800
+
+💡 Business Insight:
+- Revenue steadily growing month-over-month (+4-5%).
+- Average order value stable (~89-90), indicating consistent purchasing behavior.
+- Number of unique customers increasing → positive acquisition trend.
+================================================================================*/
+SELECT
+    DATE_FORMAT(o.order_date, '%Y-%m-01')										month
+    ,ROUND(SUM(op.item_quantity*p.product_price*(1-op.position_discount)), 2) 	revenue
+    ,COUNT(DISTINCT o.customer_id)												unique_customers
+    ,COUNT(DISTINCT op.order_id) 												order_count
+    ,ROUND(
+        SUM(op.item_quantity*p.product_price*(1-op.position_discount)) / 
+        COUNT(DISTINCT op.order_id), 2)											avg_order_value
+FROM orders o
+JOIN order_positions op ON o.order_id = op.order_id
+JOIN products p ON op.product_id = p.product_id
+GROUP BY month
+ORDER BY month;
