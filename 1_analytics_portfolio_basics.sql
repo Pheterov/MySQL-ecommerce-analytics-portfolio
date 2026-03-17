@@ -165,9 +165,7 @@ JOIN products p ON op.product_id = p.product_id
 JOIN product_groups pg ON p.group_id = pg.group_id
 WHERE op.position_discount > 0
 GROUP BY pg.category, o.shipping_mode
-
 UNION ALL
-
 SELECT
     pg.category                                 				product_category
     ,o.shipping_mode                              				shipping_type
