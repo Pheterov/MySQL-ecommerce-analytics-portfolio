@@ -138,10 +138,12 @@ What this tells a business: Transition from acquisition to retention strategy ne
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?logo=mysql&logoColor=white)  
 ![DBeaver](https://img.shields.io/badge/DBeaver-IDE-382923?logo=dbeaver&logoColor=white)  
 
-**SQL Techniques:** `JOIN`, `GROUP BY`, `CASE WHEN`, `COALESCE`, `NULLIF`  
-**Window Functions:** `LAG`, `LEAD`, `DENSE_RANK`, `NTILE`, `MIN() OVER`  
-**Advanced:** Multi-level CTEs, MoM comparisons, cohort logic  
-**Business Metrics:** Revenue, AOV, Retention Rate, Customer LTV, Pareto Analysis  
+| Category | Techniques |
+|----------|------------|
+| **Fundamentals** | `JOIN`, `GROUP BY`, `CASE WHEN`, `COALESCE`, `NULLIF` |
+| **Window Functions** | `LAG`, `LEAD`, `DENSE_RANK`, `NTILE`, `MIN() OVER` |
+| **Advanced** | Multi-level CTEs, MoM comparisons, cohort logic |
+| **Business Metrics** | Revenue, AOV, Retention Rate, Customer LTV, Pareto |
 
 ---
 
