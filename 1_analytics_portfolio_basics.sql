@@ -254,19 +254,20 @@ ORDER BY total_revenue DESC;
 7️⃣ Month-over-Month Revenue Growth
 🎯 Goal: Track revenue trends & growth patterns
 🛠️ Stack: SQL (LAG)
-📈 KPI: revenue_change, revenue_change_pct
 💡 Impact: Insights into revenue fluctuations; informs strategy
 📊 Example KPI:
-| Month   | Revenue   | Revenue Change | Revenue Change % |
-|---------|-----------|----------------|-----------------|
-| 2018-01 | 120,500   | NULL           | NULL            |
-| 2018-02 | 125,400   | 4,900          | 4.07%           |
+| 	month	 |  revenue  | previous_month_revenue | revenue_change | revenue_change_pct |
+|------------|-----------|------------------------|----------------|--------------------|
+| 2018-01-01 |    324,04 | 					[NULL]| 		 [NULL]|			  [NULL]|
+| 2018-02-01 | 14 470,88 |	 	  			324,04|   	  14 146,84|	  		4 365,72|
+| 2018-02-01 |  8 552,10 |	 	  		 14 470,88|   	  -5 918,79|	  		  -40,90|
 ====================================================================================================*/
 WITH monthly_revenue AS
 (
 SELECT
 	DATE_FORMAT(o.order_date, '%Y-%m-01') 										month
-	,SUM(op.item_quantity * p.product_price * (1 - op.position_discount)) 		revenue
+	,SUM(op.item_quantity*COALESCE(p.product_price,0) * 
+		(1-COALESCE(op.position_discount,0))) 									revenue
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
@@ -274,14 +275,14 @@ GROUP BY month
 )
 SELECT
     month
-    ,ROUND(revenue, 2)															revenue
-    ,ROUND(LAG(revenue) OVER (
-    ORDER BY month), 2) 														previous_month_revenue
-    ,ROUND(revenue - LAG(revenue) OVER (
-    ORDER BY month), 2) 														revenue_change
-    ,ROUND(
-        (revenue - LAG(revenue) OVER (ORDER BY month)) * 100.0 / 
-        LAG(revenue) OVER (ORDER BY month), 2) 									revenue_change_pct
+    ,ROUND(revenue,2)															revenue
+    ,ROUND(LAG(revenue) OVER(
+		ORDER BY month),2) 														previous_month_revenue
+    ,ROUND(revenue - LAG(revenue) OVER(
+		ORDER BY month),2) 														revenue_change
+    ,ROUND((revenue - LAG(revenue) OVER (
+		ORDER BY month))*100.0 / 
+        NULLIF(LAG(revenue) OVER (ORDER BY month),0),2) 						revenue_change_pct
 FROM monthly_revenue
 ORDER BY month;
 
