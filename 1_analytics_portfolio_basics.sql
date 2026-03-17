@@ -26,7 +26,6 @@ These are conscious tradeoffs for readability and portfolio clarity:
     orders containing multiple categories, this will weight the average by
     number of line items, not by number of orders.
 2.  Retention is defined as Month+1 retention, not 30 day rolling retention.
-3.  All metrics use calendar months, not 4/4/5 or fiscal months.
 
 -------------------------------------------------------------------------------
 
