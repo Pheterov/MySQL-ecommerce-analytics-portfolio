@@ -67,8 +67,8 @@ ORDER BY total_units_sold DESC;
 | month				| product_category		      | total_units_sold | units_change | units_change_pct |
 |-------------------|-----------------------------|------------------|--------------|------------------|
 | 2018-02-01		| Furniture    	  			  |				  70 |		 [NULL] |			[NULL] |
-| 2018-03-01		| Furniture    	  			  |				  54 |		  	-16 |			-22.86 |
-| 2018-03-01		| Furniture    	  			  |		   		 103 |		  	 49 |			 90.74 |
+| 2018-03-01		| Furniture    	  			  |				  54 |		  	-16 |			-22,86 |
+| 2018-03-01		| Furniture    	  			  |		   		 103 |		  	 49 |			 90,74 |
 =======================================================================================================*/
 
 WITH monthly_category_sales AS
@@ -151,10 +151,10 @@ FROM orders o;
 📊 Example KPI:
 | product_category       | shipping_type    | discounted_flag | avg_shipping_days | min_shipping_days | max_shipping_days | orders_count |
 |------------------------|------------------|-----------------|-------------------|-------------------|-------------------|--------------|
-| Furniture				 | Standard Class	| Full Price	  |				 5.06 |					4 |					7 |			 445 |
-| Furniture				 | Standard Class	| Discounted	  |				 4.92 |					3 |					7 |		 	 626 |
-| Office Supplies		 | First Class		| Full Price	  |				 2.18 |					1 |					3 |		 	 300 |
-| Office Supplies		 | First Class		| Discounted	  |				 2.22 |					1 |					4 |		 	 326 |
+| Furniture				 | Standard Class	| Full Price	  |				 5,06 |					4 |					7 |			 445 |
+| Furniture				 | Standard Class	| Discounted	  |				 4,92 |					3 |					7 |		 	 626 |
+| Office Supplies		 | First Class		| Full Price	  |				 2,18 |					1 |					3 |		 	 300 |
+| Office Supplies		 | First Class		| Discounted	  |				 2,22 |					1 |					4 |		 	 326 |
 ============================================================================================================================================*/
 
 SELECT
@@ -200,9 +200,9 @@ ORDER BY product_category, shipping_type, discounted_flag DESC;
 | 2018-01-01 | SAFCO-Boltless     |    	   272,74 |		  	   1 |
 | 2018-01-01 | Avery-Hi-Liter     |     	19,54 | 	  	   2 |
 | 2018-01-01 | Message-Book       |     	16,45 |		  	   3 |
-| 2018-02-01 | Global-Deluxe      |   	  2573,82 |		  	   1 |
-| 2018-02-01 | Tennsco6--and-18   |   	  1325,85 | 	  	   2 |
-| 2018-02-01 | Hon-4700-Series    |   	  1067,94 |		  	   3 |
+| 2018-02-01 | Global-Deluxe      |   	 2 573,82 |		  	   1 |
+| 2018-02-01 | Tennsco6--and-18   |   	 1 325,85 | 	  	   2 |
+| 2018-02-01 | Hon-4700-Series    |   	 1 067,94 |		  	   3 |
 ====================================================================================================*/
 WITH monthly_product_revenue AS 
 (
