@@ -69,7 +69,7 @@ orders ─┬── order_positions ─── products ─── product_groups
 
 ## 📈 Sample Output
 
-**Monthly Revenue Performance**
+** Query 1 Monthly Revenue Performance**
 | month | revenue | unique_customers | orders | AOV |
 |-------|---------|------------------|--------|-----|
 | 2018-01 | 324.04 | 3 | 3 | 108.01 |
