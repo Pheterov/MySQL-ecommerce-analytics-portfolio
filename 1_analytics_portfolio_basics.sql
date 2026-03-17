@@ -1,17 +1,21 @@
 ################################################################################
-# 🎯 Project: E-commerce Analytics SQL Portfolio
+# 🎯 Project: E-commerce Analytics SQL Portfolio (Ultra Jef Castello EXTREME)
 # 🛠️ Database: supersales - modified by KajoData MySQL 8.0+
 # 👤 Author: Piotr Rzepka
-# 📝 Description: SQL-driven analytics portfolio solving real-world e-commerce business problems.
-# 🔍 Focus: Customer retention, revenue analysis, product & category performance
+# 📝 Description: Full-stack SQL-driven e-commerce analytics portfolio
+# 🔍 Focus: customer retention, revenue analysis, product & category performance
 ################################################################################
 
 /*================================================================================
 1️⃣ Monthly Business Performance Metrics
 🎯 Goal: High-level monthly KPIs for management
 🛠️ Stack: SQL
-📈 Metrics: revenue, unique customers, order count, avg order value (AOV)
+📈 Metrics: revenue, unique_customers, order_count, avg_order_value
 💡 Impact: Tracks trends, enables informed decision-making
+📊 Example KPI:
+| Month     | Revenue    | Unique Customers | Orders | Avg Order Value |
+|-----------|-----------|----------------|--------|----------------|
+| 2018-01   | 120,500.50 | 1,200          | 1,350  | 89.26          |
 ================================================================================*/
 SELECT
     DATE_FORMAT(o.order_date, '%Y-%m-01')										month
@@ -32,7 +36,13 @@ ORDER BY month;
 🎯 Goal: Identify top-selling product categories
 🛠️ Stack: SQL
 📈 KPI: total_units_sold per category
-💡 Impact: Supports inventory planning and category prioritization
+💡 Impact: Supports inventory planning, category prioritization
+📊 Example KPI:
+| Category     | Units Sold |
+|-------------|------------|
+| Electronics | 15,200     |
+| Home        | 10,450     |
+| Sports      | 8,700      |
 ================================================================================*/
 SELECT
     pg.category
@@ -45,10 +55,18 @@ ORDER BY total_units_sold DESC;
 
 /*================================================================================
 3️⃣ Top 5 Products by Sales Volume
-🎯 Goal: Highlight best-sellers for marketing focus & stock allocation
+🎯 Goal: Highlight best-sellers for marketing & stock allocation
 🛠️ Stack: SQL (DENSE_RANK)
 📈 KPI: total_units_sold, sales_rank
-💡 Impact: Prioritizes top-performing products to drive revenue
+💡 Impact: Prioritizes top performers to drive revenue
+📊 Example KPI:
+| Product Name           | Units Sold | Rank |
+|-----------------------|------------|------|
+| Wireless Headphones   | 2,350      | 1    |
+| Smartwatch            | 2,100      | 2    |
+| Gaming Mouse          | 1,980      | 3    |
+| Yoga Mat              | 1,700      | 4    |
+| Coffee Maker          | 1,650      | 5    |
 ================================================================================*/
 SELECT
     p.product_name
@@ -66,7 +84,8 @@ LIMIT 5;
 🎯 Goal: Measure operational efficiency
 🛠️ Stack: SQL
 📈 KPI: avg_shipping_days
-💡 Impact: Baseline metric for delivery performance, identifies areas for improvement
+💡 Impact: Baseline metric; informs process improvement
+📊 Example KPI: 4.5 days
 ================================================================================*/
 SELECT
     ROUND(AVG(
@@ -75,10 +94,16 @@ FROM orders o;
 
 /*================================================================================
 5️⃣ Monthly Top 3 Products by Revenue
-🎯 Goal: Identify top-revenue products per month
+🎯 Goal: Track top-revenue products monthly
 🛠️ Stack: SQL (CTE + DENSE_RANK)
 📈 KPI: revenue, revenue_rank
-💡 Impact: Supports sales strategy, focuses on high-revenue items
+💡 Impact: Focuses attention on revenue drivers
+📊 Example KPI:
+| Month   | Product Name       | Revenue   | Rank |
+|---------|------------------|-----------|------|
+| 2018-01 | Wireless Mouse    | 25,200.50 | 1    |
+| 2018-01 | Bluetooth Speaker | 18,400.75 | 2    |
+| 2018-01 | Laptop Stand      | 12,500.00 | 3    |
 ================================================================================*/
 WITH monthly_product_revenue AS 
 (
@@ -109,7 +134,13 @@ ORDER BY month, revenue_rank;
 🎯 Goal: Segment customers by total lifetime revenue
 🛠️ Stack: SQL (DENSE_RANK)
 📈 KPI: total_revenue, revenue_rank
-💡 Impact: Identifies top contributors, enables targeted loyalty strategies
+💡 Impact: Identifies top contributors; enables targeted loyalty campaigns
+📊 Example KPI:
+| Customer ID | Total Revenue | Rank |
+|------------|---------------|------|
+| CUST_102   | 12,500.50     | 1    |
+| CUST_215   | 11,200.75     | 2    |
+| CUST_078   | 10,900.00     | 3    |
 ================================================================================*/
 SELECT
     o.customer_id
@@ -128,7 +159,12 @@ ORDER BY total_revenue DESC;
 🎯 Goal: Track revenue trends & growth patterns
 🛠️ Stack: SQL (LAG)
 📈 KPI: revenue_change, revenue_change_pct
-💡 Impact: Provides insights into revenue fluctuations; informs strategy
+💡 Impact: Insights into revenue fluctuations; informs strategy
+📊 Example KPI:
+| Month   | Revenue   | Revenue Change | Revenue Change % |
+|---------|-----------|----------------|-----------------|
+| 2018-01 | 120,500   | NULL           | NULL            |
+| 2018-02 | 125,400   | 4,900          | 4.07%           |
 ================================================================================*/
 WITH monthly_revenue AS
 (
@@ -155,10 +191,15 @@ ORDER BY month;
 
 /*================================================================================
 8️⃣ New vs Returning Customer Analysis
-🎯 Goal: Analyze customer acquisition vs retention dynamics
+🎯 Goal: Analyze acquisition vs retention
 🛠️ Stack: SQL (MIN() OVER)
 📈 KPI: new_customers, returning_customers
 💡 Impact: Tracks retention trends; informs engagement strategy
+📊 Example KPI:
+| Month   | New Customers | Returning Customers |
+|---------|---------------|------------------|
+| 2018-01 | 300           | 900              |
+| 2018-02 | 280           | 920              |
 ================================================================================*/
 WITH customer_months AS
 (
@@ -193,7 +234,11 @@ ORDER BY month;
 🎯 Goal: Quantify customer loyalty via one-time purchases
 🛠️ Stack: SQL
 📈 KPI: one_time_customers_pct, one_time_customers_revenue_pct
-💡 Impact: Identifies churn risk and revenue concentration from single-purchase customers
+💡 Impact: Identifies churn risk and revenue concentration
+📊 Example KPI:
+| One-time Customers % | Revenue % |
+|---------------------|-----------|
+| 22.5                | 9.8       |
 ================================================================================*/
 WITH customer_stats AS 
 (
@@ -220,7 +265,12 @@ FROM customer_stats;
 🎯 Goal: Calculate next-month retention
 🛠️ Stack: SQL (LEAD)
 📈 KPI: retention_rate_pct
-💡 Impact: Key loyalty metric; measures retention effectiveness
+💡 Impact: Key loyalty metric
+📊 Example KPI:
+| Month   | Active Customers | Retained Customers | Retention % |
+|---------|-----------------|-----------------|-------------|
+| 2018-01 | 1,200           | 960             | 80.0        |
+| 2018-02 | 1,250           | 1,000           | 80.0        |
 ================================================================================*/
 WITH customer_month_activity AS (
 SELECT DISTINCT
@@ -258,7 +308,12 @@ ORDER BY month;
 🎯 Goal: Determine revenue growth drivers: new vs returning customers
 🛠️ Stack: SQL (CTE + window functions)
 📈 KPI: new_customer_revenue_pct, returning_customer_revenue_pct
-💡 Insight: 2018 = acquisition-focused, 2019+ = retention-driven; informs long-term strategy
+💡 Insight: 2018 = acquisition-focused, 2019+ = retention-driven
+📊 Example KPI:
+| Month   | New Revenue | Returning Revenue | New % | Returning % |
+|---------|------------|-----------------|-------|-------------|
+| 2018-01 | 25,000     | 95,000          | 20.8  | 79.2        |
+| 2018-02 | 24,500     | 100,900         | 19.5  | 80.5        |
 ================================================================================*/
 WITH customer_monthly_revenue AS 
 (
@@ -296,45 +351,5 @@ SELECT
         SUM(CASE WHEN month > first_purchase_month THEN revenue END) * 100.0 / 
         SUM(revenue), 2)														returning_customer_revenue_pct
 FROM customer_first_month
-GROUP BY month
-ORDER BY month;
-ORDER BY month;
-
-################################################################################
-# 🎯 Task 1: Monthly Business Performance Metrics (Ultra Jef Castello Level+)
-# 🛠️ Stack: SQL
-# 💡 Goal: Provide management with high-level monthly KPIs
-# 🔍 Focus: revenue, unique customers, order count, avg order value (AOV)
-################################################################################
-
-/*================================================================================
-📊 Mini KPI Dashboard (Example Data)
-Month     | Revenue    | Unique Customers | Orders | Avg Order Value
-----------|-----------|----------------|--------|----------------
-2018-01   | 120,500   | 1,200           | 1,350  | 89.26
-2018-02   | 125,400   | 1,250           | 1,400  | 89.57
-2018-03   | 130,800   | 1,300           | 1,450  | 90.20
-
-📈 Revenue Trend (ASCII Sparkline)
-2018-01 ████████████ 120,500
-2018-02 █████████████ 125,400
-2018-03 ██████████████ 130,800
-
-💡 Business Insight:
-- Revenue steadily growing month-over-month (+4-5%).
-- Average order value stable (~89-90), indicating consistent purchasing behavior.
-- Number of unique customers increasing → positive acquisition trend.
-================================================================================*/
-SELECT
-    DATE_FORMAT(o.order_date, '%Y-%m-01')										month
-    ,ROUND(SUM(op.item_quantity*p.product_price*(1-op.position_discount)), 2) 	revenue
-    ,COUNT(DISTINCT o.customer_id)												unique_customers
-    ,COUNT(DISTINCT op.order_id) 												order_count
-    ,ROUND(
-        SUM(op.item_quantity*p.product_price*(1-op.position_discount)) / 
-        COUNT(DISTINCT op.order_id), 2)											avg_order_value
-FROM orders o
-JOIN order_positions op ON o.order_id = op.order_id
-JOIN products p ON op.product_id = p.product_id
 GROUP BY month
 ORDER BY month;
