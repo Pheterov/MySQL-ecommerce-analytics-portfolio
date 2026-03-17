@@ -22,10 +22,10 @@
 
 | Focus | Insight | Business Takeaway |
 |-------|---------|-----------------|
-| Revenue Performance | Top 10% products generate ~60% of revenue | Focus marketing & inventory on high-impact products |
-| Customer Retention | M+1 retention: 9–13% early, 15–40% later | Shift from acquisition-heavy to retention strategy |
-| Delivery Efficiency | ~15% orders consistently delayed | Potential logistics bottlenecks |
-| Discount Impact | Correlation with revenue & shipping delays | Informs promotion & pricing strategy |
+| 💰 **Revenue Performance** ![Revenue](https://img.shields.io/badge/Revenue-Top10%25-green) | Top 10% products generate ~60% of revenue | Focus marketing & inventory on high-impact products |
+| 👥 **Customer Retention** ![Retention](https://img.shields.io/badge/Retention-M%2B1-blue) | M+1 retention: 9–13% early, 15–40% later | Shift from acquisition-heavy to retention strategy |
+| 🚚 **Delivery Efficiency** ![Delivery](https://img.shields.io/badge/Delivery-Efficiency-orange) | ~15% orders consistently delayed | Potential logistics bottlenecks |
+| 🎁 **Discount Impact** ![Discount](https://img.shields.io/badge/Discount-Impact-purple) | Correlation with revenue & shipping delays | Informs promotion & pricing strategy |
 
 ---
 
