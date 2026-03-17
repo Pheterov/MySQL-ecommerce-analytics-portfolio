@@ -97,6 +97,60 @@ SELECT
 FROM orders o;
 
 /*================================================================================
+🎯 Goal: Show difference between baseline metric vs enhanced insight
+🛠️ Stack: SQL
+💡 Business Insight:
+   - Baseline avg shipping time is not enough; comparing Discounted orders vs Full Price orders is a bare minimum
+   - Enables management to assess whether promotions affect fulfillment
+   - Note: database is a modified Supersales by KajoData; 
+     some results (e.g., Furniture, First Class) reflect dataset structure, not real-world logistics
+📊 Example KPI:
+| product_category       | shipping_type    | discounted_flag | avg_shipping_days | min_shipping_days | max_shipping_days | orders_count |
+|------------------------|------------------|-----------------|-------------------|-------------------|-------------------|--------------|
+| Furniture				 |First Class		|Full Price		  |			2.14	  |			1		  |			3		  |		 99		 |
+|------------------------|------------------|-----------------|-------------------|-------------------|-------------------|--------------|
+| Furniture				 |First Class		|Discounted		  |			2.14	  |			1		  |			3		  |		 184	 |
+|------------------------|------------------|-----------------|-------------------|-------------------|-------------------|--------------|
+| Furniture				 |Same Day			|Full Price		  |			0		  |			0		  |			0		  |		 36		 |
+|------------------------|------------------|-----------------|-------------------|-------------------|-------------------|--------------|
+| Furniture				 |Same Day			|Discounted		  |			0		  |			0		  |			1		  |		 63		 |
+================================================================================*/
+
+SELECT
+    pg.category                                 				product_category
+    ,o.shipping_mode                              				shipping_type
+    ,'Discounted'                                 				discounted_flag
+    ,ROUND(AVG(DATEDIFF(o.shipping_date, o.order_date)), 2) 	avg_shipping_days
+    ,ROUND(MIN(DATEDIFF(o.shipping_date, o.order_date)), 2) 	min_shipping_days
+    ,ROUND(MAX(DATEDIFF(o.shipping_date, o.order_date)), 2) 	max_shipping_days
+    ,COUNT(DISTINCT o.order_id)                    				orders_count
+FROM orders o
+JOIN order_positions op ON o.order_id = op.order_id
+JOIN products p ON op.product_id = p.product_id
+JOIN product_groups pg ON p.group_id = pg.group_id
+WHERE op.position_discount > 0
+GROUP BY pg.category, o.shipping_mode
+
+UNION ALL
+
+SELECT
+    pg.category                                 				product_category
+    ,o.shipping_mode                              				shipping_type
+    ,'Full Price'                                 				discounted_flag
+    ,ROUND(AVG(DATEDIFF(o.shipping_date, o.order_date)), 2) 	avg_shipping_days
+    ,ROUND(MIN(DATEDIFF(o.shipping_date, o.order_date)), 2) 	min_shipping_days
+    ,ROUND(MAX(DATEDIFF(o.shipping_date, o.order_date)), 2) 	max_shipping_days
+    ,COUNT(DISTINCT o.order_id)                    				orders_count
+FROM orders o
+JOIN order_positions op ON o.order_id = op.order_id
+JOIN products p ON op.product_id = p.product_id
+JOIN product_groups pg ON p.group_id = pg.group_id
+WHERE op.position_discount = 0
+GROUP BY pg.category, o.shipping_mode
+
+ORDER BY product_category, shipping_type, discounted_flag DESC;
+
+/*================================================================================
 5️⃣ Monthly Top 3 Products by Revenue
 🎯 Goal: Track top-revenue products monthly
 🛠️ Stack: SQL (CTE + DENSE_RANK)
