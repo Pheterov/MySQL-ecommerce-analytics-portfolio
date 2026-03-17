@@ -194,12 +194,12 @@ ORDER BY product_category, shipping_type, discounted_flag DESC;
 📊 Example KPI:
 | month   	 | product_name       |	revenue	  	  | revenue_rank |
 |------------|--------------------|---------------|--------------|
-| 2018-01-01 | SAFCO-Boltless     |    272,74 	  |		  1    	 |
-| 2018-01-01 | Avery-Hi-Liter     |     19,54 	  | 	  2    	 |
-| 2018-01-01 | Message-Book       |     16,45 	  |		  3		 |
-| 2018-02-01 | Global-Deluxe      |   2573,82 	  |		  1    	 |
-| 2018-02-01 | Tennsco6--and-18   |   1325,85 	  | 	  2    	 |
-| 2018-02-01 | Hon-4700-Series    |   1067,94 	  |		  3		 |
+| 2018-01-01 | SAFCO-Boltless     |    	   272,74 |		  	   1 |
+| 2018-01-01 | Avery-Hi-Liter     |     	19,54 | 	  	   2 |
+| 2018-01-01 | Message-Book       |     	16,45 |		  	   3 |
+| 2018-02-01 | Global-Deluxe      |   	  2573,82 |		  	   1 |
+| 2018-02-01 | Tennsco6--and-18   |   	  1325,85 | 	  	   2 |
+| 2018-02-01 | Hon-4700-Series    |   	  1067,94 |		  	   3 |
 ====================================================================================================*/
 WITH monthly_product_revenue AS 
 (
