@@ -23,3 +23,25 @@
 ✅ Discount Impact on Shipping & Revenue  
 
 **Bottom line**: If you need someone who writes SQL that answers business questions—not just joins tables—this is what that looks like.
+
+---
+
+## 🔧 Tech Stack
+
+![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?logo=mysql&logoColor=white)
+![DBeaver](https://img.shields.io/badge/DBeaver-IDE-382923?logo=dbeaver&logoColor=white)
+
+---
+
+## 📊 Skills Demonstrated
+
+| Category | Techniques |
+|----------|------------|
+| **Fundamentals** | `JOIN`, `GROUP BY`, `CASE WHEN`, `COALESCE`, `NULLIF` |
+| **Window Functions** | `LAG`, `LEAD`, `DENSE_RANK`, `NTILE`, `MIN() OVER` |
+| **Advanced** | Multi-level CTEs, MoM comparisons, cohort logic |
+| **Business Metrics** | Revenue, AOV, Retention Rate, Customer LTV, Pareto |
+
+---
+
+## 🗄️ Database Schema
