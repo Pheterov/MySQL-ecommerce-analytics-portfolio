@@ -12,11 +12,11 @@
 🛠️ Stack: SQL
 💡 Impact: Tracks trends, enables informed decision-making
 📊 Example KPI:
-| Month     | Revenue    | Unique Customers | Orders | Avg Order Value |
-|-----------|-----------|-------------------|--------|-----------------|
-| 2018-01   |   324.04	| 		   3       	|	 3   |		108.01     |
-| 2018-02   | 14470.88	| 		  32        |	32   |		452.22     |
-| 2018-03   |  8552.10	| 		  38        |	40   |		213.80     |	
+| month     | revenue   | unique_customers  | orders_count | avg_order_value |
+|-----------|-----------|-------------------|--------------|-----------------|
+| 2018-01   |     324.0 | 		   		  3 |	 		 3 |		  108.01 |
+| 2018-02   |  14470.88 | 		  		 32 |	   		32 |		  452.22 |
+| 2018-03   |   8552.10 | 		  		 38 |	   		40 |		  213.80 |	
 ====================================================================================================*/
 SELECT
     DATE_FORMAT(o.order_date, '%Y-%m-01')										month
@@ -41,11 +41,11 @@ ORDER BY month;
 📈 KPI: total_units_sold per category
 💡 Impact: Supports inventory planning, category prioritization
 📊 Example KPI:
-| Category     	  | Units Sold |
+| category     	  | units_sold |
 |-----------------|------------|
-| Office Supplies |  22,906    |
-| Furniture       |   8,028    |
-| Technology      |   6,939    |
+| Office Supplies |     22,906 |
+| Furniture       |   	 8,028 |
+| Technology      |   	 6,939 |
 ====================================================================================================*/
 SELECT
     pg.category
@@ -64,11 +64,11 @@ ORDER BY total_units_sold DESC;
 #    - Enhanced metric: month-over-month comparison, numeric + percentage change
 #    - Negative change shown as minus, highlights decreasing performance
 📊 Example KPI:
-|		month		|		 product_category     | total_units_sold | units_change | units_change_pct |
+| month				| product_category		      | total_units_sold | units_change | units_change_pct |
 |-------------------|-----------------------------|------------------|--------------|------------------|
-| 	  2018-02-01	|  			Furniture    	  |			70		 |		  [NULL]|			 [NULL]|
-| 	  2018-03-01	|  			Furniture    	  |			54		 |		  	 -16|			 -22.86|
-| 	  2018-03-01	|  			Furniture    	  |		   103		 |		  	  49|			  90.74|
+| 2018-02-01		| Furniture    	  			  |				  70 |		 [NULL] |			[NULL] |
+| 2018-03-01		| Furniture    	  			  |				  54 |		  	-16 |			-22.86 |
+| 2018-03-01		| Furniture    	  			  |		   		 103 |		  	 49 |			 90.74 |
 ====================================================================================================*/
 
 WITH monthly_category_sales AS
@@ -106,13 +106,13 @@ ORDER BY product_category, month;
 🛠️ Stack: SQL 
 💡 Impact: Prioritizes top performers to drive revenue
 📊 Example KPI:
-| Product Name          | Units Sold | Rank |
-|-----------------------|------------|------|
-| Staples				|     215    |   1  |
-| Staple-envelope       |     170    |   2  |
-| Easy-staple-paper		|     150    |   3  |
-| Staples-in-misc.		|      86    |   4  |
-| Logitech P710e-Mobile |      75    |   5  |
+| product_name          | total_units_sold | sales_rank |
+|-----------------------|------------------|------------|
+| Staples				|     	  	   215 |     	  1 |
+| Staple-envelope       |     	  	   170 |     	  2 |
+| Easy-staple-paper		|	  	  	   150 |     	  3 |
+| Staples-in-misc.		|      	   		86 |     	  4 |
+| Logitech P710e-Mobile |      	   		75 |     	  5 |
 ====================================================================================================*/
 SELECT
     p.product_name
@@ -147,10 +147,10 @@ FROM orders o;
      some results (e.g., Furniture, First Class) reflect dataset structure, not real-world logistics
 📊 Example KPI:
 | product_category       | shipping_type    | discounted_flag | avg_shipping_days | min_shipping_days | max_shipping_days | orders_count |
-| Furniture				 |Standard Class	|Full Price		  |			5.06	  |			4		  |			7		  |		 445	 |
-| Furniture				 |Standard Class	|Discounted		  |			4.92	  |			3		  |			7		  |		 626	 |
-| Office Supplies		 |First Class		|Full Price		  |			2.18	  |			1		  |			3		  |		 300	 |
-| Office Supplies		 |First Class		|Discounted		  |			2.22	  |			1		  |			4		  |		 326	 |
+| Furniture				 | Standard Class	| Full Price	  |				  5.06|					4 |					7 |			 445 |
+| Furniture				 | Standard Class	| Discounted	  |				  4.92|					3 |					7 |		 	 626 |
+| Office Supplies		 | First Class		| Full Price	  |				  2.18|					1 |					3 |		 	 300 |
+| Office Supplies		 | First Class		| Discounted	  |				  2.22|					1 |					4 |		 	 326 |
 ============================================================================================================================================*/
 
 SELECT
