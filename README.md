@@ -76,6 +76,8 @@ orders ─┬── order_positions ─── products ─── product_groups
 💡 Key Insight:
 Top 10% of customers generate nearly 60% of total revenue, highlighting the critical importance of retaining high-value clients for sustained business growth.
 
+<br>
+
 **Monthly Revenue Breakdown: New vs Returning Customers**  
 
 |       month      | new_customer_revenue | returning_customer_revenue | new_customer_revenue_pct | returning_customer_revenue_pct |
