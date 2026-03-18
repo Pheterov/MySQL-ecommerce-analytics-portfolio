@@ -127,7 +127,7 @@ ORDER BY product_category, month;
 
 /*===================================================================================================
 3️⃣ Top 5 Products by Sales Volume
-🎯 Goal: Highlight best-sellers for marketing & stock allocation
+🎯 Goal: Spot the best-sellers so marketing and stock focus on what really drives revenue
 🛠️ Stack: SQL 
 💡 Impact: Prioritizes top performers to drive revenue
 📊 Example KPI:
