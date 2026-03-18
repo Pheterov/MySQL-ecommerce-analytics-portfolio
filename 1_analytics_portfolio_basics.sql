@@ -85,9 +85,9 @@ ORDER BY total_units_sold DESC;
 # 🎯 Goal: Show difference between baseline metric vs enhanced insight
 # 🛠️ Stack: SQL
 # 💡 Business Insight:
-#    - Baseline total units sold per category lacks temporal context
-#    - Enhanced metric: month-over-month comparison, numeric + percentage change
-#    - Negative change shown as minus, highlights decreasing performance
+#    - Just looking at total units alone hides trends
+#    - Checking month-over-month numbers (both absolute and percentage changes) makes it clear which categories are growing or shrinking
+#    - Negative changes stand out so you can spot declining performance quickly
 📊 Example KPI:
 | month				| product_category		      | total_units_sold | units_change | units_change_pct |
 |-------------------|-----------------------------|------------------|--------------|------------------|
