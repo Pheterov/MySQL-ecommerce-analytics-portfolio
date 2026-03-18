@@ -53,18 +53,22 @@ ORDER BY revenue DESC;
 
 /*================================================================================================================================================================================================
 🎯 Goal: Show difference between baseline metric vs enhanced insight.
-		  Benchmark delivery_state across revenue, customer value and purchasing behavior to support
-          data-driven regional prioritization.
+		 Benchmark delivery_state across revenue, customer value and purchasing behavior to support
+		 data-driven regional prioritization.
+
 🛠️ Stack: SQL
+
 💡 Business Impact:
 - Identifies top-performing states for targeted marketing and budget allocation
 - Highlights underperforming regions requiring pricing, operational or acquisition improvements
 - Differentiates volume-driven vs value-driven markets for better strategic focus
+
 🔍 Key Insights:
 - Use revenue_rank and revenue_share_pct to identify core markets and assess business dependency
 - Compare AOV, revenue_per_customer and purchase_frequency to distinguish high-value vs high-volume states
 - States with high value metrics but low revenue share signal underpenetrated growth opportunities,
   while high volume with low value may require upsell or margin optimization
+
 📊 Example KPI:
 | delivery_state | revenue    | orders_cnt  | unique_customers | AoV 	 | revenue_per_customer | total_items_sold | avg_items_per_order | purchase_frequency | revenue_share_pct | revenue_rank |
 |----------------|------------|-------------|------------------|---------|----------------------|------------------|---------------------|--------------------|-------------------|--------------|
@@ -127,6 +131,12 @@ ORDER BY revenue DESC;
 🎯 Goal: Identify high-volume cities for logistics optimization
 🛠️ Stack: SQL
 💡 Impact: Prioritizes warehouse locations and delivery routes
+📊 Example KPI:
+| ranking | delivery_city | items_sold  |
+|---------|---------------|-------------|
+|  	    1 | New York City | 	  3 417 |
+| 		2 |	Los Angeles   | 	  2 879 |
+|		3 | Philadelphia  | 	  1 981 |
 ====================================================================================================*/
 WITH city_sales AS
 (
@@ -145,6 +155,68 @@ SELECT
 	,items_sold
 FROM city_sales
 WHERE ranking <= 5;
+
+/*==============================================================================================================
+🎯 Goal: Show difference between baseline metric vs enhanced insight.
+		  Benchmarks delivery_city performance by shifting focus
+		  from unit volume to revenue quality and pricing health.
+
+🛠️ Stack: SQL
+
+💡 Business Impact:
+Ensures investment in logistics and marketing targets high-value markets
+that contribute sustainably to the bottom line.Reduces profit leakage
+by identifying regions where volume dominance relies excessively on price concessions.
+
+🔍 Key Insights:
+Misalignment between item_ranking and revenue_ranking reveals
+markets generating low monetary yield despite high transaction counts.
+An elevated avg_discount_depth_pct signals aggressive pricing tactics required
+to maintain sales activity in specific territories.
+
+📊 Example KPI:
+|revenue_ranking | items_ranking | delivery_city | total_revenue | items_sold | AoV	   | avg_disctount_depth_pct |
+|----------------|---------------|---------------|---------------|------------|--------|-------------------------|
+| 			   1 |			   1 | New York City |	  258 988,76 |		3 417 |	575.53 |					8.97 |
+|			   2 |			   2 | Los Angeles	 |	  173 235,36 |		2 879 |	451.13 |				   12.82 |
+|			   3 |			   5 | Seattle		 |	  119 720,46 |		1 590 |	564.72 |					7.97 |
+|			   4 |			   4 | San Francisco |	  111 361,31 |		1 935 |	420.23 |				   12.33 |
+|			   5 |			   3 | Philadelphia	 |	  105 241,09 |		1 981 |	397.14 |					36.4 |
+================================================================================================================*/
+
+WITH city_metrics AS
+(
+SELECT
+	o.delivery_city
+	,SUM(op.item_quantity) 																	items_sold
+	,RANK() OVER (
+		ORDER BY SUM(op.item_quantity) DESC)												items_ranking
+	,ROUND(SUM(op.item_quantity*p.product_price*(1-op.position_discount)), 2)				total_revenue
+	,ROUND(
+		SUM(op.item_quantity*p.product_price*(1-op.position_discount)) / 
+		COUNT(DISTINCT o.order_id), 2)														AoV
+	,ROUND(
+		SUM(op.item_quantity*p.product_price*op.position_discount) / 
+		SUM(op.item_quantity*p.product_price)*100.0, 2)										avg_discount_depth_pct
+	,DENSE_RANK() OVER(
+		ORDER BY SUM(op.item_quantity*p.product_price*(1-op.position_discount)) DESC)		revenue_ranking
+FROM orders o
+JOIN order_positions op ON o.order_id = op.order_id
+JOIN products p ON op.product_id = p.product_id
+GROUP BY o.delivery_city
+)
+SELECT
+	revenue_ranking
+	,items_ranking
+	,delivery_city
+	,total_revenue
+	,items_sold
+	,AoV
+	,avg_discount_depth_pct
+FROM city_metrics
+WHERE revenue_ranking <= 5
+ORDER BY revenue_ranking;
+
 
 /*===================================================================================================
 3️⃣ Average Shipping Time by Shipping Mode
