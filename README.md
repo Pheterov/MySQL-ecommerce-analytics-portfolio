@@ -14,7 +14,7 @@
 | **Business Impact** | Revenue growth, retention optimization, customer segmentation |
 | **Code Quality** | Documented assumptions, reproducible pipelines, clean formatting |
 
-> I don’t just analyze data neither query tables — I look for decisions hidden inside the numbers.
+> I don’t just analyze data or query tables — I look for decisions hidden inside the numbers.
 ---
 
 ## 📊 Highlighted Insights (Real Impact)
