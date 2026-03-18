@@ -132,7 +132,8 @@ WITH city_sales AS
 SELECT
 	o.delivery_city
 	,SUM(op.item_quantity) 																				items_sold
-	,DENSE_RANK() OVER(ORDER BY SUM(op.item_quantity) DESC)												ranking
+	,DENSE_RANK() OVER(
+		ORDER BY SUM(op.item_quantity) DESC)															ranking
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 GROUP BY o.delivery_city
