@@ -76,7 +76,7 @@ orders ─┬── order_positions ─── products ─── product_groups
 
 &nbsp;
 
-**💡 Key Insight:**  
+## **💡 Key Insight:**  
 Top 10% of customers generate nearly 60% of total revenue, highlighting the critical importance of retaining high-value clients for sustained business growth.
 
 &nbsp;
@@ -94,7 +94,7 @@ Top 10% of customers generate nearly 60% of total revenue, highlighting the crit
 
 &nbsp;
 
-**💡 Key Insight:**  
+## **💡 Key Insight:**  
 New customers drive initial revenue, but the growing share of returning customers signals that retention strategies are key to sustainable growth.
 
 &nbsp;
