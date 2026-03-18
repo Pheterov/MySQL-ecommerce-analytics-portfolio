@@ -13,7 +13,7 @@
 | **SQL Level** | Advanced: multi-table JOINs, CTEs, window functions, cohort analysis |
 | **Business Impact** | Revenue growth, retention optimization, customer segmentation |
 | **Code Quality** | Documented assumptions, reproducible pipelines, clean formatting |
-<br>
+
 >“I don’t just query tables — I extract decisions hidden in data.”
 
 ---
