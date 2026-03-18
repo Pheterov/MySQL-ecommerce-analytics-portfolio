@@ -80,7 +80,7 @@ Top 10% of customers generate nearly 60% of total revenue, highlighting the crit
 
 **Monthly Revenue Breakdown: New vs Returning Customers**  
 
-|       month      | new_customer_revenue | returning_customer_revenue | new_customer_revenue_pct | returning_customer_revenue_pct |
+|month&nbsp;&nbsp;&nbsp;| new_customer_revenue | returning_customer_revenue | new_customer_revenue_pct | returning_customer_revenue_pct |
 |------------|----------------------|----------------------------|--------------------------|--------------------------------|
 | 2018-01-01   | 324,04 | [NULL] | 100 | [NULL] |
 | 2018-02-01   | 14 470,88 | [NULL] | 100 | [NULL] |
