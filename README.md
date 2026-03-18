@@ -18,7 +18,7 @@
 
 ---
 
-## 📊 Highlighted Insights
+## 📊 Highlighted Insights (Real Impact)
 
 | Focus | Insight | Business Takeaway |
 |-------|---------|-----------------|
