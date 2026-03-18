@@ -221,22 +221,6 @@ FROM city_metrics
 WHERE revenue_ranking <= 5
 ORDER BY revenue_ranking;
 
-
-/*===================================================================================================
- Average Shipping Time by Shipping Mode
-🎯 Goal: Compare operational efficiency across shipping methods
-🛠️ Stack: SQL
-💡 Impact: Identifies fastest shipping options for customer satisfaction
-====================================================================================================*/
-SELECT
-	o.shipping_mode
-	,ROUND(AVG(
-		DATEDIFF(o.shipping_date, o.order_date)), 1) 																avg_delivery_time
-FROM orders o
-WHERE o.shipping_date >= o.order_date
-GROUP BY o.shipping_mode
-ORDER BY avg_delivery_time;
-
 /*===================================================================================================
 3️⃣ Top Category by Units Sold in 2019
 🎯 Goal: Identify best-performing category for inventory planning
