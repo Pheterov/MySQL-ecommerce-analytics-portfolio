@@ -114,4 +114,4 @@ New customers drive initial revenue, but the growing share of returning customer
 
 If you need someone who writes SQL that actually drives decisions, this repo shows business-first, reproducible analysis with real e-commerce data.
 
-## 📬 Open to opportunities – let’s turn your data into decisions 🚀
+** 📬 Open to opportunities – let’s turn your data into decisions 🚀 **
