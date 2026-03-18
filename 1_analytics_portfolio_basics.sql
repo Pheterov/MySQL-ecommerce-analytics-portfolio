@@ -66,9 +66,9 @@ ORDER BY month;
 📊 Example KPI:
 | category     	  | total_units_sold |
 |-----------------|------------------|
-| Office Supplies |     	  22,906 |
-| Furniture       |   	 	   8,028 |
-| Technology      |   	 	   6,939 |
+| Office Supplies |     	  22 906 |
+| Furniture       |   	 	   8 028 |
+| Technology      |   	 	   6 939 |
 ====================================================================================================*/
 
 SELECT
