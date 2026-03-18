@@ -14,6 +14,7 @@
 | **Business Impact** | Revenue growth, retention optimization, customer segmentation |
 | **Code Quality** | Documented assumptions, reproducible pipelines, clean formatting |
 
+> I don’t just analyze data neither query tables — I look for decisions hidden inside the numbers.
 ---
 
 ## 📊 Highlighted Insights (Real Impact)
@@ -101,5 +102,3 @@ Early stage: heavy acquisition → later stage: focus on returning customer reve
 # 🎯 Bottom Line
 
 If you need someone who writes SQL that actually drives decisions, this repo shows business-first, reproducible analysis with real e-commerce data.
-
-> I don’t just analyze data — I look for decisions hidden inside the numbers.
