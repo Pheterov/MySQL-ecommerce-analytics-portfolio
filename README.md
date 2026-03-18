@@ -70,14 +70,14 @@ orders ─┬── order_positions ─── products ─── product_groups
 ## 🏆 Sample Output (Interpretation Ready)
 
 **Monthly Revenue Snapshot**  
-| Month | Revenue | Unique Customers | Orders | AOV |
+| month | revenue | unique_customers | orders | AoV |
 |-------|---------|----------------|--------|-----|
 | 2018-01 | 324.04 | 3 | 3 | 108.01 |
 | 2018-02 | 14,470.88 | 32 | 32 | 452.22 |
 | 2018-03 | 8,552.10 | 38 | 40 | 213.80 |
 
 **Retention Insight (M+1)**  
-| Month | Active Customers | Retained | Retention Rate |
+| month | active_customers | retained | retention_rate |
 |-------|----------------|----------|----------------|
 | 2018-02 | 32 | 3 | 9.38% |
 | 2018-03 | 38 | 5 | 13.16% |
