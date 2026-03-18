@@ -68,23 +68,28 @@ orders ─┬── order_positions ─── products ─── product_groups
 
 ## 🏆 Sample Output (Interpretation Ready)
 
-**Monthly Revenue Snapshot**  
-| month | revenue | unique_customers | orders | AoV |
-|-------|---------|----------------|--------|-----|
-| 2018-01 | 324.04 | 3 | 3 | 108.01 |
-| 2018-02 | 14,470.88 | 32 | 32 | 452.22 |
-| 2018-03 | 8,552.10 | 38 | 40 | 213.80 |
+**Top 10% Customer Contribution to Total Revenue**  
+| top_10pct_revenue | total_revenue | top_10pct_revenue_pct |
+|-------------------|---------------|-----------------------|
+|    1 348 957,66   |  2 268 169,36 |                 59,47 |
 
 
+💡 Key Insight:
+Top 10% of customers generate nearly 60% of total revenue, highlighting the critical importance of retaining high-value clients for sustained business growth.
 
-**Retention Insight (M+1)**  
-| month | active_customers | retained | retention_rate |
+
+**Monthly Revenue Breakdown: New vs Returning Customers**  
+| month | new_customer_revenue | returning_customer_revenue | new_customer_revenue_pct | returning_customer_revenue_pct |
 |-------|----------------|----------|----------------|
-| 2018-02 | 32 | 3 | 9.38% |
-| 2018-03 | 38 | 5 | 13.16% |
-| 2018-04 | 63 | 4 | 6.35% |
-| 2018-05 | 67 | 7 | 10.45% |
-| 2018-06 | 67 | 6 | 8.96% |
+| 2018-01-01 | 324,04 | [NULL] | 100 | [NULL] |
+| 2018-02-01 | 14 470,88 | [NULL] | 100 | [NULL] |
+| 2018-03-01 | 8 326,86 | 225,23 | 97,37 | 2,63 |
+| 2018-04-01 | 39 682,17 | 1 150,89 | 97,18 | 2,82 |
+| 2018-05-01 | 23 230,08 | 3 270,22 | 87,66 | 12,34 |
+| 2018-06-01 | 23 276,30 | 6 036,73 | 79,41 | 20,59 |
+
+💡 Key Insight:
+New customers drive initial revenue, but the growing share of returning customers signals that retention strategies are key to sustainable growth.
 
 ---
 
