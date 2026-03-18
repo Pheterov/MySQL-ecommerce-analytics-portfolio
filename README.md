@@ -15,7 +15,6 @@
 | **Code Quality** | Documented assumptions, reproducible pipelines, clean formatting |
 
 > I don’t just analyze data or query tables — I look for decisions hidden inside the numbers.
----
 
 ## 📊 Highlighted Insights (Real Impact)
 
@@ -27,8 +26,6 @@
 | <p align="center">🎯<br>Discount Impact</p>| Correlation with revenue & shipping delays | Informs promotion & pricing strategy |
 <br>
 Each insight highlights a measurable business opportunity based on real e-commerce data.
-
----
 
 ## 🔧 Tech Stack & Skills
 
@@ -65,7 +62,6 @@ orders ─┬── order_positions ─── products ─── product_groups
 </details>
 
 ## 🏆 Sample Output (Interpretation Ready)
----
 **Top 10% Customer Contribution to Total Revenue**  
 
 | top_10pct_revenue | total_revenue | top_10pct_revenue_pct |
