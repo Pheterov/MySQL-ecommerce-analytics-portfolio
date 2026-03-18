@@ -63,7 +63,7 @@ ORDER BY month;
 🎯 Goal: Identify top-selling product categories
 🛠️ Stack: SQL
 📈 KPI: total_units_sold per category
-💡 Impact: Supports inventory planning, category prioritization
+💡 Impact: Helps plan inventory and focus on the categories that matter most
 📊 Example KPI:
 | category     	  | total_units_sold |
 |-----------------|------------------|
