@@ -13,7 +13,7 @@
 | **SQL Level** | Advanced: multi-table JOINs, CTEs, window functions, cohort analysis |
 | **Business Impact** | Revenue growth, retention optimization, customer segmentation |
 | **Code Quality** | Documented assumptions, reproducible pipelines, clean formatting |
-
+<br>
 > “I don’t just query tables — I extract decisions hidden in data.”
 
 ---
@@ -26,7 +26,6 @@
 | 👥 Customer Retention (M+1) | M+1 retention: 9–13% early, 15–40% later | Shift from acquisition-heavy to retention strategy |
 | 🚚 Delivery Efficiency | ~15% orders consistently delayed | Potential logistics bottlenecks |
 | 🎯 Discount Impact | Correlation with revenue & shipping delays | Informs promotion & pricing strategy |
-<br>
 <br>
 Each insight highlights a measurable business opportunity based on real e-commerce data.
 
