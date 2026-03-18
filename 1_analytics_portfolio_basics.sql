@@ -82,7 +82,7 @@ GROUP BY pg.category
 ORDER BY total_units_sold DESC;
 
 /*======================================================================================================
-# 🎯 Goal: Show difference between baseline metric vs enhanced insight
+# 🎯 Goal: Show how simple totals hide trends
 # 🛠️ Stack: SQL
 # 💡 Business Insight:
 #    - Just looking at total units alone hides trends
