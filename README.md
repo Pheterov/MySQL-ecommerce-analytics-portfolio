@@ -5,7 +5,7 @@
 
 ---
 
-## 👀 Summary / Role Fit — Why You Should Care
+## 👀 For Recruiters — Why You Should Care
 
 | What | Snapshot |
 |------|---------|
