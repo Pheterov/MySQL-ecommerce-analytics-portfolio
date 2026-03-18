@@ -108,6 +108,6 @@ New customers drive initial revenue, but the growing share of returning customer
 -- New customer = first order in calendar month
 ```
 
-# 🎯 Bottom Line
+## 🎯 Bottom Line
 
 If you need someone who writes SQL that actually drives decisions, this repo shows business-first, reproducible analysis with real e-commerce data.
