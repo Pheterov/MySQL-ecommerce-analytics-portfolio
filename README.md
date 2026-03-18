@@ -14,7 +14,7 @@
 | **Business Impact** | Revenue growth, retention optimization, customer segmentation |
 | **Code Quality** | Documented assumptions, reproducible pipelines, clean formatting |
 
-> I don’t just run queries — I dig into the numbers to find decisions that actually matter.
+> I analyze the numbers to help make business decisions.
 
 &nbsp;
 
