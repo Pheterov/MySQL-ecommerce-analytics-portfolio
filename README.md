@@ -88,6 +88,7 @@ Top 10% of customers generate nearly 60% of total revenue, highlighting the crit
 | 2018-04-01   | 39 682,17 | 1 150,89 | 97,18 | 2,82 |
 | 2018-05-01   | 23 230,08 | 3 270,22 | 87,66 | 12,34 |
 | 2018-06-01   | 23 276,30 | 6 036,73 | 79,41 | 20,59 |
+<br>
 
 💡 Key Insight:
 New customers drive initial revenue, but the growing share of returning customers signals that retention strategies are key to sustainable growth.
