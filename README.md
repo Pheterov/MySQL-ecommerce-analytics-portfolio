@@ -15,7 +15,7 @@
 | **Code Quality** | Documented assumptions, reproducible pipelines, clean formatting |
 
 >“I don’t just query tables — I extract decisions hidden in data.”
-<br>
+
 ---
 
 ## 📊 Highlighted Insights (Real Impact)
