@@ -14,7 +14,7 @@
 | **Business Impact** | Revenue growth, retention optimization, customer segmentation |
 | **Code Quality** | Documented assumptions, reproducible pipelines, clean formatting |
 
-> I don’t just analyze data or query tables — I look for decisions hidden inside the numbers.
+> I don’t just run queries — I dig into the numbers to find decisions that actually matter.
 
 &nbsp;
 
@@ -22,10 +22,10 @@
 
 | Focus | Insight | Business Takeaway |
 |-------|---------|-----------------|
-| <p align="center">💰<br>Revenue Performance</p> | Top 10% customers generate ~60% of revenue. | Retaining high-value customers is critical for growth. |
-| <p align="center">👥<br>Customer Retention(M+1)</p> | New customers drive initial revenue; returning customers’ share grows over time, showing retention strategies are important. | Shift from acquisition-heavy to retention strategy |
-| <p align="center">🚚<br>Delivery Efficiency</p>  | ~15% orders consistently delayed | Potential logistics bottlenecks |
-| <p align="center">🎯<br>Discount Impact</p>| Discounts affect sales and delivery | Optimize pricing & promotions strategy |
+| <p align="center">💰<br>Revenue Performance</p> | Top 10% customers generate ~60% of revenue. | Retaining top customers is key to growth. |
+| <p align="center">👥<br>Customer Retention(M+1)</p> | New customers drive initial revenue; returning customers’ share grows over time | Focus on keeping customers, not just acquiring new ones. |
+| <p align="center">🚚<br>Delivery Efficiency</p>  | ~15% of orders are consistently delayed | Look into logistics bottlenecks to improve delivery. |
+| <p align="center">🎯<br>Discount Impact</p>| Discounts affect revenue and delivery times | Adjust pricing and promotions |
 
 &nbsp;
 
@@ -79,7 +79,7 @@ orders ─┬── order_positions ─── products ─── product_groups
 &nbsp;
 
 ## **💡 Key Insight:**  
-New customers drive initial revenue, but the growing share of returning customers signals that retention strategies are key to sustainable growth.
+New customers bring in the first revenue, but returning customers gradually take a bigger share. Retention is what keeps growth steady.
 
 &nbsp;
 
