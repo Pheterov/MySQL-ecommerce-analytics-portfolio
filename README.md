@@ -93,4 +93,4 @@ New customers bring in the first revenue, but returning customers gradually take
 
 ## 🎯 Bottom Line
 
-This repository demonstrates business-focused, reproducible SQL analyses on real e-commerce data.
+This repository demonstrates business-focused, reproducible SQL analyses on artificial e-commerce data.
