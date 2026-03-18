@@ -142,9 +142,9 @@ WITH city_sales AS
 (
 SELECT
 	o.delivery_city
-	,SUM(op.item_quantity) 																				items_sold
+	,SUM(op.item_quantity) 																							items_sold
 	,DENSE_RANK() OVER(
-		ORDER BY SUM(op.item_quantity) DESC)															ranking
+		ORDER BY SUM(op.item_quantity) DESC)																		ranking
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 GROUP BY o.delivery_city
@@ -188,18 +188,22 @@ WITH city_metrics AS
 (
 SELECT
 	o.delivery_city
-	,SUM(op.item_quantity) 																	items_sold
+	,SUM(op.item_quantity) 																							items_sold
 	,RANK() OVER (
-		ORDER BY SUM(op.item_quantity) DESC)												items_ranking
-	,ROUND(SUM(op.item_quantity*p.product_price*(1-op.position_discount)), 2)				total_revenue
+		ORDER BY SUM(op.item_quantity) DESC)																		items_ranking
+	,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*
+		(1-COALESCE(op.position_discount,0))), 2)																	total_revenue
 	,ROUND(
-		SUM(op.item_quantity*p.product_price*(1-op.position_discount)) / 
-		COUNT(DISTINCT o.order_id), 2)														AoV
+		ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*
+			(1-COALESCE(op.position_discount,0))), 2) / 
+		COUNT(DISTINCT o.order_id), 2)																				AoV
 	,ROUND(
-		SUM(op.item_quantity*p.product_price*op.position_discount) / 
-		SUM(op.item_quantity*p.product_price)*100.0, 2)										avg_discount_depth_pct
+		SUM(op.item_quantity*COALESCE(p.product_price,0)*
+			COALESCE(op.position_discount,0)) / 
+		SUM(op.item_quantity*COALESCE(p.product_price,0))*100.0, 2)													avg_discount_depth_pct
 	,DENSE_RANK() OVER(
-		ORDER BY SUM(op.item_quantity*p.product_price*(1-op.position_discount)) DESC)		revenue_ranking
+		ORDER BY SUM(op.item_quantity*COALESCE(p.product_price,0)*
+		(1-COALESCE(op.position_discount,0))) DESC)																	revenue_ranking
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
@@ -227,7 +231,7 @@ ORDER BY revenue_ranking;
 SELECT
 	o.shipping_mode
 	,ROUND(AVG(
-		DATEDIFF(o.shipping_date, o.order_date)), 1) 													avg_delivery_time
+		DATEDIFF(o.shipping_date, o.order_date)), 1) 																avg_delivery_time
 FROM orders o
 WHERE o.shipping_date >= o.order_date
 GROUP BY o.shipping_mode
