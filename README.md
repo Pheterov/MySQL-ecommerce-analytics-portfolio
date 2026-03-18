@@ -65,7 +65,7 @@ orders ─┬── order_positions ─── products ─── product_groups
 </details>
 
 ## 🏆 Sample Output (Interpretation Ready)
-
+<br>
 **Top 10% Customer Contribution to Total Revenue**  
 
 | top_10pct_revenue | total_revenue | top_10pct_revenue_pct |
