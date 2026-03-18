@@ -13,20 +13,20 @@
 | **SQL Level** | Advanced: multi-table JOINs, CTEs, window functions, cohort analysis |
 | **Business Impact** | Revenue growth, retention optimization, customer segmentation |
 | **Code Quality** | Documented assumptions, reproducible pipelines, clean formatting |
-
+<p></p>
 > I don’t just analyze data or query tables — I look for decisions hidden inside the numbers.
-
+<p></p>
 ## 📊 Highlighted Insights (Real Impact)
-
+<p></p>
 | Focus | Insight | Business Takeaway |
 |-------|---------|-----------------|
 | <p align="center">💰<br>Revenue Performance</p> | Top 10% products generate ~60% of revenue | Focus marketing & inventory on high-impact products |
 | <p align="center">👥<br>Customer Retention(M+1)</p> </center> | M+1 retention: 9–13% early, 15–40% later | Shift from acquisition-heavy to retention strategy |
 | <p align="center">🚚<br>Delivery Efficiency</p>  | ~15% orders consistently delayed | Potential logistics bottlenecks |
 | <p align="center">🎯<br>Discount Impact</p>| Correlation with revenue & shipping delays | Informs promotion & pricing strategy |
-<br>
+<p></p>
 Each insight highlights a measurable business opportunity based on real e-commerce data.
-
+<p></p>
 ## 🔧 Tech Stack & Skills
 
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?logo=mysql&logoColor=white)  
@@ -38,16 +38,16 @@ Each insight highlights a measurable business opportunity based on real e-commer
 | **Window Functions** | `LAG`, `LEAD`, `DENSE_RANK`, `NTILE`, `MIN() OVER` |
 | **Advanced** | Multi-level CTEs, MoM comparisons, cohort logic |
 | **Business Metrics** | Revenue, AOV, Retention Rate, Customer LTV, Pareto |
-
+<p></p>
 ---
-
+<p></p>
 ## 🗄️ Schema (Simple View)
 orders ─┬── order_positions ─── products ─── product_groups
 <br>
 &emsp;&emsp;&emsp;&emsp;├── order_ratings
 <br>
 &emsp;&emsp;&emsp;&emsp;└── order_returns
-
+<p></p>
 
 <details>
 <summary>📋 Click for full table structure</summary>
