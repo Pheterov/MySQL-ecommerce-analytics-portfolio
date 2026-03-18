@@ -119,7 +119,8 @@ SELECT
 FROM final
 ORDER BY revenue DESC;
 
-
+/* Using 2 CTEs separates base aggregations from derived metrics,
+   improving readability and maintainability */
 
 /*===================================================================================================
 2️⃣ Top 5 Cities by Units Sold
