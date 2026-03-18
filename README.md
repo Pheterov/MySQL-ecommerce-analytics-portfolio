@@ -22,7 +22,7 @@
 
 | Focus | Insight | Business Takeaway |
 |-------|---------|-----------------|
-| <p align="center">💰<br>Revenue Performance</p> | Top 10% products generate ~60% of revenue. | RPrioritize stocking and promotion for products that drive most revenue. |
+| <p align="center">💰<br>Revenue Performance</p> | Top 10% customers generate ~60% of revenue. | RPrioritize stocking and promotion for products that drive most revenue. |
 | <p align="center">👥<br>Customer Retention(M+1)</p> | New customers drive initial revenue; returning customers’ share grows over time, showing retention strategies are important. | Shift from acquisition-heavy to retention strategy |
 | <p align="center">🚚<br>Delivery Efficiency</p>  | ~15% orders consistently delayed | Potential logistics bottlenecks |
 | <p align="center">🎯<br>Discount Impact</p>| Discounts affect sales and delivery | Optimize pricing & promotions strategy |
