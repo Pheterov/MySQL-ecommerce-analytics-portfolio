@@ -277,7 +277,7 @@ SELECT
 FROM yearly_metrics
 ORDER BY year;
 
-/*================================================================================================================================
+/*=========================================================================================================================================================================================================================================================
 🎯 Goal: Show difference between baseline metric vs enhanced insight.
 		  Evaluate city-level performance by comparing year-over-year changes in revenue, customer base, and order value.
 		  Identify whether growth is driven by customer expansion, higher spending per order, or both.
