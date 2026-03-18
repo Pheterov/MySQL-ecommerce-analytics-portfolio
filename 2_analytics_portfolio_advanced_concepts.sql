@@ -223,7 +223,7 @@ ORDER BY revenue_ranking;
 
 
 /*===================================================================================================
-3️⃣ Average Shipping Time by Shipping Mode
+ Average Shipping Time by Shipping Mode
 🎯 Goal: Compare operational efficiency across shipping methods
 🛠️ Stack: SQL
 💡 Impact: Identifies fastest shipping options for customer satisfaction
@@ -238,7 +238,7 @@ GROUP BY o.shipping_mode
 ORDER BY avg_delivery_time;
 
 /*===================================================================================================
-4️⃣ Top Category by Units Sold in 2019
+3️⃣ Top Category by Units Sold in 2019
 🎯 Goal: Identify best-performing category for inventory planning
 🛠️ Stack: SQL
 💡 Impact: Guides procurement and marketing focus
@@ -263,7 +263,7 @@ ORDER BY items_sold DESC
 LIMIT 1;
 
 /*===================================================================================================
-5️⃣ Running Total Revenue per Customer
+4️⃣ Running Total Revenue per Customer
 🎯 Goal: Track cumulative customer spending over time
 🛠️ Stack: SQL
 💡 Impact: Identifies high-value customers for retention programs
@@ -291,7 +291,7 @@ FROM customer_orders
 ORDER BY customer_id, order_date, order_id;
 
 /*===================================================================================================
-6️⃣ Month-over-Month AOV Change
+5️⃣ Month-over-Month AOV Change
 🎯 Goal: Measure average order value trends
 🛠️ Stack: SQL
 💡 Impact: Identifies pricing strategy effectiveness
@@ -323,7 +323,7 @@ FROM monthly_averages
 ORDER BY month;
 
 /*===================================================================================================
-7️⃣ Top 2 Products by Revenue within Each Category
+6️⃣ Top 2 Products by Revenue within Each Category
 🎯 Goal: Identify best-performing products per category
 🛠️ Stack: SQL
 💡 Impact: Guides product placement and promotion strategies
@@ -361,7 +361,7 @@ WHERE ranking <= 2
 ORDER BY category, ranking, revenue DESC;
 
 /*===================================================================================================
-8️⃣ Customers Spending More Than in Previous Month
+7️⃣ Customers Spending More Than in Previous Month
 🎯 Goal: Identify customers with increasing spend patterns
 🛠️ Stack: SQL
 💡 Impact: Targets customers for upsell opportunities
@@ -401,7 +401,7 @@ WHERE prev_month = DATE_SUB(month, INTERVAL 1 MONTH) AND
 ORDER BY customer_id, month;
 
 /*===================================================================================================
-9️⃣ Month+1 Purchase Return Rate
+8️⃣ Month+1 Purchase Return Rate
 🎯 Goal: Measure customer retention month-over-month
 🛠️ Stack: SQL
 💡 Impact: Evaluates loyalty program effectiveness
@@ -441,7 +441,7 @@ GROUP BY month
 ORDER BY month;
 
 /*===================================================================================================
-🔟 Discount Effectiveness Analysis
+9️⃣ Discount Effectiveness Analysis
 🎯 Goal: Evaluate impact of discounts on order value
 🛠️ Stack: SQL
 💡 Impact: Informs discount strategy optimization
@@ -491,7 +491,7 @@ SELECT
 FROM order_flags;
 
 /*===================================================================================================
-1️⃣1️⃣ Customer Value Segmentation with NTILE
+🔟 Customer Value Segmentation with NTILE
 🎯 Goal: Segment customers by lifetime value
 🛠️ Stack: SQL
 💡 Impact: Enables targeted marketing strategies
