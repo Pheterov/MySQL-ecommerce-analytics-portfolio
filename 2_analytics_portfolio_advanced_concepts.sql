@@ -92,7 +92,7 @@ FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
 GROUP BY o.delivery_state
-), final AS
+), calculations AS
 (
 SELECT
     delivery_state
@@ -120,7 +120,7 @@ SELECT
 	,purchase_frequency
 	,revenue_share_pct
 	,revenue_rank
-FROM final
+FROM calculations
 ORDER BY revenue DESC;
 
 /* Using 2 CTEs separates base aggregations from derived metrics,
@@ -233,7 +233,8 @@ SELECT
 	o.customer_id
 	,o.order_id
 	,o.order_date
-	,SUM(op.item_quantity*COALESCE(p.product_price,0)*(1-COALESCE(op.position_discount,0))) 						revenue
+	,SUM(op.item_quantity*COALESCE(p.product_price,0)*
+		(1-COALESCE(op.position_discount,0))) 																		revenue
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
@@ -276,7 +277,7 @@ SELECT
 FROM yearly_metrics
 ORDER BY year;
 
-/*==============================================================================================================
+/*================================================================================================================================
 🎯 Goal: Show difference between baseline metric vs enhanced insight.
 		  Evaluate city-level performance by comparing year-over-year changes in revenue, customer base, and order value.
 		  Identify whether growth is driven by customer expansion, higher spending per order, or both.
@@ -308,7 +309,7 @@ which may indicate reliance on discounts or lower-value transactions to drive vo
 |              4,09 | Philadelphia   |    19 322,31 |    14 663,35 |           	  31.77 |                    60 |                    42 |             18 |               316.76 |               349,13 |           	   -32,37 |               	   -9,27 |
 |              3,35 | San Francisco  |    15 855,28 |    28 143,73 |          	 -43.66 |                    37 |                    53 |            -16 |               406.55 |               521,18 |       	   	  -114,63 |                   -21,99 |
 
-===============================================================================================================*/
+==========================================================================================================================================================================================================================================================*/
 
 WITH local_sales AS
 (
@@ -319,13 +320,13 @@ SELECT
 			THEN op.item_quantity*COALESCE(p.product_price, 0)*
 				(1-COALESCE(op.position_discount, 0))
 			ELSE 0
-			END) 																									revenue_2019
+		END) 																										revenue_2019
 	,SUM(CASE 
 			WHEN EXTRACT(YEAR FROM o.order_date) = 2018 
 			THEN op.item_quantity*COALESCE(p.product_price, 0)*
 				(1-COALESCE(op.position_discount, 0))
 			ELSE 0
-			END) 										 															revenue_2018
+		END) 										 																revenue_2018
 	,COUNT(DISTINCT CASE
 		WHEN EXTRACT(YEAR FROM o.order_date) = 2019 
 		THEN o.order_id
@@ -339,7 +340,8 @@ SELECT
 		NULLIF(
 			COUNT(DISTINCT CASE
 					WHEN EXTRACT(YEAR FROM o.order_date) = 2019 
-					THEN o.order_id END),0), 2) 																	avg_order_value_2019
+					THEN o.order_id
+		END),0), 2) 																								avg_order_value_2019
 	,ROUND(SUM(CASE
 		WHEN EXTRACT(YEAR FROM o.order_date) = 2018 
 		THEN op.item_quantity*COALESCE(p.product_price, 0)*
@@ -349,13 +351,16 @@ SELECT
 		NULLIF(
 			COUNT(DISTINCT CASE
 					WHEN EXTRACT(YEAR FROM o.order_date) = 2018 
-					THEN o.order_id END),0), 2) 																	avg_order_value_2018
+					THEN o.order_id
+		END),0), 2) 																								avg_order_value_2018
 	,COUNT(DISTINCT CASE
 			WHEN EXTRACT(YEAR FROM o.order_date) = 2019 
-			THEN o.customer_id END) 																				unique_customers_2019
+			THEN o.customer_id 
+		END) 																										unique_customers_2019
 	,COUNT(DISTINCT CASE
 			WHEN EXTRACT(YEAR FROM o.order_date) = 2018 
-			THEN o.customer_id END) 																				unique_customers_2018
+			THEN o.customer_id 
+		END) 																										unique_customers_2018
 FROM order_positions op
 JOIN orders o ON op.order_id = o.order_id
 JOIN products p ON op.product_id = p.product_id
@@ -489,7 +494,7 @@ SELECT
 	,COUNT(CASE
 		WHEN next_order = next_month
 		THEN customer_id
-		END) 																										bought_next_month
+	END) 																											bought_next_month
 	,ROUND(COUNT(CASE
 		WHEN next_order = next_month
 		THEN customer_id
