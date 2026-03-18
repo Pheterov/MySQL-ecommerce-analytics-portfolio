@@ -81,12 +81,12 @@ Top 10% of customers generate nearly 60% of total revenue, highlighting the crit
 **Monthly Revenue Breakdown: New vs Returning Customers**  
 |       month      | new_customer_revenue | returning_customer_revenue | new_customer_revenue_pct | returning_customer_revenue_pct |
 |------------|----------------------|----------------------------|--------------------------|--------------------------------|
-| 2018-01-01 | 324,04 | [NULL] | 100 | [NULL] |
-| 2018-02-01 | 14 470,88 | [NULL] | 100 | [NULL] |
-| 2018-03-01 | 8 326,86 | 225,23 | 97,37 | 2,63 |
-| 2018-04-01 | 39 682,17 | 1 150,89 | 97,18 | 2,82 |
-| 2018-05-01 | 23 230,08 | 3 270,22 | 87,66 | 12,34 |
-| 2018-06-01 | 23 276,30 | 6 036,73 | 79,41 | 20,59 |
+| 2018-01-01   | 324,04 | [NULL] | 100 | [NULL] |
+| 2018-02-01   | 14 470,88 | [NULL] | 100 | [NULL] |
+| 2018-03-01   | 8 326,86 | 225,23 | 97,37 | 2,63 |
+| 2018-04-01   | 39 682,17 | 1 150,89 | 97,18 | 2,82 |
+| 2018-05-01   | 23 230,08 | 3 270,22 | 87,66 | 12,34 |
+| 2018-06-01   | 23 276,30 | 6 036,73 | 79,41 | 20,59 |
 
 💡 Key Insight:
 New customers drive initial revenue, but the growing share of returning customers signals that retention strategies are key to sustainable growth.
