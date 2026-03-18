@@ -214,7 +214,7 @@ ORDER BY product_category, shipping_type, discounted_flag DESC;
 5️⃣ Monthly Top 3 Products by Revenue
 🎯 Goal: Track top-revenue products monthly
 🛠️ Stack: SQL
-💡 Impact: Focuses attention on revenue drivers
+💡 Impact: Identify top-revenue products to guide marketing and inventory decisions.
 📊 Example KPI:
 | month   	 | product_name       |	revenue	  	  | revenue_rank |
 |------------|--------------------|---------------|--------------|
