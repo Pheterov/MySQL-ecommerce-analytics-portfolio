@@ -279,9 +279,9 @@ ORDER BY total_revenue DESC;
 
 /*===================================================================================================
 7️⃣ Month-over-Month Revenue Growth
-🎯 Goal: Track how revenue changes from month to month
+🎯 Goal: Track how revenue changes from month to month.
 🛠️ Stack: SQL
-💡 Impact: Shows which months grow or shrink, helping plan actions and priorities
+💡 Impact: Shows which months grow or shrink, helping plan actions and priorities.
 📊 Example KPI:
 | 	month	 |  revenue  | previous_month_revenue | revenue_change | revenue_change_pct |
 |------------|-----------|------------------------|----------------|--------------------|
@@ -316,9 +316,9 @@ ORDER BY month;
 
 /*===================================================================================================
 8️⃣ New vs Returning Customer Analysis
-🎯 Goal: Compare new customers to returning ones
+🎯 Goal: Compare new customers to returning ones.
 🛠️ Stack: SQL
-💡 Impact: Shows whether we’re keeping customers or just gaining new ones, guiding retention efforts
+💡 Impact: Shows whether we’re keeping customers or just gaining new ones, guiding retention efforts.
 📊 Example KPI:
 | month   	 | new_customers | returning_customers |
 |------------|---------------|---------------------|
@@ -357,9 +357,9 @@ ORDER BY month;
 
 /*===================================================================================================
 9️⃣ One-Time Customer Analysis
-🎯 Goal: Quantify customer loyalty via one-time purchases
+🎯 Goal: Measure how many customers buy only once.
 🛠️ Stack: SQL
-💡 Impact: Identifies churn risk and revenue concentration
+💡 Impact: Highlights risk of losing customers and shows how much revenue comes from occasional buyers.
 📊 Example KPI:
 | one_time_customers_pct | one_time_customers_revenue_pct |
 |------------------------|--------------------------------|
