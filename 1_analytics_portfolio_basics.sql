@@ -128,6 +128,30 @@ FROM customer_first_month
 GROUP BY month
 ORDER BY month;
 
+/*===================================================================================================
+2️⃣ Product Category Performance (Units Sold) 
+🎯 Goal: Identify top-selling product categories.
+🛠️ Stack: SQL
+💡 Impact: Helps plan inventory and focus on the categories that matter most.
+
+Query result snippet:
+
+| category		  | total_units_sold | 
+|-----------------|------------------|
+| Office Supplies | 		  22 906 |
+| Furniture		  |			   8 028 |
+| Technology 	  | 		   6 939 |
+====================================================================================================*/
+SELECT
+	pg.category
+	,SUM(op.item_quantity) 														total_units_sold
+FROM order_positions op
+JOIN products p ON op.product_id = p.product_id 
+JOIN product_groups pg ON p.group_id = pg.group_id
+GROUP BY pg.category 
+ORDER BY total_units_sold DESC;
+
+
 /*======================================================================================================
 # 🎯 Goal: Show how simple totals hide trends.
 #    - Just looking at total units alone hides trends.
@@ -242,31 +266,7 @@ FROM monthly_revenue
 ORDER BY month;
 
 /*===================================================================================================
-5️⃣ Product Category Performance (Units Sold)
-🎯 Goal: Identify top-selling product categories.
-🛠️ Stack: SQL
-💡 Impact: Helps plan inventory and focus on the categories that matter most.
-
-Query result snippet:
-
-| category     	  | total_units_sold |
-|-----------------|------------------|
-| Office Supplies |     	  22 906 |
-| Furniture       |   	 	   8 028 |
-| Technology      |   	 	   6 939 |
-====================================================================================================*/
-
-SELECT
-    pg.category
-    ,SUM(op.item_quantity) 														total_units_sold
-FROM order_positions op
-JOIN products p ON op.product_id = p.product_id
-JOIN product_groups pg ON p.group_id = pg.group_id
-GROUP BY pg.category
-ORDER BY total_units_sold DESC;
-
-/*===================================================================================================
-6️⃣ Monthly Top 3 Products by Revenue
+5️⃣ Monthly Top 3 Products by Revenue
 🎯 Goal: Track top-revenue products monthly
 🛠️ Stack: SQL
 💡 Impact: Identify top-revenue products to guide marketing and inventory decisions.
@@ -309,7 +309,7 @@ WHERE revenue_rank <= 3
 ORDER BY month, revenue_rank;
 
 /*===================================================================================================
-7️⃣ New vs Returning Customer Analysis
+6️⃣ New vs Returning Customer Analysis
 🎯 Goal: Compare amount of new customers to returning ones.
 🛠️ Stack: SQL
 💡 Impact: Shows whether we’re keeping customers or just gaining new ones.
@@ -352,10 +352,9 @@ GROUP BY month
 ORDER BY month;
 
 /*===================================================================================================
-8️⃣ One-Time Customer Analysis
-🎯 Goal: Measure how many customers buy only once.
+7️⃣ One-Time Customer Analysis
+🎯 Goal: Measure how many customers buy only once also calculate their contribution to total revenue.
 🛠️ Stack: SQL
-💡 Impact: Highlights risk of losing customers and shows how much revenue comes from occasional buyers.
 
 Query result snippet:
 
@@ -386,7 +385,7 @@ SELECT
 FROM customer_stats;
 
 /*===================================================================================================
-9️⃣ Month+1 Customer Retention Rate
+8️⃣ Month+1 Customer Retention Rate
 🎯 Goal: Calculate next-month retention
 🛠️ Stack: SQL
 
