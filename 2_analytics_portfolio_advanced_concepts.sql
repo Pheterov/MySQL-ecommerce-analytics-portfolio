@@ -175,13 +175,21 @@ SELECT
     ,year
     ,month
     ,revenue                                                                                               									current_year_revenue
-    ,LAG(revenue) OVER(PARTITION BY delivery_state, month ORDER BY year)                                   									last_year_revenue
+    ,LAG(revenue) OVER(
+		PARTITION BY month 
+		ORDER BY year)                                   																					last_year_revenue
     ,orders_cnt
-    ,LAG(orders_cnt) OVER(PARTITION BY delivery_state, month ORDER BY year)                                   								last_year_orders_cnt
+    ,LAG(orders_cnt) OVER(
+		PARTITION BY month
+		ORDER BY year)                                   																					last_year_orders_cnt
     ,unique_customers
-    ,LAG(unique_customers) OVER(PARTITION BY delivery_state, month ORDER BY year)                                   						last_year_unique_customers
+    ,LAG(unique_customers) OVER(
+		PARTITION BY month 
+		ORDER BY year)																                                   						last_year_unique_customers
     ,AoV
-    ,LAG(aov) OVER(PARTITION BY delivery_state, month ORDER BY year)                                   										last_year_aov
+    ,LAG(aov) OVER(
+		PARTITION BY month
+		ORDER BY year)                                   																					last_year_aov
 FROM base_metrics
 ORDER BY year DESC, month DESC;
 
@@ -206,65 +214,97 @@ Next step: column name adjustments, math calculations, choosing important metric
 ================================================================================================================================================================================================*/
 
 /*================================================================================================================================================================================================
-4️⃣.1️⃣ YoY math calculations, column decision making, column names optimization
+4️⃣.1️⃣ YoY math calculations, column decision making, column names optimization, discount depth, revenue
 ================================================================================================================================================================================================*/
 
-WITH base_metrics AS 
-(
+WITH base_metrics AS (
 SELECT
-    EXTRACT(YEAR FROM o.order_date)                                                                         								year
-    ,EXTRACT(MONTH FROM o.order_date)                                                                       								month
-    ,o.delivery_state                                                                                        								delivery_state
+    EXTRACT(YEAR FROM o.order_date)																										year
+    ,EXTRACT(MONTH FROM o.order_date)																									month
     ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*
-		(1-COALESCE(op.position_discount,0))), 2) 																							revenue
-    ,COUNT(DISTINCT op.order_id)                                                                                      						orders_cnt
-    ,COUNT(DISTINCT o.customer_id)                                                                          								unique_customers
+    	(1-COALESCE(op.position_discount,0))), 2)																						revenue
+    ,COUNT(DISTINCT op.order_id)																										orders_cnt
+    ,COUNT(DISTINCT o.customer_id)																										unique_customers
+    ,SUM(op.item_quantity)																												items_sold
     ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*
-		(1-COALESCE(op.position_discount,0))) /
-    COUNT(DISTINCT o.order_id), 2)                                                                         									aov
+    	(1-COALESCE(op.position_discount,0))) /
+    	NULLIF(COUNT(DISTINCT op.order_id),0),2)																						aov
+    ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price, 0)*
+		COALESCE(op.position_discount, 0)) /
+    	NULLIF(SUM(op.item_quantity*COALESCE(p.product_price, 0)), 0) * 100, 2)															discount_depth
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
 WHERE o.delivery_state = 'California'
-GROUP BY YEAR, MONTH, o.delivery_state
-ORDER BY YEAR DESC, MONTH DESC, REVENUE DESC
+GROUP BY year, month
 )
 SELECT
-    year																																	
+    year
     ,month
-    ,revenue                                                                                               									cyr_rev
-    ,LAG(revenue) OVER(PARTITION BY delivery_state, month ORDER BY year)                                   									lyr_rev
-        ,revenue - LAG(revenue) OVER(PARTITION BY delivery_state, month ORDER BY year)														rev_diff
-    ,orders_cnt
-    ,LAG(orders_cnt) OVER(PARTITION BY delivery_state, month ORDER BY year)                                   								lyr_o_cnt
-    ,orders_cnt - LAG(orders_cnt) OVER(PARTITION BY delivery_state, month ORDER BY year)													ord_diff
-    ,unique_customers 																														uniq_cstmr
-    ,LAG(unique_customers) OVER(PARTITION BY delivery_state, month ORDER BY year)                                   						lyr_uniq
-    ,unique_customers - LAG(unique_customers) OVER(PARTITION BY delivery_state, month ORDER BY year)										cstmr_diff
-    ,ROUND(aov, 2)						 																									aov
-    ,LAG(aov) OVER(PARTITION BY delivery_state, month ORDER BY year)																		lyr_aov
+    ,revenue																															cyr_rev
+    ,LAG(revenue) OVER(
+    	PARTITION BY MONTH
+    	ORDER BY year)																													lyr_rev
+    ,revenue - LAG(revenue) OVER(
+    	PARTITION BY MONTH
+    	ORDER BY year)																													rev_diff
+    ,orders_cnt																															orders_cnt
+    ,LAG(orders_cnt) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)																													lyr_o_cnt
+    ,orders_cnt - LAG(orders_cnt) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)																													ord_diff
+    ,unique_customers																													uniq_cstmr
+    ,LAG(unique_customers) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)																													lyr_uniq
+    ,unique_customers - LAG(unique_customers) OVER(
+    	PARTITION BY MONTH
+    	ORDER BY year)																													cstmr_diff
+    ,items_sold																															items_sold
+    ,LAG(items_sold) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)																													lyr_items
+    ,items_sold - LAG(items_sold) OVER(
+    	PARTITION BY MONTH
+    	ORDER BY year)																													items_diff
+    ,ROUND(aov,2)																														aov
+    ,LAG(aov) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)																													lyr_aov
+    ,discount_depth																														d_depth
+    ,LAG(discount_depth) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)																													lyr_d_depth
+    ,discount_depth - LAG(discount_depth) OVER(
+    	PARTITION BY MONTH
+    	ORDER BY year)																													d_depth_diff
 FROM base_metrics
 ORDER BY year DESC, month DESC;
 
 /*================================================================================================================================================================================================
 Query result snippet:
 
-| year | month | cyr_rev   | lyr_rev   | rev_diff  | orders_cnt | lyr_o_cnt | ord_diff | uniq_cstmr | lyr_uniq | cstmr_diff |   aov  | lyr_aov |
-|------|-------|-----------|-----------|-----------|------------|-----------|----------|------------|----------|------------|--------|---------|
-| 2022 |     1 | 16 186,48 | 19 957,45 | -3 770,97 |         37 |        33 |        4 |         35 |       33 |          2 | 437,47 | 	604,77 |
-| 2021 |    12 | 13 860,23 | 19 555,03 | -5 694,80 |         53 |        45 |        8 |         49 |       45 |          4 | 261,51 | 	434,56 |
-| 2021 |    11 | 18 346,94 |  8 693,27 |  9 653,67 |         26 |        28 |       -2 |         26 |       26 |          0 | 705,65 | 	310,47 |
-| 2021 |    10 | 15 769,12 | 12 468,53 |  3 300,59 |         40 |        33 |        7 |         40 |       33 |          7 | 394,23 | 	377,83 |
-| 2021 |     9 | 20 248,41 | 11 782,73 |  8 465,68 |         32 |        19 |       13 |         30 |       19 |         11 | 632,76 | 	620,14 |
+| year | month |   cyr_rev  |  	 lyr_rev |   rev_diff  | orders_cnt | lyr_o_cnt | ord_diff | uniq_cstmr | lyr_uniq | cstmr_diff | items_sold | lyr_items | items_diff | aov	    |  lyr_aov | d_depth | lyr_d_depth | d_depth_diff |
+|------|-------|------------|------------|-------------|------------|-----------|----------|------------|----------|------------|------------|-----------|------------|------0--|----------|---------|-------------|--------------|
+| 2022 |     1 |  16 186,48 |  19 957,45 |   -3 770,97 |         37 |        33 |        4 |         35 |       33 |          2 |        300 |       327 |     	  -27 |  437,47 |   604,77 |   13,73 |       15,21 |        -1,48 |
+| 2021 |    12 |  13 860,23 |  19 555,03 |   -5 694,80 |         53 |        45 |        8 |         49 |       45 |          4 |        336 |       312 |         24 |  261,51 |   434,56 |   12,32 |        8,93 |         3,39 |
+| 2021 |    11 |  18 346,94 |   8 693,27 |    9 653,67 |         26 |        28 |       -2 |         26 |       26 |          0 |        239 |       199 |         40 |  705,65 |   310,47 |   11,85 |        8,96 |         2,89 |
+| 2021 |    10 |  15 769,12 |  12 468,53 |    3 300,59 |         40 |        33 |        7 |         40 |       33 |          7 |        329 |       230 |         99 |  394,23 |   377,83 |   13,95 |       11,29 |         2,66 |
+| 2021 |     9 |  20 248,41 |  11 782,73 |    8 465,68 |         32 |        19 |       13 |         30 |       19 |         11 |        283 |       151 |        132 |  632,76 |   620,14 |   11,58 |       17,62 |        -6,04 |
 
 This table is serving us in future calculations, we're not going to report it in it's current form. 
-Now that we decided wchich metrics to use we can add some % based calculations, it will extend columns but it's essential for our future visual report.
-Also November of 2021 repesents very interesting case. Equal amount of customers, less orders but revenue is doubled, would've been nice to
-take a deeper look there.
+Now that we decided wchich metrics to use we can add some % based calculations and add another metric.
+
+🔍 Also November of 2021 repesents very interesting case. Equal amount of customers, less orders but revenue is doubled, would've been nice to
+take a deeper look there aswell.
 
 Notes & Reflections
-Currently everything we do is happening on a state-level granurality, as we keep on going we'll begin to examine smaller and smaller scale.
+Currently, all our activities are taking place at the state level, but as we move forward, we will begin to analyze them in greater detail.
+The answers are not in a plain sight, we have to constantly make decisions add, delete, adjust, change granularity.
 
-Next step: discount depth, percentage values, revenue and items sold comparison 
+Next step: items sold comparison, percentage comparison values, delete overwhelming columns
+/*================================================================================================================================================================================================
 
-
+================================================================================================================================================================================================*/
