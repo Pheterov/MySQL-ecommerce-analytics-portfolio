@@ -1,46 +1,25 @@
-#####################################################################################################
-# 🎯 Project: E-commerce Analytics SQL Portfolio
-# 🛠️ Database: supersales - modified by KajoData MySQL 8.0+
-# 👤 Author: Piotr Rzepka
-# 📝 Description: Full-stack SQL-driven e-commerce analytics portfolio
-# 🔍 Focus: customer retention, revenue analysis, product & category performance
-#####################################################################################################
+   Project: E-commerce Analytics SQL Portfolio
+🛠️ Database: supersales - modified by KajoData MySQL 8.0+
+👤 Author: Piotr Rzepka
+📝 Description: SQL e-commerce analytics portfolio
 
-EXPLICIT ASSUMPTIONS
--------------------------------------------------------------------------------
-All queries are based on the following conscious, documented assumptions:
+																					"The story of California's revenue" 
 
-1.  Revenue is calculated at order_date, regardless of shipping status
-2.  position_discount is a multiplier between 0 and 1 (0 = no discount, 1 = 100% discount)
-3.  NULL values in position_discount or product_price are treated as 0
-4.  Orders with shipping_date < order_date are considered data entry errors
-    and are excluded only from shipping-time related metrics
-5.  A customer is considered "new" in the calendar month of their first order
-
--------------------------------------------------------------------------------
-KNOWN LIMITATIONS
--------------------------------------------------------------------------------
-These are conscious tradeoffs for readability and portfolio clarity:
-
-1.  Shipping time per category is calculated at the order line level. For
-    orders containing multiple categories, this will weight the average by
-    number of line items, not by number of orders.
-2.  Retention is defined as Month+1 retention, not 30 day rolling retention.
-
--------------------------------------------------------------------------------
-
-/*===================================================================================================
+/*================================================================================================================================================================================================
 1️⃣ Revenue and Order Count by Delivery State
-🎯 Goal: Measure regional sales performance
-🛠️ Stack: SQL
-💡 Impact: Identifies high-performing regions for targeted marketing
-📊 Example KPI:
+
+This basic metric doesn't really tell us anything... Can we make an informed and profitable decision based on a report like this? 
+We’ve only identified which region is the most profitable, but let’s dig a little deeper and try to figure out why, step by step.
+What's next then ? Maybe it'd be nice to see performance over time.
+
+Query result snippet:
+
 | delivery_state | revenue    | orders_cnt  |
 |----------------|------------|-------------|
 | California 	 | 451 450,55 | 	  1 021 |
 | New York		 | 312 376,98 | 		562 |
 | Texas			 | 164 948,68 | 		487 |
-=====================================================================================================*/
+===============================================================================================================================================================================================*/
 SELECT
 	o.delivery_state
 	,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*(1-COALESCE(op.position_discount,0))), 2) 				revenue
@@ -52,24 +31,52 @@ GROUP BY o.delivery_state
 ORDER BY revenue DESC;
 
 /*================================================================================================================================================================================================
-🎯 Goal: Show difference between baseline metric vs enhanced insight.
-		 Benchmark delivery_state across revenue, customer value and purchasing behavior to support
-		 data-driven regional prioritization.
+2️⃣ YoY performance
 
-🛠️ Stack: SQL
+Result is suspicious... immediately raises a red flag.
+Between 2018 - 2021 California was doing fantastic and then in 2022... sudden ~90% revenue drop.
+Such a drastic change is highly unlikely from a business perspective.
 
-💡 Business Impact:
-- Identifies top-performing states for targeted marketing and budget allocation
-- Highlights underperforming regions requiring pricing, operational or acquisition improvements
-- Differentiates volume-driven vs value-driven markets for better strategic focus
+Query result snippet:
 
-🔍 Key Insights:
-- Use revenue_rank and revenue_share_pct to identify core markets and assess business dependency
-- Compare AOV, revenue_per_customer and purchase_frequency to distinguish high-value vs high-volume states
-- States with high value metrics but low revenue share signal underpenetrated growth opportunities,
-  while high volume with low value may require upsell or margin optimization
+| year | delivery_state | revenue    | orders_cnt |
+|------|----------------|------------|------------|
+| 2022 | California     |  16 186,48 |         37 |
+| 2021 | California     | 148 729,44 |        336 |
+| 2020 | California     | 121 925,07 |        279 |
+| 2019 | California     |  93 307,09 |        198 |
+| 2018 | California     |  71 302,47 |        171 |
 
-📊 Example KPI:
+This query is a classic example of how misleading conclusions can arise from “just take the average” type of thinking.
+================================================================================================================================================================================================*/
+
+SELECT
+	EXTRACT(YEAR FROM o.order_date)																					year
+	,o.delivery_state
+	,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*(1-COALESCE(op.position_discount,0))), 2) 				revenue
+	,COUNT(DISTINCT op.order_id)																					orders_cnt
+FROM orders o
+JOIN order_positions op ON o.order_id = op.order_id
+JOIN products p ON op.product_id = p.product_id
+WHERE o.delivery_state='California'
+GROUP BY YEAR,o.delivery_state
+ORDER BY year DESC
+
+/*================================================================================================================================================================================================
+What am I going to do next:
+- validate data completeness and add months to the result
+- double check aggregation logic
+- adjust filtering to compare with other regions
+================================================================================================================================================================================================*/
+
+
+/*================================================================================================================================================================================================
+2️⃣YoY performance
+
+🛠️ Stac: SQL
+
+Query result snippet:
+
 | delivery_state | revenue    | orders_cnt  | unique_customers | AoV 	 | revenue_per_customer | total_items_sold | avg_items_per_order | purchase_frequency | revenue_share_pct | revenue_rank |
 |----------------|------------|-------------|------------------|---------|----------------------|------------------|---------------------|--------------------|-------------------|--------------|
 | California 	 | 451 450,55 | 	  1 021 |			   577 |  442,17 |				 782,41 |			 7 667 |				7,51 |				 1,77 |				19,90 |			   1 |
@@ -131,7 +138,9 @@ ORDER BY revenue DESC;
 🎯 Goal: Identify high-volume cities for logistics optimization
 🛠️ Stack: SQL
 💡 Impact: Prioritizes warehouse locations and delivery routes
-📊 Example KPI:
+
+Query result snippet:
+
 | ranking | delivery_city | items_sold  |
 |---------|---------------|-------------|
 |  	    1 | New York City | 	  3 417 |
@@ -174,7 +183,8 @@ markets generating low monetary yield despite high transaction counts.
 An elevated avg_discount_depth_pct signals aggressive pricing tactics required
 to maintain sales activity in specific territories.
 
-📊 Example KPI:
+Query result snippet:
+
 |revenue_ranking | items_ranking | delivery_city | total_revenue | items_sold | AoV	   | avg_disctount_depth_pct |
 |----------------|---------------|---------------|---------------|------------|--------|-------------------------|
 | 			   1 |			   1 | New York City |	  258 988,76 |		3 417 |	575.53 |					8.97 |
@@ -300,7 +310,8 @@ exhibit simultaneous drops in revenue, customers, and AOV, signaling structural 
 Mixed-signal cities (e.g. Philadelphia) reveal customer growth alongside decreasing AOV,
 which may indicate reliance on discounts or lower-value transactions to drive volume.
 
-📊 Example KPI:
+Query result snippet:
+
 | revenue_share_pct | delivery_city  | revenue_2019 | revenue_2018 | revenue_growth_pct | unique_customers_2019 | unique_customers_2018 | customers_diff | avg_order_value_2019 | avg_order_value_2018 | avg_order_value_diff | avg_order_value_pct_diff |
 |-------------------|----------------|--------------|--------------|--------------------|-----------------------|-----------------------|----------------|----------------------|----------------------|----------------------|--------------------------|
 |             15,83 | New York City  |    74 849,79 |    35 206,02 |          	 112.61 |                    98 |                    67 |             31 |               741.09 |               525,46 |      	       215,63 |               	   41,04 |
@@ -386,7 +397,6 @@ ORDER BY revenue_2019 DESC;
 5️⃣ Top 2 Products by Revenue within Each Category
 🎯 Goal: Identify best-performing products per category
 🛠️ Stack: SQL
-💡 Impact: Guides product placement and promotion strategies
 ====================================================================================================*/
 WITH products_grouped AS
 (
@@ -424,7 +434,6 @@ ORDER BY category, ranking, revenue DESC;
 6️⃣ Customers Spending More Than in Previous Month
 🎯 Goal: Identify customers with increasing spend patterns
 🛠️ Stack: SQL
-💡 Impact: Targets customers for upsell opportunities
 ====================================================================================================*/
 WITH customer_monthly_spending AS
 (
@@ -464,7 +473,6 @@ ORDER BY customer_id, month;
 7️⃣ Month+1 Purchase Return Rate
 🎯 Goal: Measure customer retention month-over-month
 🛠️ Stack: SQL
-💡 Impact: Evaluates loyalty program effectiveness
 ====================================================================================================*/
 WITH customers_month AS
 (
@@ -504,7 +512,6 @@ ORDER BY month;
 8️⃣ Discount Effectiveness Analysis
 🎯 Goal: Evaluate impact of discounts on order value
 🛠️ Stack: SQL
-💡 Impact: Informs discount strategy optimization
 ====================================================================================================*/
 WITH position_values AS
 (
