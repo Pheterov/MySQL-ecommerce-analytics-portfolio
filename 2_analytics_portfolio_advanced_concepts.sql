@@ -146,7 +146,7 @@ Next step: YoY metrics
 ================================================================================================================================================================================================*/
 
 /*===============================================================================================================================================================================================
-4️⃣ YoY insight, defining important metrics, deleting redundant columns
+4️⃣ YoY insight
 ================================================================================================================================================================================================*/
 
 WITH base_metrics AS 
@@ -193,6 +193,13 @@ Query result snippet:
 | California     | 2021 |    10 |            15 769,12 |         12 468,53 |         83 |                   65 |               40 |                         33 |  189,99 |        191,82 |
 | California     | 2021 |     9 |            20 248,41 |         11 782,73 |         77 |                   40 |               30 |                         19 |  262,97 |        294,57 |
 
+Notes & Reflections
+Table became lengthy mainly because of column names, since for now it only serves a purpose for our own self,
+we can make some adjustments for future calculations.Also we can define what's still useful and what can be dealt with.
+I'm convinced that for now delivery_state is redundant, it's obvious which state we're focusing on.
+Is amount of orders important to us or maybe we'd like to know how many customers contribute to the revenue ? Maybe both metrics carry much value to our report ?
+
+Next step: column quantity and name adjustments, math calculations, choosing important metrics 
 ================================================================================================================================================================================================*/
 
 /*================================================================================================================================================================================================
