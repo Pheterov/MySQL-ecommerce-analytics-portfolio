@@ -355,6 +355,7 @@ ORDER BY month;
 7️⃣ One-Time Customer Analysis
 🎯 Goal: Measure how many customers buy only once also calculate their contribution to total revenue.
 🛠️ Stack: SQL
+💡  Insight: The result suggests exceptionally high retention or a unique characteristic of the dataset.
 
 Query result snippet:
 
