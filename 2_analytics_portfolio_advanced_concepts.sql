@@ -214,7 +214,7 @@ Next step: Identify metrics that actually explain revenue dynamics.
 ================================================================================================================================================================================================*/
 
 /*================================================================================================================================================================================================
-4️⃣.1️⃣ YoY math calculations, column decision making, column names optimization, discount depth, revenue
+4️⃣.1️⃣ YoY math calculations, column decision making, column names optimization, discount depth, revenue, code optimization
 ================================================================================================================================================================================================*/
 
 WITH base_metrics AS (
@@ -330,40 +330,46 @@ WITH base_metrics AS (
 -- CTE 1: Monthly aggregation for California
 -- Calculate revenue, orders, unique customers, items sold, AOV, discount depth
 SELECT
-    EXTRACT(YEAR FROM o.order_date)																											year
-    ,EXTRACT(MONTH FROM o.order_date)																										month
-    ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*(1-COALESCE(op.position_discount,0))),2)										revenue -- total revenue
-    ,COUNT(DISTINCT op.order_id)																											orders_cnt -- total orders
-    ,COUNT(DISTINCT o.customer_id)																											unique_customers -- unique customers
-    ,SUM(op.item_quantity)																													items_sold -- total items sold
+    EXTRACT(YEAR FROM o.order_date)																										year
+    ,EXTRACT(MONTH FROM o.order_date)																									month
+    ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*(1-COALESCE(op.position_discount,0))),2)									revenue -- total revenue
+    ,COUNT(DISTINCT op.order_id)																										orders_cnt -- total orders
+    ,COUNT(DISTINCT o.customer_id)																										unique_customers -- unique customers
+    ,SUM(op.item_quantity)																												items_sold -- total items sold
     ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*(1-COALESCE(op.position_discount,0)))/
-        NULLIF(COUNT(DISTINCT op.order_id),0),2)																							aov -- average order value
+        NULLIF(COUNT(DISTINCT op.order_id),0),2)																						aov -- average order value
     ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*COALESCE(op.position_discount,0))/
-        NULLIF(SUM(op.item_quantity*COALESCE(p.product_price,0)),0)*100,2)																	discount_depth -- average discount %
+        NULLIF(SUM(op.item_quantity*COALESCE(p.product_price,0)),0)*100,2)																discount_depth -- average discount %
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
 WHERE o.delivery_state = 'California'
-GROUP BY year,month
+GROUP BY EXTRACT(YEAR FROM o.order_date),EXTRACT(MONTH FROM o.order_date)
+),
+materialized AS (
+-- CTE 2: Materialize base_metrics to avoid alias resolution issues in LAG() ORDER BY
+SELECT *
+FROM base_metrics
 ),
 yoy_metrics AS (
--- CTE 2: Year-over-Year comparison
+-- CTE 3: Year-over-Year comparison
 -- Add previous year values for each month using window functions
 SELECT
     year
     ,month
-    ,revenue																																cyr_rev -- current year revenue
-    ,LAG(revenue) OVER(PARTITION BY month ORDER BY year)																					lyr_rev -- last year revenue
-    ,orders_cnt																																orders_cnt -- current year orders
-    ,LAG(orders_cnt) OVER(PARTITION BY month ORDER BY year)																					lyr_o_cnt -- last year orders
-    ,unique_customers																														uniq_cstmr -- current year customers
-    ,LAG(unique_customers) OVER(PARTITION BY month ORDER BY year)																			lyr_uniq -- last year customers
-    ,items_sold																																items_sold -- current year items
-    ,LAG(items_sold) OVER(PARTITION BY month ORDER BY year)																					lyr_items -- last year items
-    ,aov																																	aov -- current year AOV
-    ,LAG(aov) OVER(PARTITION BY month ORDER BY year)																						lyr_aov -- last year AOV
-    ,discount_depth																															d_depth -- current year discount
-    ,LAG(discount_depth) OVER(PARTITION BY month ORDER BY year)																				lyr_d_depth -- last year discount
+    ,revenue																															cyr_rev -- current year revenue
+    ,LAG(revenue) OVER(PARTITION BY month ORDER BY year)																				lyr_rev -- last year revenue
+    ,orders_cnt																															orders_cnt -- current year orders
+    ,LAG(orders_cnt) OVER(PARTITION BY month ORDER BY year)																				lyr_o_cnt -- last year orders
+    ,unique_customers																													uniq_cstmr -- current year customers
+    ,LAG(unique_customers) OVER(PARTITION BY month ORDER BY year)																		lyr_uniq -- last year customers
+    ,items_sold																															items_sold -- current year items
+    ,LAG(items_sold) OVER(PARTITION BY month ORDER BY year)																				lyr_items -- last year items
+    ,aov																																aov -- current year AOV
+    ,LAG(aov) OVER(PARTITION BY month ORDER BY year)																					lyr_aov -- last year AOV
+    ,discount_depth																														d_depth -- current year discount depth
+    ,LAG(discount_depth) OVER(PARTITION BY month ORDER BY year)																			lyr_d_depth -- last year discount depth
+FROM materialized
 )
 SELECT
 -- Final SELECT with all YoY differences and percentages
@@ -371,28 +377,28 @@ SELECT
     ,month
     ,cyr_rev
     ,lyr_rev
-    ,cyr_rev - lyr_rev																														rev_diff -- revenue difference
-    ,ROUND((cyr_rev - lyr_rev)/NULLIF(lyr_rev,0)*100,2)																						rev_pct_diff -- revenue % change
+    ,cyr_rev - lyr_rev																													rev_diff -- revenue difference
+    ,ROUND((cyr_rev - lyr_rev)/NULLIF(lyr_rev,0)*100,2)																					rev_pct_diff -- revenue % change
     ,orders_cnt
     ,lyr_o_cnt
-    ,orders_cnt - lyr_o_cnt																													ord_diff -- orders difference
-    ,ROUND((orders_cnt - lyr_o_cnt)/NULLIF(lyr_o_cnt,0)*100,2)																				ord_pct_diff -- orders % change
+    ,orders_cnt - lyr_o_cnt																												ord_diff -- orders difference
+    ,ROUND((orders_cnt - lyr_o_cnt)/NULLIF(lyr_o_cnt,0)*100,2)																			ord_pct_diff -- orders % change
     ,uniq_cstmr
     ,lyr_uniq
-    ,uniq_cstmr - lyr_uniq																													cstmr_diff -- customers difference
-    ,ROUND((uniq_cstmr - lyr_uniq)/NULLIF(lyr_uniq,0)*100,2)																				cstmr_pct_diff -- customers % change
+    ,uniq_cstmr - lyr_uniq																												cstmr_diff -- customers difference
+    ,ROUND((uniq_cstmr - lyr_uniq)/NULLIF(lyr_uniq,0)*100,2)																			cstmr_pct_diff -- customers % change
     ,items_sold
     ,lyr_items
-    ,items_sold - lyr_items																													items_diff -- items difference
-    ,ROUND((items_sold - lyr_items)/NULLIF(lyr_items,0)*100,2)																				items_pct_diff -- items % change
+    ,items_sold - lyr_items																												items_diff -- items difference
+    ,ROUND((items_sold - lyr_items)/NULLIF(lyr_items,0)*100,2)																			items_pct_diff -- items % change
     ,aov
     ,lyr_aov
-    ,aov - lyr_aov																															aov_change -- AOV difference
-    ,ROUND((aov - lyr_aov)/NULLIF(lyr_aov,0)*100,2)																							aov_pct_change -- AOV % change
+    ,aov - lyr_aov																														aov_change -- AOV difference
+    ,ROUND((aov - lyr_aov)/NULLIF(lyr_aov,0)*100,2)																						aov_pct_change -- AOV % change
     ,d_depth
     ,lyr_d_depth
-    ,d_depth - lyr_d_depth																													d_depth_diff -- discount difference
-    ,ROUND((d_depth - lyr_d_depth)/NULLIF(lyr_d_depth,0)*100,2)																				d_depth_pct_change -- discount % change
+    ,d_depth - lyr_d_depth																												d_depth_diff -- discount difference
+    ,ROUND((d_depth - lyr_d_depth)/NULLIF(lyr_d_depth,0)*100,2)																			d_depth_pct_change -- discount % change
 FROM yoy_metrics
 ORDER BY year DESC, month DESC;
 /*================================================================================================================================================================================================
