@@ -248,6 +248,12 @@ SELECT
     ,revenue - LAG(revenue) OVER(
     	PARTITION BY MONTH
     	ORDER BY year)																													rev_diff
+    ,ROUND((revenue - LAG(revenue) OVER(
+    	PARTITION BY MONTH
+    	ORDER BY year)) /
+    LAG(revenue) OVER(
+    	PARTITION BY MONTH
+    	ORDER BY year)*100.0, 2)																												rev_pct_diff
     ,orders_cnt																															orders_cnt
     ,LAG(orders_cnt) OVER(
     	PARTITION BY month 
@@ -255,6 +261,12 @@ SELECT
     ,orders_cnt - LAG(orders_cnt) OVER(
     	PARTITION BY month 
     	ORDER BY year)																													ord_diff
+    ,ROUND((orders_cnt - LAG(orders_cnt) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)) /
+    LAG(orders_cnt) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)*100.0, 2)																												ord_pct_diff
     ,unique_customers																													uniq_cstmr
     ,LAG(unique_customers) OVER(
     	PARTITION BY month 
@@ -262,6 +274,12 @@ SELECT
     ,unique_customers - LAG(unique_customers) OVER(
     	PARTITION BY MONTH
     	ORDER BY year)																													cstmr_diff
+    ,ROUND((unique_customers - LAG(unique_customers) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)) / 
+    LAG(unique_customers) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)*100.0, 2)																										cstmr_pct_diff
     ,items_sold																															items_sold
     ,LAG(items_sold) OVER(
     	PARTITION BY month 
@@ -269,10 +287,25 @@ SELECT
     ,items_sold - LAG(items_sold) OVER(
     	PARTITION BY MONTH
     	ORDER BY year)																													items_diff
+    ,ROUND((items_sold - LAG(items_sold) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)) /
+    LAG(items_sold) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)*100.0, 2)																										items_pct_diff	
     ,ROUND(aov,2)																														aov
     ,LAG(aov) OVER(
     	PARTITION BY month 
     	ORDER BY year)																													lyr_aov
+    ,ROUND(aov - LAG(aov) OVER(
+    	PARTITION BY month 
+    	ORDER BY year), 2)																												aov_change
+    ,ROUND((aov - LAG(aov) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)) /
+    LAG(aov) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)*100.0, 2)																												aov_pct_change
     ,discount_depth																														d_depth
     ,LAG(discount_depth) OVER(
     	PARTITION BY month 
@@ -280,26 +313,51 @@ SELECT
     ,discount_depth - LAG(discount_depth) OVER(
     	PARTITION BY MONTH
     	ORDER BY year)																													d_depth_diff
+    ,ROUND((discount_depth- LAG(discount_depth) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)) / 
+    LAG(discount_depth) OVER(
+    	PARTITION BY month 
+    	ORDER BY year)*100.0, 2)																										d_depth_pct_change
 FROM base_metrics
 ORDER BY year DESC, month DESC;
 
 /*================================================================================================================================================================================================
 Query result snippet:
 
-| year | month |   cyr_rev  |  	 lyr_rev |   rev_diff  | orders_cnt | lyr_o_cnt | ord_diff | uniq_cstmr | lyr_uniq | cstmr_diff | items_sold | lyr_items | items_diff | aov	    |  lyr_aov | d_depth | lyr_d_depth | d_depth_diff |
-|------|-------|------------|------------|-------------|------------|-----------|----------|------------|----------|------------|------------|-----------|------------|---------|----------|---------|-------------|--------------|
-| 2022 |     1 |  16 186,48 |  19 957,45 |   -3 770,97 |         37 |        33 |        4 |         35 |       33 |          2 |        300 |       327 |     	  -27 |  437,47 |   604,77 |   13,73 |       15,21 |        -1,48 |
-| 2021 |    12 |  13 860,23 |  19 555,03 |   -5 694,80 |         53 |        45 |        8 |         49 |       45 |          4 |        336 |       312 |         24 |  261,51 |   434,56 |   12,32 |        8,93 |         3,39 |
-| 2021 |    11 |  18 346,94 |   8 693,27 |    9 653,67 |         26 |        28 |       -2 |         26 |       26 |          0 |        239 |       199 |         40 |  705,65 |   310,47 |   11,85 |        8,96 |         2,89 |
-| 2021 |    10 |  15 769,12 |  12 468,53 |    3 300,59 |         40 |        33 |        7 |         40 |       33 |          7 |        329 |       230 |         99 |  394,23 |   377,83 |   13,95 |       11,29 |         2,66 |
-| 2021 |     9 |  20 248,41 |  11 782,73 |    8 465,68 |         32 |        19 |       13 |         30 |       19 |         11 |        283 |       151 |        132 |  632,76 |   620,14 |   11,58 |       17,62 |        -6,04 |
+| year | month |   cyr_rev |   lyr_rev |   rev_diff | rev_pct_diff | orders_cnt | lyr_o_cnt | ord_diff | ord_pct_diff | uniq_cstmr | lyr_uniq | cstmr_diff | cstmr_pct_diff | items_sold | lyr_items | items_diff | items_pct_diff |    aov |  lyr_aov | aov_change | aov_pct_change | d_depth | lyr_d_depth | d_depth_diff | d_depth_pct_change |
+|------|-------|-----------|-----------|------------|--------------|------------|-----------|----------|--------------|------------|----------|------------|----------------|------------|-----------|------------|----------------|--------|----------|------------|----------------|---------|-------------|--------------|--------------------|
+| 2022 |     1 | 16 186,48 | 19 957,45 | -3 770,97  |       -18,90 |         37 |        33 |        4 |        12,12 |         35 |       33 |          2 |           6,06 |        300 |       327 |        -27 |          -8,26 | 437,47 |   604,77 |    -167,30 |         -27,66 |   13,73 |       15,21 |        -1,48 |              -9,73 |
+| 2021 |    12 | 13 860,23 | 19 555,03 | -5 694,80  |       -29,12 |         53 |        45 |        8 |        17,78 |         49 |       45 |          4 |           8,89 |        336 |       312 |         24 |           7,69 | 261,51 |   434,56 |    -173,05 |         -39,82 |   12,32 |        8,93 |         3,39 |              37,96 |
+| 2021 |    11 | 18 346,94 |  8 693,27 |  9 653,67  |       111,05 |         26 |        28 |       -2 |        -7,14 |         26 |       26 |          0 |           0,00 |        239 |       199 |         40 |          20,10 | 705,65 |   310,47 |     395,18 |         127,28 |   11,85 |        8,96 |         2,89 |              32,25 |
+| 2021 |    10 | 15 769,12 | 12 468,53 |  3 300,59  |        26,47 |         40 |        33 |        7 |        21,21 |         40 |       33 |          7 |          21,21 |        329 |       230 |         99 |          43,04 | 394,23 |   377,83 |      16,40 |           4,34 |   13,95 |       11,29 |         2,66 |              23,56 |
+| 2021 |     9 | 20 248,41 | 11 782,73 |  8 465,68  |        71,85 |         32 |        19 |       13 |        68,42 |         30 |       19 |         11 |          57,89 |        283 |       151 |        132 |          87,42 | 632,76 |   620,14 |      12,62 |           2,04 |   11,58 |       17,62 |        -6,04 |             -34,28 |
 
-This table is serving us in future calculations, we're not going to report it in it's current form. 
 
+This table is serving us in future calculations, we're not going to report it in it's current form.
+
+The number of columns may feel overwhelming at first glance—comparing a single metric often requires looking at multiple related values. So why structure it this way?
+
+Because metrics without context are misleading - as we have presented in the very 1st query of this presentation.
+
+A percentage change like -5% means very little on its own. Does it represent a drop from 1,000 customers to 950, or from 20 customers to 19?
+The business impact in these two scenarios is completely different. The same applies to absolute values — losing 10 customers might be insignificant at scale, or critical if your baseline is small.
+
+This table is intentionally designed to preserve that context. By showing current and previous state aswell with both absolute values and their changes (numeric and percentage),
+we can properly assess the significance of each movement instead of reacting to isolated figures.
+
+Of course, this is only part of the story.
+
+From a business perspective, not all customers are equal. Losing one high-value, repeat customer may hurt far more than losing several low-value, one-time buyers.
+
+This is exactly the direction we’ll explore next.
+
+On a side note things worth noticing solely from this tiny snippet:
 🔍 In the case of September, the increase in revenue can be corellated with the growth in the customer base in comparison to the last year.
 +71% revenue +68% orders, +57% customers, nearly doubled items sold.This suggests that growth was volume-driven rather than changes in pricing or customer behavior.
+
 However, November 2021 presents a particularly interesting case.
-Equal amount of customers, slightly less orders but revenue is doubled,strong candidate for deeper analysis.
+Equal amount of customers, slightly less orders but revenue is more than doubled +111%,strong candidate for deeper analysis.
 
 Notes & Reflections
 Currently, all our activities are taking place at the state level, but as we move forward, we will begin to analyze them in greater detail.
