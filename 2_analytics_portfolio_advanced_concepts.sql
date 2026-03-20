@@ -61,13 +61,13 @@ Query result snippet:
 | 2019 | California     |  93 307,09 |        198 |
 | 2018 | California     |  71 302,47 |        171 |
 
-Result is suspicious... immediately raises a red flag.
+Result is suspicious... immediately raises a red flag
 Between 2018 - 2021 California was doing fantastic and then in 2022... sudden ~90% revenue drop.
 Such a drastic change is highly unlikely from a business perspective.
 
-This query is a classic example of how misleading conclusions can arise from “just take the average” type of thinking.
+THIS QUERY IS A CLASSIC EXAMPLE OF HOW MISLEADING CONCLUSIONS CAN ARISE FROM “just take the average” type of thinking.
 
-What am I going to do next:
+📝What am I going to do next:
 - validate data completeness and add months column to the result
 - double-check aggregation logic
 - adjust filtering to compare with other regions
@@ -140,7 +140,7 @@ Query result snippet:
 | 2021 |    10 | California     |  15 769,12 |         40 |               40 | 394,23 |
 | 2021 |     9 | California     |  20 248,41 |         32 |               30 | 632,76 |
 
-We used month-over-month trends to confirm there is a complete data for every prior month. 
+We used month-over-month trends to confirm there is a complete data for every prior month.
 It's a good moment to step back and define what we actually want to measure and how we want to approach it:
 	- including every variation of a metric can generate noise rather than insight
 	- metrics should be logically consistent and easy to interpret — combining everything into a single table is not the right approach
@@ -206,11 +206,11 @@ Query result snippet:
 | California     | 2021 |    10 |          15 769,12   |        12 468,53  |         83 |                   65 |               40 |                         33 | 394,23 |       377,83  |
 | California     | 2021 |     9 |          20 248,41   |        11 782,73  |         77 |                   40 |               30 |                         19 | 632,76 |       620,14  |
 
-Notes & Reflections
-The table became quite wide, mainly due to verbose column names. Since it currently serves internal analytical purposes, we can simplify it in the next steps.
-We can also start evaluating which metrics are truly useful and which may be redundant. At this stage, `delivery_state` is no longer necessary, as the analysis is focused solely on California.
+📝 Notes & Reflections
+   The table became quite wide, mainly due to verbose column names. Since it currently serves internal analytical purposes, we can simplify it in the next steps.
+   We can also start evaluating which metrics are truly useful and which may be redundant. At this stage, `delivery_state` is no longer necessary, as the analysis is focused solely on California.
 
-Next step: Identify metrics that actually explain revenue dynamics.
+   Next step: Identify metrics that actually explain revenue dynamics.
 ================================================================================================================================================================================================*/
 
 /*================================================================================================================================================================================================
@@ -330,16 +330,16 @@ WITH base_metrics AS (
 -- CTE 1: Monthly aggregation for California
 -- Calculate revenue, orders, unique customers, items sold, AOV, discount depth
 SELECT
-    EXTRACT(YEAR FROM o.order_date)																										year
-    ,EXTRACT(MONTH FROM o.order_date)																									month
-    ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*(1-COALESCE(op.position_discount,0))),2)									revenue -- total revenue
-    ,COUNT(DISTINCT op.order_id)																										orders_cnt -- total orders
-    ,COUNT(DISTINCT o.customer_id)																										unique_customers -- unique customers
-    ,SUM(op.item_quantity)																												items_sold -- total items sold
+    EXTRACT(YEAR FROM o.order_date)																											year
+    ,EXTRACT(MONTH FROM o.order_date)																										month
+    ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*(1-COALESCE(op.position_discount,0))),2)										revenue -- total revenue
+    ,COUNT(DISTINCT op.order_id)																											orders_cnt -- total orders
+    ,COUNT(DISTINCT o.customer_id)																											unique_customers -- unique customers
+    ,SUM(op.item_quantity)																													items_sold -- total items sold
     ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*(1-COALESCE(op.position_discount,0)))/
-        NULLIF(COUNT(DISTINCT op.order_id),0),2)																						aov -- average order value
+        NULLIF(COUNT(DISTINCT op.order_id),0),2)																							aov -- average order value
     ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*COALESCE(op.position_discount,0))/
-        NULLIF(SUM(op.item_quantity*COALESCE(p.product_price,0)),0)*100,2)																discount_depth -- average discount %
+        NULLIF(SUM(op.item_quantity*COALESCE(p.product_price,0)),0)*100,2)																	discount_depth -- average discount %
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
@@ -357,18 +357,18 @@ yoy_metrics AS (
 SELECT
     year
     ,month
-    ,revenue																															cyr_rev -- current year revenue
-    ,LAG(revenue) OVER(PARTITION BY month ORDER BY year)																				lyr_rev -- last year revenue
-    ,orders_cnt																															orders_cnt -- current year orders
-    ,LAG(orders_cnt) OVER(PARTITION BY month ORDER BY year)																				lyr_o_cnt -- last year orders
-    ,unique_customers																													uniq_cstmr -- current year customers
-    ,LAG(unique_customers) OVER(PARTITION BY month ORDER BY year)																		lyr_uniq -- last year customers
-    ,items_sold																															items_sold -- current year items
-    ,LAG(items_sold) OVER(PARTITION BY month ORDER BY year)																				lyr_items -- last year items
-    ,aov																																aov -- current year AOV
-    ,LAG(aov) OVER(PARTITION BY month ORDER BY year)																					lyr_aov -- last year AOV
-    ,discount_depth																														d_depth -- current year discount depth
-    ,LAG(discount_depth) OVER(PARTITION BY month ORDER BY year)																			lyr_d_depth -- last year discount depth
+    ,revenue																																cyr_rev -- current year revenue
+    ,LAG(revenue) OVER(PARTITION BY month ORDER BY year)																					lyr_rev -- last year revenue
+    ,orders_cnt																																orders_cnt -- current year orders
+    ,LAG(orders_cnt) OVER(PARTITION BY month ORDER BY year)																					lyr_o_cnt -- last year orders
+    ,unique_customers																														uniq_cstmr -- current year customers
+    ,LAG(unique_customers) OVER(PARTITION BY month ORDER BY year)																			lyr_uniq -- last year customers
+    ,items_sold																																items_sold -- current year items
+    ,LAG(items_sold) OVER(PARTITION BY month ORDER BY year)																					lyr_items -- last year items
+    ,aov																																	aov -- current year AOV
+    ,LAG(aov) OVER(PARTITION BY month ORDER BY year)																						lyr_aov -- last year AOV
+    ,discount_depth																															d_depth -- current year discount depth
+    ,LAG(discount_depth) OVER(PARTITION BY month ORDER BY year)																				lyr_d_depth -- last year discount depth
 FROM materialized
 )
 SELECT
@@ -377,28 +377,28 @@ SELECT
     ,month
     ,cyr_rev
     ,lyr_rev
-    ,cyr_rev - lyr_rev																													rev_diff -- revenue difference
-    ,ROUND((cyr_rev - lyr_rev)/NULLIF(lyr_rev,0)*100,2)																					rev_pct_diff -- revenue % change
+    ,cyr_rev - lyr_rev																														rev_diff -- revenue difference
+    ,ROUND((cyr_rev - lyr_rev)/NULLIF(lyr_rev,0)*100,2)																						rev_pct_diff -- revenue % change
     ,orders_cnt
     ,lyr_o_cnt
-    ,orders_cnt - lyr_o_cnt																												ord_diff -- orders difference
-    ,ROUND((orders_cnt - lyr_o_cnt)/NULLIF(lyr_o_cnt,0)*100,2)																			ord_pct_diff -- orders % change
+    ,orders_cnt - lyr_o_cnt																													ord_diff -- orders difference
+    ,ROUND((orders_cnt - lyr_o_cnt)/NULLIF(lyr_o_cnt,0)*100,2)																				ord_pct_diff -- orders % change
     ,uniq_cstmr
     ,lyr_uniq
-    ,uniq_cstmr - lyr_uniq																												cstmr_diff -- customers difference
-    ,ROUND((uniq_cstmr - lyr_uniq)/NULLIF(lyr_uniq,0)*100,2)																			cstmr_pct_diff -- customers % change
+    ,uniq_cstmr - lyr_uniq																													cstmr_diff -- customers difference
+    ,ROUND((uniq_cstmr - lyr_uniq)/NULLIF(lyr_uniq,0)*100,2)																				cstmr_pct_diff -- customers % change
     ,items_sold
     ,lyr_items
-    ,items_sold - lyr_items																												items_diff -- items difference
-    ,ROUND((items_sold - lyr_items)/NULLIF(lyr_items,0)*100,2)																			items_pct_diff -- items % change
+    ,items_sold - lyr_items																													items_diff -- items difference
+    ,ROUND((items_sold - lyr_items)/NULLIF(lyr_items,0)*100,2)																				items_pct_diff -- items % change
     ,aov
     ,lyr_aov
-    ,aov - lyr_aov																														aov_change -- AOV difference
-    ,ROUND((aov - lyr_aov)/NULLIF(lyr_aov,0)*100,2)																						aov_pct_change -- AOV % change
+    ,aov - lyr_aov																															aov_change -- AOV difference
+    ,ROUND((aov - lyr_aov)/NULLIF(lyr_aov,0)*100,2)																							aov_pct_change -- AOV % change
     ,d_depth
     ,lyr_d_depth
-    ,d_depth - lyr_d_depth																												d_depth_diff -- discount difference
-    ,ROUND((d_depth - lyr_d_depth)/NULLIF(lyr_d_depth,0)*100,2)																			d_depth_pct_change -- discount % change
+    ,d_depth - lyr_d_depth																													d_depth_diff -- discount difference
+    ,ROUND((d_depth - lyr_d_depth)/NULLIF(lyr_d_depth,0)*100,2)																				d_depth_pct_change -- discount % change
 FROM yoy_metrics
 ORDER BY year DESC, month DESC;
 /*================================================================================================================================================================================================
@@ -416,8 +416,9 @@ Query result snippet:
 
 This table is serving us in future calculations, we're not going to report it in it's current form.
 
-The number of columns may feel overwhelming at first glance—comparing a single metric often requires looking at multiple related values. So why structure it this way?
+The number of columns may feel overwhelming at first glance. So why structure it this way when we have previously mentioned reducing amount for easier decision making rather than producing noise ?
 
+Comparing a single metric often requires looking at multiple related values.
 Because metrics without context are misleading - as we have presented in the very 1st query of this presentation.
 
 A percentage change like -5% means very little on its own. Does it represent a drop from 1,000 customers to 950, or from 20 customers to 19?
@@ -432,16 +433,20 @@ From a business perspective, not all customers are equal. Losing one high-value,
 
 This is exactly the direction we’ll explore next.
 
-On a side note things worth noticing solely from this tiny snippet:
-🔍 In the case of September, the increase in revenue can be corellated with the growth in the customer base in comparison to the last year.
-+71% revenue +68% orders, +57% customers, nearly doubled items sold.This suggests that growth was volume-driven rather than changes in pricing or customer behavior.
+⭐ On a side note things worth noticing solely from this tiny snippet:
 
-However, November 2021 presents a particularly interesting case.
-Equal amount of customers, slightly less orders but revenue is more than doubled +111%,strong candidate for deeper analysis.
+- In the case of September, the increase in revenue can be corellated with the growth in the customer base in comparison to the last year.
+  +71% revenue +68% orders, +57% customers, nearly doubled items sold.This suggests that growth was volume-driven rather than changes in pricing or customer behavior.
 
-Notes & Reflections
-Currently, all our activities are taking place at the state level, but as we move forward, we will begin to analyze them in greater detail.
-The answers are not in a plain sight, we have to constantly make decisions which columns to add or delete, adjust, change granularity.
+- However, November 2021 presents a particularly interesting case.
+  Equal amount of customers, slightly less orders but revenue is more than doubled +111%,strong candidate for deeper analysis.
+
+💡 While November 2021 presents an interesting anomaly, it does not directly contribute to explaining California’s overall performance.
+   It is therefore intentionally excluded from deeper analysis at this stage and marked as a potential follow-up investigation.
+
+📝 Notes & Reflections
+   Currently, all our activities are taking place at the state level, but as we move forward, we will begin to analyze them in greater detail.
+   The answers are not in a plain sight, we have to constantly make decisions which columns to add or delete, adjust, change granularity.
 
 
 /*================================================================================================================================================================================================
