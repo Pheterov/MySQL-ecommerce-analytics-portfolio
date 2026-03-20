@@ -141,9 +141,11 @@ Query result snippet:
 | 2021 |     9 | California     |  20 248,41 |         32 |               30 | 632,76 |
 
 We used month-over-month trends to confirm there is a complete data for every prior month. 
-It's a good moment to decide what we'd love to calculate and clarify the approach:
+It's a good moment to step back and define what we actually want to measure and how we want to approach it:
 	- including every variation of a metric can generate noise rather than insight
-	- the data must make logical sense, mixing every important metric into one table is definitely not what we want
+	- metrics should be logically consistent and easy to interpret — combining everything into a single table is not the right approach
+	- the structure will evolve — adding and removing columns is a part of the analytical process
+	- the goal is not to present the final answer immediately, but to clearly show the reasoning path that leads to it
 
 Next step: YoY metrics
 ================================================================================================================================================================================================*/
@@ -205,12 +207,10 @@ Query result snippet:
 | California     | 2021 |     9 |          20 248,41   |        11 782,73  |         77 |                   40 |               30 |                         19 | 632,76 |       620,14  |
 
 Notes & Reflections
-Table became lengthy mainly because of column names, since for now it only serves a purpose for our own self,
-we can make some adjustments for future calculations.Also we can define what's still useful and what can be dealt with.
-I'm convinced that for now delivery_state is redundant, it's obvious which state we're focusing on.
-Is amount of orders important to us or maybe we'd like to know how many customers contribute to the revenue ? Maybe both metrics carry much value to our report ?
+The table became quite wide, mainly due to verbose column names. Since it currently serves internal analytical purposes, we can simplify it in the next steps.
+We can also start evaluating which metrics are truly useful and which may be redundant. At this stage, `delivery_state` is no longer necessary, as the analysis is focused solely on California.
 
-Next step: column name adjustments, math calculations, choosing important metrics, deleting redundant columns 
+Next step: Identify metrics that actually explain revenue dynamics.
 ================================================================================================================================================================================================*/
 
 /*================================================================================================================================================================================================
@@ -287,7 +287,7 @@ ORDER BY year DESC, month DESC;
 Query result snippet:
 
 | year | month |   cyr_rev  |  	 lyr_rev |   rev_diff  | orders_cnt | lyr_o_cnt | ord_diff | uniq_cstmr | lyr_uniq | cstmr_diff | items_sold | lyr_items | items_diff | aov	    |  lyr_aov | d_depth | lyr_d_depth | d_depth_diff |
-|------|-------|------------|------------|-------------|------------|-----------|----------|------------|----------|------------|------------|-----------|------------|------0--|----------|---------|-------------|--------------|
+|------|-------|------------|------------|-------------|------------|-----------|----------|------------|----------|------------|------------|-----------|------------|---------|----------|---------|-------------|--------------|
 | 2022 |     1 |  16 186,48 |  19 957,45 |   -3 770,97 |         37 |        33 |        4 |         35 |       33 |          2 |        300 |       327 |     	  -27 |  437,47 |   604,77 |   13,73 |       15,21 |        -1,48 |
 | 2021 |    12 |  13 860,23 |  19 555,03 |   -5 694,80 |         53 |        45 |        8 |         49 |       45 |          4 |        336 |       312 |         24 |  261,51 |   434,56 |   12,32 |        8,93 |         3,39 |
 | 2021 |    11 |  18 346,94 |   8 693,27 |    9 653,67 |         26 |        28 |       -2 |         26 |       26 |          0 |        239 |       199 |         40 |  705,65 |   310,47 |   11,85 |        8,96 |         2,89 |
@@ -295,7 +295,6 @@ Query result snippet:
 | 2021 |     9 |  20 248,41 |  11 782,73 |    8 465,68 |         32 |        19 |       13 |         30 |       19 |         11 |        283 |       151 |        132 |  632,76 |   620,14 |   11,58 |       17,62 |        -6,04 |
 
 This table is serving us in future calculations, we're not going to report it in it's current form. 
-Now that we decided wchich metrics to use we can add some % based calculations and add another metric.
 
 🔍 Also November of 2021 repesents very interesting case. Equal amount of customers, less orders but revenue is doubled, would've been nice to
 take a deeper look there aswell.
@@ -304,7 +303,7 @@ Notes & Reflections
 Currently, all our activities are taking place at the state level, but as we move forward, we will begin to analyze them in greater detail.
 The answers are not in a plain sight, we have to constantly make decisions add, delete, adjust, change granularity.
 
-Next step: items sold comparison, percentage comparison values, delete overwhelming columns
+
 /*================================================================================================================================================================================================
 
 ================================================================================================================================================================================================*/
