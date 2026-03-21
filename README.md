@@ -1,6 +1,7 @@
 # 🛒 SQL E-commerce Analytics Portfolio
 
 > I analyze the numbers to help in making informed and profitable business decisions.
+&nbsp;
 > MySQL 8+ • Window Functions • CTEs • Cohort & Pareto Analysis
 
 ---
