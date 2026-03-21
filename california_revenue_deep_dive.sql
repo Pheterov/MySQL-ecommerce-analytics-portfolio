@@ -5,6 +5,12 @@ Project: E-commerce Analytics SQL Portfolio
 
 																					"The story of California's revenue" 
 
+/*
+SQL analysis of 2018–2022 e-commerce data reveals that California leads in total revenue,
+but since 2021 its growth has been driven primarily by low-value customer acquisition.
+This shift reduced retention potential and puts future revenue stability at risk.
+*/
+	
 /*================================================================================================================================================================================================
 1️⃣ Revenue and Order Count by Delivery State
 ================================================================================================================================================================================================*/
