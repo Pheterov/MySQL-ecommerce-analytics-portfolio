@@ -1,6 +1,6 @@
 # 🛒 SQL E-commerce Analytics Portfolio
 
-> **Turning raw e-commerce data into revenue & retention insights**  
+> I analyze the numbers to help in making informed and profitable business decisions.
 > MySQL 8+ • Window Functions • CTEs • Cohort & Pareto Analysis
 
 ---
@@ -14,17 +14,15 @@
 | **Business Impact** | Revenue growth, retention optimization, customer segmentation |
 | **Code Quality** | Documented assumptions, reproducible pipelines, clean formatting |
 
-> I analyze the numbers to help in making informed and profitable business decisions.
-
 &nbsp;
 
 ## 📊 Highlighted Insights (Real Impact)
 
-| Focus | Insight | Business Takeaway |
-|-------|---------|-----------------|
-| <p align="center">💰<br>Revenue Performance</p> | Top 10% customers generate ~60% of revenue. | Retaining top customers is key to growth. |
-| <p align="center">👥<br>Customer Retention(M+1)</p> | New customers drive initial revenue; returning customers’ share grows over time | Focus on keeping customers, not just acquiring new ones. |
-| <p align="center">🚚<br>Delivery Efficiency</p>  | ~15% of orders are consistently delayed | Look into logistics bottlenecks to improve delivery. |
+| Focus | Insight |
+|-------|---------|
+| <p align="center">💰<br>Revenue Performance</p> | Top 10% products generate 59.47% of revenue. | 
+| <p align="center">👥<br>Customer Retention(M+1)</p> | zxcv | 
+| <p align="center">🚚<br>Delivery Efficiency</p>  | ~15% of orders are consistently delayed | 
 
 &nbsp;
 
@@ -77,11 +75,6 @@ orders ─┬── order_positions ─── products ─── product_groups
 
 &nbsp;
 
-## **💡 Key Insight:**  
-New customers bring in the first revenue, but returning customers gradually take a bigger share. Retention is what keeps growth steady.
-
-&nbsp;
-
 ## 📝 Documented Assumptions
 
 ```sql
@@ -93,4 +86,4 @@ New customers bring in the first revenue, but returning customers gradually take
 
 ## 🎯 Bottom Line
 
-This repository demonstrates business-focused, reproducible SQL analyses on artificial e-commerce data.
+The code speaks. The comments explain why.
