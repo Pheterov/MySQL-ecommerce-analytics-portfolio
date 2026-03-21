@@ -271,7 +271,7 @@ ORDER BY month;
 🛠️ Stack: SQL
 💡 Impact: Identify top-revenue products to guide marketing and inventory decisions.
 
-Query reult snippet:
+Query result snippet:
 
 | month   	 | product_name       |	revenue	  	  | ranking |
 |------------|--------------------|---------------|---------|
