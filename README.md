@@ -67,7 +67,7 @@ orders ─┬── order_positions ─── products ─── product_groups
 *Dates are shown as MM-YY for compactness.*
 
 | month       | new_customer_revenue | returning_customer_revenue | new_revenue_pct | returning_revenue_pct |
-|------------|----------------------|----------------------------|----------------|----------------------|
+|------------|----------------------|----------------------------|----------------|---------------------|
 | 01-18' | 324,04               | [NULL]                     | 100            | [NULL]               |
 | 02-18' | 14 470,88            | [NULL]                     | 100            | [NULL]               |
 | 03-18' | 8 326,86             | 225,23                      | 97,37          | 2,63                 |
