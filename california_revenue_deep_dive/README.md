@@ -1,1 +1,1 @@
-Step-by-step revenue analysis for California (2018–2022) — MoM/YoY trends, AOV, discount depth, CLV segmentation, acquisition quality vs revenue growth, Month+1 retention by segment. The goal is to show the reasoning path that leads to the answer.
+Step-by-step revenue analysis for California (2018–2022) — MoM/YoY trends, AOV, discount depth, CLV segmentation, acquisition quality vs revenue growth, Month+1 retention by segment.The goal is to show the reasoning path that leads to the answer.
