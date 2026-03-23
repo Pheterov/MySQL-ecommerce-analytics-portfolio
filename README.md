@@ -23,7 +23,7 @@
 | Focus | Insight |
 |-------|---------|
 | <p align="center">💰<br>Revenue Performance</p> | Top 10% products generate 59.47% of revenue. | 
-| <p align="center">👥<br>Customer Retention(M+1)</p> | zxcv | 
+| <p align="center">👥<br>Customer Retention</p> |Customer acquisition phase in 2018, transitioning to retention-driven revenue growth in subsequent years. | 
 | <p align="center">🚚<br>Delivery Efficiency</p>  | ~15% of orders are consistently delayed | 
 
 &nbsp;
