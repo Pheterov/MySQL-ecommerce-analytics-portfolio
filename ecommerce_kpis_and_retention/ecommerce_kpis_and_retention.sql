@@ -32,6 +32,7 @@ These are conscious tradeoffs for readability and portfolio clarity:
 1️⃣ Top 10% Products Revenue Contribution (Pareto Analysis)
 🎯 Goal: See how much of total revenue comes from the top 10% selling products.
 🛠️ Stack: SQL
+💡 Insight: Top 10% products contribute to nearly 60% of total revenue.
 		 
 Query result snippet:
 		 
@@ -200,6 +201,7 @@ ORDER BY product_category, month;
 3️⃣ Monthly Business Performance Metrics
 🎯 Goal: Monthly KPIs for management.
 🛠️ Stack: SQL
+💡 Impact: A quick monthly pulse check to flag trends worth investigating.
 
 Query result snippet:
 
@@ -389,6 +391,7 @@ FROM customer_stats;
 8️⃣ Month+1 Customer Retention Rate
 🎯 Goal: Calculate next-month retention
 🛠️ Stack: SQL
+💡  Insight: A direct signal of whether the business retains or loses its customer base over time.
 
 Query result snippet:
 
