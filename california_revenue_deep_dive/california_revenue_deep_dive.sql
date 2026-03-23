@@ -776,7 +776,7 @@ Query result snippet:
    A more granular segmentation incorporating purchase frequency as a standalone dimension
    would produce cleaner retention separation between segments.
 
-   ⭐ Final conclusion.
+   ⭐ Final conclusion:
    California leads in revenue across all states. Its growth from 2018 to 2020 was backed
    by consistent top_customer acquisition. From 2021 onward, acquisition quality declined —
    growth became volume-driven, dominated by low_value and risky_high_value customers
