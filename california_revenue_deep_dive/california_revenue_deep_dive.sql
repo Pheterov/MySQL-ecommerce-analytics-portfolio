@@ -17,7 +17,8 @@ This shift reduced retention potential and puts future revenue stability at risk
 	   
 SELECT
 	o.delivery_state
-	,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*(1-COALESCE(op.position_discount,0))), 2) 										revenue
+	,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*
+		(1-COALESCE(op.position_discount,0))), 2) 																							revenue
 	,COUNT(DISTINCT op.order_id)																											orders_cnt
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
@@ -168,10 +169,12 @@ SELECT
     EXTRACT(YEAR FROM o.order_date)                                                                         								year
     ,EXTRACT(MONTH FROM o.order_date)                                                                       								month
     ,o.delivery_state                                                                                        								delivery_state
-    ,ROUND(SUM(op.item_quantity * COALESCE(p.product_price,0) * (1 - COALESCE(op.position_discount,0))), 2) 								revenue
+    ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*
+		(1 - COALESCE(op.position_discount,0))), 2) 																						revenue
     ,COUNT(op.order_id)                                                                                      								orders_cnt
     ,COUNT(DISTINCT o.customer_id)                                                                          								unique_customers
-    ,ROUND(SUM(op.item_quantity * COALESCE(p.product_price,0) * (1 - COALESCE(op.position_discount,0))) /
+    ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*
+		(1-COALESCE(op.position_discount,0))) /
            COUNT(DISTINCT o.order_id), 2)                                                                   								aov
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
@@ -225,49 +228,64 @@ Query result snippet:
 4️⃣.1️⃣ YoY math calculations, column decision making, column names optimization, discount depth, code optimization
 ================================================================================================================================================================================================*/
 
-WITH base_metrics AS (
+WITH base_metrics AS 
+(
 -- CTE 1: Monthly aggregation for California
 -- Calculate revenue, orders, unique customers, items sold, AOV, discount depth
 SELECT
     EXTRACT(YEAR FROM o.order_date)																											year
     ,EXTRACT(MONTH FROM o.order_date)																										month
-    ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*(1-COALESCE(op.position_discount,0))),2)										revenue           -- total revenue
+    ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*
+		(1-COALESCE(op.position_discount,0))),2)																							revenue           -- total revenue
     ,COUNT(DISTINCT op.order_id)																											orders_cnt        -- total orders
     ,COUNT(DISTINCT o.customer_id)																											unique_customers  -- unique customers
     ,SUM(op.item_quantity)																													items_sold        -- total items sold
-    ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*(1-COALESCE(op.position_discount,0)))/
+    ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*
+		(1-COALESCE(op.position_discount,0)))/
         NULLIF(COUNT(DISTINCT op.order_id),0),2)																							aov               -- average order value
-    ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*COALESCE(op.position_discount,0))/
+    ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price,0)*COALESCE(op.position_discount,0)) /
         NULLIF(SUM(op.item_quantity*COALESCE(p.product_price,0)),0)*100,2)																	discount_depth    -- revenue-weighted average discount rate (total discount value / total pre-discount revenue)
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
 WHERE o.delivery_state = 'California'
 GROUP BY EXTRACT(YEAR FROM o.order_date), EXTRACT(MONTH FROM o.order_date)
-),
-materialized AS (
+), materialized AS
+(
 -- CTE 2: Materialize base_metrics to avoid alias resolution issues in MySQL 8.0
 SELECT *
 FROM base_metrics
-),
-yoy_metrics AS (
+), yoy_metrics AS
+(
 -- CTE 3: Year-over-Year comparison
 -- Add previous year values for each month using window functions
 SELECT
     year
     ,month
     ,revenue																																cyr_rev      -- current year revenue
-    ,LAG(revenue) OVER(PARTITION BY month ORDER BY year)																					lyr_rev      -- last year revenue
+    ,LAG(revenue) OVER(
+		PARTITION BY month
+		ORDER BY year)																														lyr_rev      -- last year revenue
     ,orders_cnt																																orders_cnt   -- current year orders
-    ,LAG(orders_cnt) OVER(PARTITION BY month ORDER BY year)																					lyr_o_cnt    -- last year orders
+    ,LAG(orders_cnt) OVER(
+		PARTITION BY month
+		ORDER BY year)																														lyr_o_cnt    -- last year orders
     ,unique_customers																														uniq_cstmr   -- current year customers
-    ,LAG(unique_customers) OVER(PARTITION BY month ORDER BY year)																			lyr_uniq     -- last year customers
+    ,LAG(unique_customers) OVER(
+		PARTITION BY month
+		ORDER BY year)																														lyr_uniq     -- last year customers
     ,items_sold																																items_sold   -- current year items
-    ,LAG(items_sold) OVER(PARTITION BY month ORDER BY year)																					lyr_items    -- last year items
+    ,LAG(items_sold) OVER(
+		PARTITION BY month
+		ORDER BY year)																														lyr_items    -- last year items
     ,aov																																	aov          -- current year AOV
-    ,LAG(aov) OVER(PARTITION BY month ORDER BY year)																						lyr_aov      -- last year AOV
+    ,LAG(aov) OVER(
+		PARTITION BY month 
+		ORDER BY year)																														lyr_aov      -- last year AOV
     ,discount_depth																															d_depth      -- current year discount depth
-    ,LAG(discount_depth) OVER(PARTITION BY month ORDER BY year)																				lyr_d_depth  -- last year discount depth
+    ,LAG(discount_depth) OVER(
+		PARTITION BY month
+		ORDER BY year)																														lyr_d_depth  -- last year discount depth
 FROM materialized
 )
 SELECT
@@ -276,28 +294,34 @@ SELECT
     ,month
     ,cyr_rev
     ,lyr_rev
-    ,cyr_rev - lyr_rev																														rev_diff          -- revenue difference
-    ,ROUND((cyr_rev - lyr_rev)/NULLIF(lyr_rev,0)*100,2)																						rev_pct_diff      -- revenue % change
+    ,cyr_rev-lyr_rev																														rev_diff          -- revenue difference
+    ,ROUND((cyr_rev-lyr_rev) /
+		NULLIF(lyr_rev,0)*100,2)																											rev_pct_diff      -- revenue % change
     ,orders_cnt
     ,lyr_o_cnt
-    ,orders_cnt - lyr_o_cnt																													ord_diff          -- orders difference
-    ,ROUND((orders_cnt - lyr_o_cnt)/NULLIF(lyr_o_cnt,0)*100,2)																				ord_pct_diff      -- orders % change
+    ,orders_cnt-lyr_o_cnt																													ord_diff          -- orders difference
+    ,ROUND((orders_cnt-lyr_o_cnt) /
+		NULLIF(lyr_o_cnt,0)*100,2)																											ord_pct_diff      -- orders % change
     ,uniq_cstmr
     ,lyr_uniq
-    ,uniq_cstmr - lyr_uniq																													cstmr_diff        -- customers difference
-    ,ROUND((uniq_cstmr - lyr_uniq)/NULLIF(lyr_uniq,0)*100,2)																				cstmr_pct_diff    -- customers % change
+    ,uniq_cstmr-lyr_uniq																													cstmr_diff        -- customers difference
+    ,ROUND((uniq_cstmr-lyr_uniq) /
+		NULLIF(lyr_uniq,0)*100,2)																											cstmr_pct_diff    -- customers % change
     ,items_sold
     ,lyr_items
-    ,items_sold - lyr_items																													items_diff        -- items difference
-    ,ROUND((items_sold - lyr_items)/NULLIF(lyr_items,0)*100,2)																				items_pct_diff    -- items % change
+    ,items_sold-lyr_items																													items_diff        -- items difference
+    ,ROUND((items_sold-lyr_items) /
+		NULLIF(lyr_items,0)*100,2)																											items_pct_diff    -- items % change
     ,aov
     ,lyr_aov
-    ,aov - lyr_aov																															aov_change        -- AOV difference
-    ,ROUND((aov - lyr_aov)/NULLIF(lyr_aov,0)*100,2)																							aov_pct_change    -- AOV % change
+    ,aov-lyr_aov																															aov_change        -- AOV difference
+    ,ROUND((aov-lyr_aov) /
+		NULLIF(lyr_aov,0)*100,2)																											aov_pct_change    -- AOV % change
     ,d_depth
     ,lyr_d_depth
-    ,d_depth - lyr_d_depth																													d_depth_diff      -- discount difference
-    ,ROUND((d_depth - lyr_d_depth)/NULLIF(lyr_d_depth,0)*100,2)																				d_depth_pct_change -- discount % change
+    ,d_depth-lyr_d_depth																													d_depth_diff      -- discount difference
+    ,ROUND((d_depth-lyr_d_depth) /
+		NULLIF(lyr_d_depth,0)*100,2)																										d_depth_pct_change -- discount % change
 FROM yoy_metrics
 ORDER BY year DESC, month DESC;
 
@@ -375,7 +399,8 @@ This is exactly the direction we'll explore next.
             Segments: top_customer, risky_high_value, loyal_low_value, low_value.
 ================================================================================================================================================================================================*/
 
-WITH customer_metrics AS (
+WITH customer_metrics AS 
+(
 SELECT
     o.customer_id                                                                   customer_id
     ,COUNT(DISTINCT o.order_id)                                                     orders_cnt
@@ -388,15 +413,20 @@ JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
 WHERE o.delivery_state = 'California'
 GROUP BY o.customer_id
-), customer_enriched AS (
+), customer_enriched AS 
+(
 SELECT
     customer_id                                                                     customer_id
     ,orders_cnt                                                                     orders_cnt
     ,total_revenue                                                                  total_revenue
     ,total_revenue / NULLIF(orders_cnt, 0)                                          avg_order_value
-    ,TIMESTAMPDIFF(MONTH, first_order_date, last_order_date) + 1                    lifetime_months
-    ,orders_cnt / NULLIF(TIMESTAMPDIFF(MONTH, first_order_date, last_order_date) + 1, 0) purchase_frequency
-    ,CASE WHEN orders_cnt > 1 THEN 1 ELSE 0 END                                     is_repeat_customer
+    ,TIMESTAMPDIFF(MONTH, first_order_date, last_order_date)+1                    	lifetime_months
+    ,orders_cnt /
+		NULLIF(TIMESTAMPDIFF(MONTH, first_order_date, last_order_date) + 1, 0) 		purchase_frequency
+    ,CASE WHEN orders_cnt > 1
+		THEN 1
+		ELSE 0
+	END                                     										is_repeat_customer
 FROM customer_metrics
 )
 SELECT
@@ -410,10 +440,10 @@ SELECT
     ,ROUND(avg_order_value*purchase_frequency*lifetime_months*is_repeat_customer, 2) clv_retention_adjusted
     ,CASE
         WHEN is_repeat_customer = 1
-        AND avg_order_value * purchase_frequency * lifetime_months >= 500
+        AND avg_order_value*purchase_frequency*lifetime_months >= 500
         THEN 'top_customer'
         WHEN is_repeat_customer = 0
-        AND avg_order_value * purchase_frequency * lifetime_months >= 500
+        AND avg_order_value*purchase_frequency*lifetime_months >= 500
         THEN 'risky_high_value'
         WHEN is_repeat_customer = 1
         THEN 'loyal_low_value'
@@ -454,7 +484,8 @@ Query result snippet:
             This shows whether high-value customers were acquired during growth months.
 ================================================================================================================================================================================================*/
 
-WITH customer_metrics AS (
+WITH customer_metrics AS 
+(
 SELECT
     o.customer_id
     ,COUNT(DISTINCT o.order_id)                                                     orders_cnt
@@ -473,12 +504,14 @@ SELECT
     ,orders_cnt
     ,total_revenue
     ,total_revenue / NULLIF(orders_cnt, 0)                                          avg_order_value
-    ,TIMESTAMPDIFF(MONTH, first_order_date, last_order_date) + 1                    lifetime_months
-    ,orders_cnt / NULLIF(TIMESTAMPDIFF(MONTH, first_order_date, last_order_date) + 1, 0) purchase_frequency
+    ,TIMESTAMPDIFF(MONTH, first_order_date, last_order_date)+1	                    lifetime_months
+    ,orders_cnt / 
+		NULLIF(TIMESTAMPDIFF(MONTH, first_order_date, last_order_date)+1, 0) 		purchase_frequency
     ,CASE WHEN orders_cnt > 1 THEN 1 ELSE 0 END                                     is_repeat_customer
     ,DATE_FORMAT(first_order_date, '%Y-%m-01')                                      acquisition_month
 FROM customer_metrics
-), customer_segmented AS (
+), customer_segmented AS 
+(
 SELECT
     customer_id
     ,acquisition_month
@@ -543,7 +576,8 @@ Query result snippet:
             High revenue growth driven by top_customers suggests sustainable expansion.
 ================================================================================================================================================================================================*/
 
-WITH customer_metrics AS (
+WITH customer_metrics AS 
+(
 SELECT
     o.customer_id
     ,COUNT(DISTINCT o.order_id)                                                     orders_cnt
@@ -556,17 +590,23 @@ JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
 WHERE o.delivery_state = 'California'
 GROUP BY o.customer_id
-), customer_enriched AS (
+), customer_enriched AS 
+(
 SELECT
     customer_id
     ,total_revenue
     ,total_revenue / NULLIF(orders_cnt, 0)                                          avg_order_value
-    ,TIMESTAMPDIFF(MONTH, first_order_date, last_order_date) + 1                    lifetime_months
-    ,orders_cnt / NULLIF(TIMESTAMPDIFF(MONTH, first_order_date, last_order_date) + 1, 0) purchase_frequency
-    ,CASE WHEN orders_cnt > 1 THEN 1 ELSE 0 END                                     is_repeat_customer
+    ,TIMESTAMPDIFF(MONTH, first_order_date, last_order_date)+1                   	lifetime_months
+    ,orders_cnt / 
+		NULLIF(TIMESTAMPDIFF(MONTH, first_order_date, last_order_date)+1, 0) 		purchase_frequency
+    ,CASE WHEN orders_cnt > 1 
+		THEN 1
+		ELSE 0
+	END                                     										is_repeat_customer
     ,DATE_FORMAT(first_order_date, '%Y-%m-01')                                      acquisition_month
 FROM customer_metrics
-), customer_segmented AS (
+), customer_segmented AS
+(
 SELECT
     customer_id
     ,acquisition_month
@@ -583,17 +623,27 @@ SELECT
         ELSE 'low_value'
     END                                                                             customer_segment
 FROM customer_enriched
-), segment_by_month AS (
+), segment_by_month AS 
+(
 SELECT
     acquisition_month
-    ,COUNT(DISTINCT CASE WHEN customer_segment = 'top_customer'      THEN customer_id END) top_customers
-    ,COUNT(DISTINCT CASE WHEN customer_segment = 'risky_high_value'  THEN customer_id END) risky_high_value
-    ,COUNT(DISTINCT CASE WHEN customer_segment = 'loyal_low_value'   THEN customer_id END) loyal_low_value
-    ,COUNT(DISTINCT CASE WHEN customer_segment = 'low_value'         THEN customer_id END) low_value
-    ,COUNT(DISTINCT customer_id)                                                           total_customers
+    ,COUNT(DISTINCT CASE WHEN customer_segment = 'top_customer' 
+		THEN customer_id 
+	END) 																			top_customers
+    ,COUNT(DISTINCT CASE WHEN customer_segment = 'risky_high_value' 
+		THEN customer_id
+	END) 																			risky_high_value
+    ,COUNT(DISTINCT CASE WHEN customer_segment = 'loyal_low_value'   
+		THEN customer_id 
+	END) 																			loyal_low_value
+    ,COUNT(DISTINCT CASE WHEN customer_segment = 'low_value'         
+		THEN customer_id
+	END) 																			low_value
+    ,COUNT(DISTINCT customer_id)                                                    total_customers
 FROM customer_segmented
 GROUP BY acquisition_month
-), monthly_revenue AS (
+), monthly_revenue AS 
+(
 SELECT
     DATE_FORMAT(o.order_date, '%Y-%m-01')                                           month
     ,SUM(op.item_quantity*COALESCE(p.product_price, 0)
@@ -603,19 +653,20 @@ JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
 WHERE o.delivery_state = 'California'
 GROUP BY month
-), revenue_yoy AS (
+), revenue_yoy AS 
+(
 SELECT
     month
     ,ROUND(revenue, 2)                                                              cyr_rev
     ,ROUND(LAG(revenue) OVER(
         PARTITION BY MONTH(month)
         ORDER BY month), 2)                                                         lyr_rev
-    ,ROUND((revenue - LAG(revenue) OVER(
+    ,ROUND((revenue-LAG(revenue) OVER(
         PARTITION BY MONTH(month)
         ORDER BY month)) /
         NULLIF(LAG(revenue) OVER(
         PARTITION BY MONTH(month)
-        ORDER BY month), 0) * 100, 2)                                               rev_pct_diff
+        ORDER BY month), 0)*100.0, 2)                                               rev_pct_diff
 FROM monthly_revenue
 )
 SELECT
@@ -691,15 +742,21 @@ JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
 WHERE o.delivery_state = 'California'
 GROUP BY o.customer_id
-), customer_enriched AS (
+), customer_enriched AS 
+(
 SELECT
     customer_id
     ,total_revenue / NULLIF(orders_cnt, 0)                                          avg_order_value
     ,TIMESTAMPDIFF(MONTH, first_order_date, last_order_date) + 1                    lifetime_months
-    ,orders_cnt / NULLIF(TIMESTAMPDIFF(MONTH, first_order_date, last_order_date) + 1, 0) purchase_frequency
-    ,CASE WHEN orders_cnt > 1 THEN 1 ELSE 0 END                                     is_repeat_customer
+    ,orders_cnt / 
+		NULLIF(TIMESTAMPDIFF(MONTH, first_order_date, last_order_date)+1, 0) 		purchase_frequency
+    ,CASE WHEN orders_cnt > 1 
+		THEN 1
+		ELSE 0
+	END                                     										is_repeat_customer
 FROM customer_metrics
-), customer_segmented AS (
+), customer_segmented AS
+(
 SELECT
     customer_id
     ,CASE
@@ -738,7 +795,7 @@ SELECT
     ,COUNT(CASE WHEN next_purchase_month = next_calendar_month
         THEN 1 END)                                                                 retained_customers
     ,ROUND(COUNT(CASE WHEN next_purchase_month = next_calendar_month
-        THEN 1 END) * 100.0 /
+        THEN 1 END)*100.0 /
         NULLIF(COUNT(*), 0), 2)                                                     retention_rate_pct
 FROM customer_next_purchase
 GROUP BY customer_segment
