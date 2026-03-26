@@ -426,7 +426,7 @@ ORDER BY clv_retention_adjusted DESC, clv DESC;
 Query result snippet:
 
 | customer_id | orders_cnt | historical_revenue | avg_order_value | lifetime_months | purchase_frequency |      clv | clv_retention_adjusted | customer_segment |
-|-------------|------------|-------------------|-----------------|-----------------|--------------------|----------|------------------------|-----------------|
+|-------------|------------|--------------------|-----------------|-----------------|--------------------|----------|------------------------|-------=----------|
 |         457 |          2 |           8 349,89 |        4 174,95 |              40 |               0,05 | 8 349,89 |               8 349,89 | top_customer     |
 |         433 |          2 |           7 301,73 |        3 650,86 |              13 |               0,15 | 7 301,73 |               7 301,73 | top_customer     |
 |         450 |          4 |           7 182,77 |        1 795,69 |              36 |               0,11 | 7 182,77 |               7 182,77 | top_customer     |
@@ -510,8 +510,8 @@ ORDER BY acquisition_month DESC, customer_segment;
 Query result snippet:
 
 | acquisition_month | customer_segment | customers_cnt | total_clv | avg_clv |
-|-------------------|-----------------|---------------|-----------|---------|
-| 2022-01-01        | low_value        |            11 |   2 214,32 |  201,30 |
+|-------------------|------------------|---------------|-----------|---------|
+| 2022-01-01        | low_value        |            11 |  2 214,32 |  201,30 |
 | 2022-01-01        | loyal_low_value  |             1 |    186,62 |  186,62 |
 | 2021-12-01        | low_value        |             6 |    876,89 |  146,15 |
 | 2021-12-01        | loyal_low_value  |             2 |    430,44 |  215,22 |
@@ -636,12 +636,12 @@ ORDER BY acquisition_month DESC;
 Query result snippet:
 
 | acquisition_month | cyr_rev   | lyr_rev   | rev_pct_diff | top_customers | risky_high_value | loyal_low_value | low_value | total_customers |
-|-------------------|-----------|-----------|--------------|---------------|-----------------|-----------------|-----------|-----------------|
-| 2022-01-01        | 16 186,48 | 19 957,45 |       -18,90 |             0 |               0 |               1 |        11 |              12 |
-| 2021-12-01        | 13 860,23 | 19 555,03 |       -29,12 |             0 |               5 |               2 |         6 |              13 |
-| 2021-11-01        | 18 346,94 |  8 693,27 |       111,05 |             0 |               3 |               0 |         9 |              12 |
-| 2021-10-01        | 15 769,12 | 12 468,53 |        26,47 |             1 |               1 |               0 |         6 |               8 |
-| 2021-09-01        | 20 248,41 | 11 782,73 |        71,85 |             1 |               3 |               1 |         7 |              12 |
+|-------------------|-----------|-----------|--------------|---------------|------=-----------|-----------------|-----------|-----------------|
+| 2022-01-01        | 16 186,48 | 19 957,45 |       -18,90 |             0 |       	        0 |               1 |        11 |              12 |
+| 2021-12-01        | 13 860,23 | 19 555,03 |       -29,12 |             0 |                5 |               2 |         6 |              13 |
+| 2021-11-01        | 18 346,94 |  8 693,27 |       111,05 |             0 |                3 |               0 |         9 |              12 |
+| 2021-10-01        | 15 769,12 | 12 468,53 |        26,47 |             1 |                1 |               0 |         6 |               8 |
+| 2021-09-01        | 20 248,41 | 11 782,73 |        71,85 |             1 |               	3 |               1 |         7 |              12 |
 
 📝 Notes & Reflections
    Based on the full query result, the data tells a clear and consistent story.
@@ -727,7 +727,7 @@ SELECT
     ,s.customer_segment
     ,LEAD(a.month) OVER (
         PARTITION BY a.customer_id
-        ORDER BY a.month)                                                            next_purchase_month
+        ORDER BY a.month)                                                          	next_purchase_month
     ,DATE_ADD(a.month, INTERVAL 1 MONTH)                                            next_calendar_month
 FROM customer_activity a
 JOIN customer_segmented s ON a.customer_id = s.customer_id
@@ -748,7 +748,7 @@ ORDER BY retention_rate_pct DESC;
 Query result snippet:
 
 | customer_segment | active_customers | retained_customers | retention_rate_pct |
-|-----------------|------------------|--------------------|--------------------|
+|------------------|------------------|--------------------|--------------------|
 | loyal_low_value  |              247 |                  9 |               3,64 |
 | top_customer     |              478 |                 13 |               2,72 |
 | low_value        |              219 |                  0 |               0,00 |
