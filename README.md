@@ -86,7 +86,3 @@ orders ─┬── order_positions ─── products ─── product_groups
 -- Shipping_date < order_date → excluded
 -- New customer = first order in calendar month
 ```
-
-## 🎯 Bottom Line
-
-The code speaks. The comments explain why.
