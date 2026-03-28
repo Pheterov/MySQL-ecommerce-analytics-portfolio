@@ -468,10 +468,10 @@ Query result snippet:
    clv_retention_adjusted zeroes out one-time buyers, isolating customers who have demonstrated
    repeat behavior. This distinction drives the segmentation logic.
 
-   top_customer: repeat buyer with CLV >= 500 — highest business value.
-   risky_high_value: one-time buyer with CLV >= 500 — high spend but no proven loyalty.
-   loyal_low_value: repeat buyer with CLV < 500 — consistent but lower spend.
-   low_value: one-time buyer with CLV < 500 — lowest priority segment.
+   top_customer: repeat buyer with CLV >= 1000 — highest business value.
+   risky_high_value: one-time buyer with CLV >= 1000 — high spend but no proven loyalty.
+   loyal_low_value: repeat buyer with CLV < 1000 — consistent but lower spend.
+   low_value: one-time buyer with CLV < 1000 — lowest priority segment.
 
    This segmentation feeds directly into the next three queries which cross-reference
    customer quality with acquisition timing and revenue growth.
@@ -518,10 +518,10 @@ SELECT
     ,ROUND(avg_order_value * purchase_frequency * lifetime_months, 2)               clv
     ,CASE
         WHEN is_repeat_customer = 1
-        AND avg_order_value * purchase_frequency * lifetime_months >= 500
+        AND avg_order_value * purchase_frequency * lifetime_months >= 1000
         THEN 'top_customer'
         WHEN is_repeat_customer = 0
-        AND avg_order_value * purchase_frequency * lifetime_months >= 500
+        AND avg_order_value * purchase_frequency * lifetime_months >= 1000
         THEN 'risky_high_value'
         WHEN is_repeat_customer = 1
         THEN 'loyal_low_value'
