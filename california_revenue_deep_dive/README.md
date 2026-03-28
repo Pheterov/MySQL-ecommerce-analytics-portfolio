@@ -18,7 +18,7 @@
 
 ## 📌 Executive Summary
 
-California is the top-performing state in this e-commerce dataset — by total revenue, order count, and customer volume. On the surface, it tells a success story. But surface-level metrics are designed to flatter, not inform. This analysis begins with a single revenue figure and methodically peels back the layers underneath: a suspicious YoY anomaly, a data completeness gap, a volume surge that masked customer quality decline, and finally, a retention signal that confirms the fragility of California's recent growth. **The conclusion is sobering: since 2021, California's revenue growth has been built on customers who don't come back.** Without a strategic shift, the pipeline of high-value repeat buyers will continue to dry up — and the revenue trajectory will follow.
+California is the top-performing state in this e-commerce dataset — by total revenue, order count, and customer volume. On the surface, it tells a success story. But surface-level metrics are designed to flatter, not inform. This analysis begins with a single revenue figure and methodically peels back the layers underneath: a suspicious YoY anomaly, a data completeness gap, a volume surge that masked customer quality decline, and finally, a retention signal that confirms the fragility of California's recent growth. **The conclusion is sobering: since 2021, California's revenue growth has been built on customers who don't come back.** Without a strategic shift, the pipeline of high-value repeat buyers will continue to dry up — and the revenue trajectory is likely to follow.
 
 > *A single revenue metric tells almost nothing. The full story required understanding time, customer quality, acquisition patterns, and retention behavior — step by step.*
 
