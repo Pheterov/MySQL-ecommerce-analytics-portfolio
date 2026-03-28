@@ -1,4 +1,4 @@
-# 🛒 SQL E-commerce Analytics Portfolio
+# 🛒 SQL E-commerce Analytics Portfolio 
 
 > MySQL 8+ • Window Functions • CTEs • Cohort & Pareto Analysis
 > ~5,000 orders, 2018–2022, synthetic e-commerce dataset modified for analytical purposes.
