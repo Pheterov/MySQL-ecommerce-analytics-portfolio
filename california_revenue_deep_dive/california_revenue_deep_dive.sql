@@ -440,10 +440,10 @@ SELECT
     ,ROUND(avg_order_value*purchase_frequency*lifetime_months*is_repeat_customer, 2) clv_retention_adjusted
     ,CASE
         WHEN is_repeat_customer = 1
-        AND avg_order_value*purchase_frequency*lifetime_months >= 500
+        AND avg_order_value*purchase_frequency*lifetime_months >= 1000
         THEN 'top_customer'
         WHEN is_repeat_customer = 0
-        AND avg_order_value*purchase_frequency*lifetime_months >= 500
+        AND avg_order_value*purchase_frequency*lifetime_months >= 1000
         THEN 'risky_high_value'
         WHEN is_repeat_customer = 1
         THEN 'loyal_low_value'
@@ -613,10 +613,10 @@ SELECT
     ,ROUND(avg_order_value * purchase_frequency * lifetime_months, 2)               clv
     ,CASE
         WHEN is_repeat_customer = 1
-        AND avg_order_value * purchase_frequency * lifetime_months >= 500
+        AND avg_order_value * purchase_frequency * lifetime_months >= 1000
         THEN 'top_customer'
         WHEN is_repeat_customer = 0
-        AND avg_order_value * purchase_frequency * lifetime_months >= 500
+        AND avg_order_value * purchase_frequency * lifetime_months >= 1000
         THEN 'risky_high_value'
         WHEN is_repeat_customer = 1
         THEN 'loyal_low_value'
@@ -761,10 +761,10 @@ SELECT
     customer_id
     ,CASE
         WHEN is_repeat_customer = 1
-        AND avg_order_value * purchase_frequency * lifetime_months >= 500
+        AND avg_order_value * purchase_frequency * lifetime_months >= 1000
         THEN 'top_customer'
         WHEN is_repeat_customer = 0
-        AND avg_order_value * purchase_frequency * lifetime_months >= 500
+        AND avg_order_value * purchase_frequency * lifetime_months >= 1000
         THEN 'risky_high_value'
         WHEN is_repeat_customer = 1
         THEN 'loyal_low_value'
