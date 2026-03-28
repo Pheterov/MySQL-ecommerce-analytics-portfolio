@@ -53,6 +53,9 @@ orders ─┬── order_positions ─── products ─── product_groups
 | `order_positions` | order_id, product_id, item_quantity, position_discount |
 | `products` | product_id, product_name, product_price, group_id |
 | `product_groups` | group_id, category, product_group |
+| `order_ratings` | order_id, rating |
+| `order_returns` | order_id, next_order_free |
+
 
 </details>
 
