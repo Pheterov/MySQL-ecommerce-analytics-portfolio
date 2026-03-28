@@ -95,8 +95,9 @@ Applying the segmentation model to acquisition cohorts revealed the central find
 
 From 2021 onward, that pattern broke down. The months with the most dramatic revenue spikes — September 2021 (+71.85%), November 2021 (+111.05%), March 2021 (+179.05%) — acquired **zero or one top_customer**. The dominant segments were `low_value` and `risky_high_value`. Revenue numbers looked strong because volume was high. But the customers behind that volume had no demonstrated propensity to return.
 
-![Chart 3: YoY Revenue % Change vs Top Customers Acquired per Month](charts/chart_03_revenue_vs_top_customers.png)
-*Chart 3: The defining visual of this case study. Monthly YoY revenue growth (%) overlaid with top_customer acquisitions per month. The divergence is stark: the tallest revenue spikes in 2021 coincide with bars near zero for top_customer acquisition. The strongest top_customer months are concentrated in 2018–2020.*
+<img width="1086" height="606" alt="image" src="https://github.com/user-attachments/assets/a87a9f4a-e4f5-416f-9fcc-166c163a5699" />
+<img width="1084" height="606" alt="image" src="https://github.com/user-attachments/assets/674304d1-cbc6-452d-b3e4-8ac1a379334f" />
+*Charts 3 and 4: The defining visual of this case study. Monthly YoY revenue growth (%) overlaid with top_customer acquisitions per month. The divergence is stark: the tallest revenue spikes in 2021 coincide with bars near zero for top_customer acquisition. The strongest top_customer months are concentrated in 2018–2020.*
 
 > *We traded sustainable growth for fragile volume. The numbers looked better. The business got worse.*
 
