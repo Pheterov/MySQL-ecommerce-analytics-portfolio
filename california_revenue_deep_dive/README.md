@@ -9,7 +9,7 @@ This basic metric doesn't really tell us anything... Can we make an informed and
 
 Chart to query #2
 
-As a logical nex step the next question was: "How is California performing YoY ?"
+As a logical following step the next question was: "How is California performing YoY ?"
 During our SQL deep divie we've identified cause behind the sudden revenue drop anomaly.
 
 <img width="1084" height="606" alt="image" src="https://github.com/user-attachments/assets/68e0c01c-3149-4d5a-8950-73abb0ac1c0c" />
