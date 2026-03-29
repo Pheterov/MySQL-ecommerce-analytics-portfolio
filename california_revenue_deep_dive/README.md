@@ -110,8 +110,9 @@ This segmentation provides something that revenue alone cannot: a **quality sign
 
 ## Key Insight: Growth ≠ Health
 
-Applying the segmentation model to acquisition cohorts revealed the central finding of this analysis. In 2018–2020, months with strong YoY revenue were consistently backed by meaningful `top_customer` acquisition. July 2020 brought in 4 top customers alongside +758.55% YoY growth. Let's take a moment there, the 750% increase in revenue looks amazing but we shouldn't celebrate too early, we must always remain conscious and not let the emotions take over too easily. We're comparing to one of the worst periods in the dataset...
-Oecember 2020 added 4 top customers with +49.55% revenue growth followed by additional 3 top_customers in December with a +78,6% increase in YoY revenue. The growth was real, and the customers driving it had demonstrated their willingness to return.
+Applying the segmentation model to acquisition cohorts revealed the central finding of this analysis. During 2018–2020, months characterized by strong year-over-year revenue performance were consistently underpinned by meaningful top_customer acquisition activity. July 2020 yielded four top-customer acquisitions alongside 758.55% year-over-year revenue growth — a result that warrants careful interpretation. A figure of this magnitude is striking, yet context is essential: the comparison baseline represents one of the weakest periods in the dataset, and allowing that distortion to drive conclusions would be a strategic misjudgment.
+October 2020 added a further 4 top customers against 49.55% year-over-year revenue growth, followed by 3 additional top-customer acquisitions in December with a 78.6% year-over-year uplift. The growth was substantive, and critically, the customers driving it had demonstrated a proven propensity to return.
+As subsequent analysis will show, it was precisely this disciplined focus on high-value customer acquisition that sustained the business's growth trajectory. The charts that follow will quantify the disproportionate revenue contribution attributable to the top_customer segment.
 
 | acquisition_month | current_year_revenue | last_year_revenue | revenue_pct_difference | top_customers | risky_high_value |  loyal_low_value | low_value | total_customers |
 |-------------------|----------------------|-------------------|------------------------|---------------|------------------|------------------|-----------|-----------------|
@@ -140,6 +141,9 @@ From 2021 onward, that pattern broke down. The months with the most dramatic rev
 | 2021-03-01        |             8 284,00 |          2 968,69 | 179,05                 | 0             | 0                | 1                | 4         | 5               |
 
 <img width="1086" height="606" alt="image" src="https://github.com/user-attachments/assets/a87a9f4a-e4f5-416f-9fcc-166c163a5699" />
+
+<br>
+
 <img width="1084" height="606" alt="image" src="https://github.com/user-attachments/assets/674304d1-cbc6-452d-b3e4-8ac1a379334f" />
 Charts 3 and 4: The defining visual of this case study. Monthly YoY revenue growth (%) overlaid with top_customer acquisitions per month. The divergence is stark: the tallest revenue spikes in 2021 coincide with bars near zero for top_customer acquisition. The strongest top_customer months are concentrated in 2018–2020.
 
