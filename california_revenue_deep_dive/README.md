@@ -57,22 +57,22 @@ This moment illustrates a foundational analytical principle: **never draw conclu
 With data integrity confirmed, the analysis moved to understanding California's growth dynamics at a monthly level. Month-over-month and year-over-year metrics — revenue, order counts, unique customers, items sold, average order value, and discount depth — painted a picture of strong apparent growth in late 2021.
 
 Revenue
-<img width="1084" height="202" alt="image" src="https://github.com/user-attachments/assets/79128c37-da98-4cec-ba6f-4dcd934e364a" />
+
 
 Orders
-<img width="1084" height="202" alt="image" src="https://github.com/user-attachments/assets/6dfc6155-7678-413f-b5c3-379d0fdb61c6" />
+
 
 Customers
-<img width="1084" height="202" alt="image" src="https://github.com/user-attachments/assets/dc8d2a3d-284f-4cdc-9f77-f38434fa7d78" />
+
 
 Items
-<img width="1084" height="202" alt="image" src="https://github.com/user-attachments/assets/5a669231-64c3-47ad-a08e-7693cad3accd" />
+
 
 AoV
-<img width="1084" height="202" alt="image" src="https://github.com/user-attachments/assets/e503b0ef-ca4a-4089-ba59-534bb51e5f12" />
+
 
 Discount Depth
-<img width="1084" height="202" alt="image" src="https://github.com/user-attachments/assets/78275d06-a02a-4aa0-a97b-4fc9cc16a8e1" />
+
 
 
 September 2021 showed +71.85% YoY revenue growth, nearly doubling items sold (+87%) and growing unique customers by +58%. November 2021 produced even more striking numbers: +111% revenue growth, with the same number of unique customers as the prior year. By conventional metrics, these are headline-worthy results.
@@ -112,11 +112,126 @@ This segmentation provides something that revenue alone cannot: a **quality sign
 
 Applying the segmentation model to acquisition cohorts revealed the central finding of this analysis. In 2018–2020, months with strong YoY revenue were consistently backed by meaningful `top_customer` acquisition. October 2020 brought in 4 top customers alongside +49.55% YoY growth. December 2020 added 3 top customers with +78.6% revenue growth. The growth was real, and the customers driving it had demonstrated their willingness to return.
 
-<img width="1084" height="202" alt="image" src="https://github.com/user-attachments/assets/ac3d2698-db26-402f-842e-6f04af0717ac" />
+
 
 From 2021 onward, that pattern broke down. The months with the most dramatic revenue spikes — September 2021 (+71.85%), November 2021 (+111.05%), March 2021 (+179.05%) — acquired **zero or one top_customer**. The dominant segments were `low_value` and `risky_high_value`. Revenue numbers looked strong because volume was high. But the customers behind that volume had no demonstrated propensity to return.
 
-<img width="1084" height="202" alt="image" src="https://github.com/user-attachments/assets/66177173-8891-4a83-919e-6db1f9b2ba6a" />
+<table>
+  <thead>
+    <tr>
+      <th>acquisition_month</th>
+      <th>current_year_revenue</th>
+      <th>last_year_revenue</th>
+      <th>revenue_pct_difference</th>
+      <th>top_customers</th>
+      <th>risky_high_value</th>
+      <th>loyal_low_value</th>
+      <th>low_value</th>
+      <th>total_customers</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background-color:#d4f8d4;">
+      <td>2021-11-01</td>
+      <td>18346.94</td>
+      <td>8693.27</td>
+      <td>111.05</td>
+      <td>0</td>
+      <td>3</td>
+      <td>0</td>
+      <td>9</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <td>2021-10-01</td>
+      <td>15769.12</td>
+      <td>12468.53</td>
+      <td>26.47</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>7</td>
+      <td>8</td>
+    </tr>
+    <tr style="background-color:#d4f8d4;">
+      <td>2021-09-01</td>
+      <td>20248.41</td>
+      <td>11782.73</td>
+      <td>71.85</td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+      <td>7</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <td>2021-08-01</td>
+      <td>13034.04</td>
+      <td>8561.93</td>
+      <td>52.23</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>4</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <td>2021-07-01</td>
+      <td>9231.12</td>
+      <td>16319.06</td>
+      <td>-43.43</td>
+      <td>0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>6</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>2021-06-01</td>
+      <td>8141.68</td>
+      <td>5063.7</td>
+      <td>60.79</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>6</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <td>2021-05-01</td>
+      <td>5420.44</td>
+      <td>6957.42</td>
+      <td>-22.09</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>7</td>
+      <td>8</td>
+    </tr>
+    <tr>
+      <td>2021-04-01</td>
+      <td>13152.17</td>
+      <td>15108.3</td>
+      <td>-12.95</td>
+      <td>2</td>
+      <td>1</td>
+      <td>0</td>
+      <td>9</td>
+      <td>12</td>
+    </tr>
+    <tr style="background-color:#d4f8d4;">
+      <td>2021-03-01</td>
+      <td>8284.0</td>
+      <td>2968.69</td>
+      <td>179.05</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>4</td>
+      <td>5</td>
+    </tr>
+  </tbody>
+</table>
 
 <img width="1086" height="606" alt="image" src="https://github.com/user-attachments/assets/a87a9f4a-e4f5-416f-9fcc-166c163a5699" />
 <img width="1084" height="606" alt="image" src="https://github.com/user-attachments/assets/674304d1-cbc6-452d-b3e4-8ac1a379334f" />
