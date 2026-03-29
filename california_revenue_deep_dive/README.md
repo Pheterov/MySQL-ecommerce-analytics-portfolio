@@ -110,9 +110,13 @@ This segmentation provides something that revenue alone cannot: a **quality sign
 
 ## Key Insight: Growth ≠ Health
 
-Applying the segmentation model to acquisition cohorts revealed the central finding of this analysis. In 2018–2020, months with strong YoY revenue were consistently backed by meaningful `top_customer` acquisition. October 2020 alone brought in 9 top customers alongside +49.55% YoY growth. December 2020 added 4 top customers with +78.6% revenue growth. The growth was real, and the customers driving it had demonstrated their willingness to return.
+Applying the segmentation model to acquisition cohorts revealed the central finding of this analysis. In 2018–2020, months with strong YoY revenue were consistently backed by meaningful `top_customer` acquisition. October 2020 brought in 4 top customers alongside +49.55% YoY growth. December 2020 added 3 top customers with +78.6% revenue growth. The growth was real, and the customers driving it had demonstrated their willingness to return.
+
+<img width="1084" height="202" alt="image" src="https://github.com/user-attachments/assets/ac3d2698-db26-402f-842e-6f04af0717ac" />
 
 From 2021 onward, that pattern broke down. The months with the most dramatic revenue spikes — September 2021 (+71.85%), November 2021 (+111.05%), March 2021 (+179.05%) — acquired **zero or one top_customer**. The dominant segments were `low_value` and `risky_high_value`. Revenue numbers looked strong because volume was high. But the customers behind that volume had no demonstrated propensity to return.
+
+<img width="1084" height="202" alt="image" src="https://github.com/user-attachments/assets/66177173-8891-4a83-919e-6db1f9b2ba6a" />
 
 <img width="1086" height="606" alt="image" src="https://github.com/user-attachments/assets/a87a9f4a-e4f5-416f-9fcc-166c163a5699" />
 <img width="1084" height="606" alt="image" src="https://github.com/user-attachments/assets/674304d1-cbc6-452d-b3e4-8ac1a379334f" />
