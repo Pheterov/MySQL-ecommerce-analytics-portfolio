@@ -116,122 +116,17 @@ Applying the segmentation model to acquisition cohorts revealed the central find
 
 From 2021 onward, that pattern broke down. The months with the most dramatic revenue spikes — September 2021 (+71.85%), November 2021 (+111.05%), March 2021 (+179.05%) — acquired **zero or one top_customer**. The dominant segments were `low_value` and `risky_high_value`. Revenue numbers looked strong because volume was high. But the customers behind that volume had no demonstrated propensity to return.
 
-<table>
-  <thead>
-    <tr>
-      <th>acquisition_month</th>
-      <th>current_year_revenue</th>
-      <th>last_year_revenue</th>
-      <th>revenue_pct_difference</th>
-      <th>top_customers</th>
-      <th>risky_high_value</th>
-      <th>loyal_low_value</th>
-      <th>low_value</th>
-      <th>total_customers</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr style="background-color:#d4f8d4;">
-      <td>2021-11-01</td>
-      <td>18346.94</td>
-      <td>8693.27</td>
-      <td>111.05</td>
-      <td>0</td>
-      <td>3</td>
-      <td>0</td>
-      <td>9</td>
-      <td>12</td>
-    </tr>
-    <tr>
-      <td>2021-10-01</td>
-      <td>15769.12</td>
-      <td>12468.53</td>
-      <td>26.47</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>7</td>
-      <td>8</td>
-    </tr>
-    <tr style="background-color:#d4f8d4;">
-      <td>2021-09-01</td>
-      <td>20248.41</td>
-      <td>11782.73</td>
-      <td>71.85</td>
-      <td>1</td>
-      <td>3</td>
-      <td>1</td>
-      <td>7</td>
-      <td>12</td>
-    </tr>
-    <tr>
-      <td>2021-08-01</td>
-      <td>13034.04</td>
-      <td>8561.93</td>
-      <td>52.23</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
-      <td>4</td>
-      <td>7</td>
-    </tr>
-    <tr>
-      <td>2021-07-01</td>
-      <td>9231.12</td>
-      <td>16319.06</td>
-      <td>-43.43</td>
-      <td>0</td>
-      <td>2</td>
-      <td>2</td>
-      <td>6</td>
-      <td>10</td>
-    </tr>
-    <tr>
-      <td>2021-06-01</td>
-      <td>8141.68</td>
-      <td>5063.7</td>
-      <td>60.79</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>6</td>
-      <td>7</td>
-    </tr>
-    <tr>
-      <td>2021-05-01</td>
-      <td>5420.44</td>
-      <td>6957.42</td>
-      <td>-22.09</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>7</td>
-      <td>8</td>
-    </tr>
-    <tr>
-      <td>2021-04-01</td>
-      <td>13152.17</td>
-      <td>15108.3</td>
-      <td>-12.95</td>
-      <td>2</td>
-      <td>1</td>
-      <td>0</td>
-      <td>9</td>
-      <td>12</td>
-    </tr>
-    <tr style="background-color:#d4f8d4;">
-      <td>2021-03-01</td>
-      <td>8284.0</td>
-      <td>2968.69</td>
-      <td>179.05</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>4</td>
-      <td>5</td>
-    </tr>
-  </tbody>
-</table>
+| acquisition_month | current_year_revenue | last_year_revenue | revenue_pct_difference | top_customers | risky_high_value | loyal_low_value | low_value | total_customers |
+|------------------|---------------------|-------------------|------------------------|---------------|------------------|------------------|-----------|-----------------|
+| 2021-11-01       | 18346.94            | 8693.27           | 111.05                 | 0             | 3                | 0                | 9         | 12              |
+| 2021-10-01       | 15769.12            | 12468.53          | 26.47                  | 0             | 0                | 1                | 7         | 8               |
+| 2021-09-01       | 20248.41            | 11782.73          | 71.85                  | 1             | 3                | 1                | 7         | 12              |
+| 2021-08-01       | 13034.04            | 8561.93           | 52.23                  | 1             | 1                | 1                | 4         | 7               |
+| 2021-07-01       | 9231.12             | 16319.06          | -43.43                 | 0             | 2                | 2                | 6         | 10              |
+| 2021-06-01       | 8141.68             | 5063.7            | 60.79                  | 0             | 0                | 1                | 6         | 7               |
+| 2021-05-01       | 5420.44             | 6957.42           | -22.09                 | 0             | 0                | 1                | 7         | 8               |
+| 2021-04-01       | 13152.17            | 15108.3           | -12.95                 | 2             | 1                | 0                | 9         | 12              |
+| 2021-03-01       | 8284.0              | 2968.69           | 179.05                 | 0             | 0                | 1                | 4         | 5               |
 
 <img width="1086" height="606" alt="image" src="https://github.com/user-attachments/assets/a87a9f4a-e4f5-416f-9fcc-166c163a5699" />
 <img width="1084" height="606" alt="image" src="https://github.com/user-attachments/assets/674304d1-cbc6-452d-b3e4-8ac1a379334f" />
