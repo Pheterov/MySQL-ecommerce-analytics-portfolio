@@ -65,10 +65,13 @@ Orders
 Customers
 <img width="1084" height="202" alt="image" src="https://github.com/user-attachments/assets/dc8d2a3d-284f-4cdc-9f77-f38434fa7d78" />
 
+Items
 <img width="1084" height="202" alt="image" src="https://github.com/user-attachments/assets/5a669231-64c3-47ad-a08e-7693cad3accd" />
 
+AoV
 <img width="1084" height="202" alt="image" src="https://github.com/user-attachments/assets/e503b0ef-ca4a-4089-ba59-534bb51e5f12" />
 
+Discount Depth
 <img width="1084" height="202" alt="image" src="https://github.com/user-attachments/assets/78275d06-a02a-4aa0-a97b-4fc9cc16a8e1" />
 
 
