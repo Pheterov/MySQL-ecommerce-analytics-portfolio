@@ -33,7 +33,7 @@ Every analysis begins somewhere. The natural starting point is the most visible 
 But this is precisely the **trap of vanity metrics**. A single aggregated figure collapses four years of business history into one number. It cannot tell us whether California is growing or declining, whether customers are returning, or whether the revenue base is structurally sound. It only tells us the final score — not how the game was played.
 
 <img width="1084" height="606" alt="image" src="https://github.com/user-attachments/assets/c99b85d6-35d2-48d0-9094-8198bddde5eb" />
-**Chart 1: Revenue by Delivery State — California's outsized lead. The metric that would be reported to leadership, and the metric that, without deeper analysis, would lead to misallocated resources and false confidence.**
+Chart 1: Revenue by Delivery State — California's outsized lead. The metric that would be reported to leadership, and the metric that, without deeper analysis, would lead to misallocated resources and false confidence.
 
 ---
 
@@ -46,7 +46,7 @@ The logical next step was to examine California's performance over time. A year-
 A simple month-level breakdown of 2022 data immediately revealed the truth: the dataset for 2022 contains only January. The apparent collapse was not a business failure — it was an incomplete dataset being compared against a full calendar year. One month of revenue will most of the time look smaller than twelve.
 
 <img width="1084" height="606" alt="image" src="https://github.com/user-attachments/assets/68e0c01c-3149-4d5a-8950-73abb0ac1c0c" />
-**Chart 2: California YoY Revenue and orders count — steady and consistent across 2018–2021. The apparent YoY and orders count cliff disappears entirely when the incomplete 2022 data is understood for what it is: a partial year, not a decline.**
+Chart 2: California YoY Revenue and orders count — steady and consistent across 2018–2021. The apparent YoY and orders count cliff disappears entirely when the incomplete 2022 data is understood for what it is: a partial year, not a decline.
 
 This moment illustrates a foundational analytical principle: **never draw conclusions from numbers you haven't validated.** A flawed report that reaches the wrong audience can trigger resource misallocation, false urgency, or misplaced confidence. Data completeness is not a technical detail — it is a business risk.
 
@@ -97,7 +97,7 @@ From 2021 onward, that pattern broke down. The months with the most dramatic rev
 
 <img width="1086" height="606" alt="image" src="https://github.com/user-attachments/assets/a87a9f4a-e4f5-416f-9fcc-166c163a5699" />
 <img width="1084" height="606" alt="image" src="https://github.com/user-attachments/assets/674304d1-cbc6-452d-b3e4-8ac1a379334f" />
-*Charts 3 and 4: The defining visual of this case study. Monthly YoY revenue growth (%) overlaid with top_customer acquisitions per month. The divergence is stark: the tallest revenue spikes in 2021 coincide with bars near zero for top_customer acquisition. The strongest top_customer months are concentrated in 2018–2020.*
+Charts 3 and 4: The defining visual of this case study. Monthly YoY revenue growth (%) overlaid with top_customer acquisitions per month. The divergence is stark: the tallest revenue spikes in 2021 coincide with bars near zero for top_customer acquisition. The strongest top_customer months are concentrated in 2018–2020.
 
 > We traded sustainable growth for fragile volume. The numbers looked better. The business got worse.
 
