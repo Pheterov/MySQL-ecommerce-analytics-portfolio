@@ -56,6 +56,8 @@ This moment illustrates a foundational analytical principle: **never draw conclu
 
 With data integrity confirmed, the analysis moved to understanding California's growth dynamics at a monthly level. Month-over-month and year-over-year metrics — revenue, order counts, unique customers, items sold, average order value, and discount depth — painted a picture of strong apparent growth in late 2021.
 
+<img width="1084" height="202" alt="image" src="https://github.com/user-attachments/assets/6919cb16-2e9d-4a9f-91a0-31f1a6310391" />
+
 September 2021 showed +71.85% YoY revenue growth, nearly doubling items sold (+87%) and growing unique customers by +57%. November 2021 produced even more striking numbers: +111% revenue growth, with the same number of unique customers as the prior year. By conventional metrics, these are headline-worthy results.
 
 But a critical question emerged: **what kind of customers were being acquired during these growth months?** Volume is easy to measure. Quality is harder — and far more important. Orders and customers are not interchangeable units. A business acquiring a thousand low-value, one-time buyers is in a fundamentally different position than one acquiring a hundred high-value repeat customers, even if the short-term revenue looks identical.
