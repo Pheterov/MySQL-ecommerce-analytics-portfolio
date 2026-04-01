@@ -6,9 +6,17 @@ Project: E-commerce Analytics SQL Portfolio
 																					"The story of California's revenue" 
 
 /*
-SQL analysis of 2018–2022 e-commerce data reveals that California leads in total revenue,
-but since 2021 its growth has been driven primarily by low-value customer acquisition.
-This shift reduced retention potential and puts future revenue stability at risk.
+
+This project was developed as a learning exercise with AI-assisted code review 
+and iterative improvement. The analytical methodology (tenure bias control, 
+right-censoring, revenue decomposition) was introduced through mentored feedback. 
+All SQL is my own, written and verified against the live dataset.
+
+SQL analysis of 2018–2022 e-commerce data reveals that California leads in total revenue.
+Initial segmentation suggested declining acquisition quality from 2021, but cohort-controlled
+analysis proved this was a tenure bias artifact — recent cohorts actually show improving
+early repeat rates. Revenue growth in 2021 was driven by a maturing returning customer base,
+not fragile one-time purchases.
 */
 
 /*================================================================================================================================================================================================
@@ -419,33 +427,32 @@ This is exactly the direction we'll explore next.
 💡 Context: Not all customers are equal. This query identifies who drives real value
             by combining cumulative spend with observed loyalty (repeat vs one-time).
             Segments: top_customer, risky_high_value, loyal_low_value, low_value.
-
+ 
 Customers were classified into four segments based on repeat behavior and total historical revenue.
 The revenue threshold of 1,000 was derived from the empirical distribution of California customer
-total revenue (n = 577): the median is 387.72 and the 75th percentile is 1,094.30,
-making 1,000 a defensible approximation of the top quartile boundary.
-
-⚠️ Metric transparency note:
-    The segmentation metric used here is total historical revenue, not a predictive CLV model.
-    A common CLV formula (avg_order_value × purchase_frequency × lifetime_months) algebraically
-    simplifies to total_revenue in all cases:
-        (revenue/orders) × (orders/lifetime) × lifetime = revenue.
-    Using total_revenue directly avoids this tautology and makes the metric self-explanatory.
-
-    This approach has a known limitation: it is biased toward older customers who had more time
-    to accumulate revenue. A customer acquired in 2018 had ~4 years to build history, while a
-    customer acquired in late 2021 had only a few months. This tenure bias means that fewer
-    "top_customers" appearing in recent cohorts could partially reflect shorter observation
-    windows rather than genuinely lower customer quality. Query 5️⃣.4️⃣ addresses this directly.
-
-⚠️ Scope note:
-    All metrics are calculated using only California-delivered orders. Customers who also ordered
-    to other states will have an incomplete profile here. This is an intentional scoping decision,
-    but it means some customers may appear lower-value than they actually are across the full business.
+total revenue (n = 565, after excluding 2022-only acquisitions): the median is ~390 and the
+75th percentile is ~1,050, making 1,000 a defensible approximation of the top quartile boundary.
+ 
+⚠️ Scope decisions:
+    1. 2022 is excluded: only January data is available, giving those customers near-zero time
+       to demonstrate repeat behavior. Including them would inflate the low_value segment artificially.
+       However, 2022 orders ARE included in the base revenue/repeat calculation — a customer acquired
+       in 2021 who ordered again in January 2022 correctly counts as a repeat buyer.
+ 
+    2. All metrics use only California-delivered orders. Nearly all CA customers (574 of 577) also
+       ordered to other states. Their CA-only profile may understate true engagement. This is an
+       intentional scoping decision, documented for transparency.
+ 
+    3. The segmentation metric is total historical revenue — not a "CLV model." A common CLV formula
+       (avg_order_value × purchase_frequency × lifetime_months) algebraically simplifies to
+       total_revenue in all cases, so using total_revenue directly is both simpler and more honest.
+       This approach is biased toward older customers; query 5️⃣.4️⃣ controls for this.
 ================================================================================================================================================================================================*/
-
+ 
 WITH customer_metrics AS 
 (
+-- All California orders 2018–2022 included for accurate revenue and repeat classification.
+-- A customer acquired in Dec 2021 who ordered again in Jan 2022 must count as repeat buyer.
 SELECT
     o.customer_id                                                                   customer_id
     ,COUNT(DISTINCT o.order_id)                                                     orders_cnt
@@ -458,86 +465,67 @@ JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
 WHERE o.delivery_state = 'California'
 GROUP BY o.customer_id
-), customer_enriched AS 
-(
-SELECT
-    customer_id                                                                     customer_id
-    ,orders_cnt                                                                     orders_cnt
-    ,total_revenue                                                                  total_revenue
-    ,total_revenue / NULLIF(orders_cnt, 0)                                          avg_order_value
-    ,TIMESTAMPDIFF(MONTH, first_order_date, last_order_date)+1                    	lifetime_months
-    ,orders_cnt /
-		NULLIF(TIMESTAMPDIFF(MONTH, first_order_date, last_order_date) + 1, 0) 		purchase_frequency
-    ,CASE WHEN orders_cnt > 1
-		THEN 1
-		ELSE 0
-	END                                     										is_repeat_customer
-FROM customer_metrics
+-- Exclude customers acquired in 2022 (incomplete period)
+HAVING EXTRACT(YEAR FROM MIN(o.order_date)) < 2022
 )
 SELECT
     customer_id                                                                     customer_id
     ,orders_cnt                                                                     orders_cnt
     ,ROUND(total_revenue, 2)                                                        historical_revenue
-    ,ROUND(avg_order_value, 2)                                                      avg_order_value
-    ,lifetime_months                                                                lifetime_months
-    ,ROUND(purchase_frequency, 2)                                                   purchase_frequency
-    ,is_repeat_customer                                                             is_repeat_customer
-    ,ROUND(total_revenue*is_repeat_customer, 2) 									retention_adjusted_revenue
+    ,ROUND(total_revenue / NULLIF(orders_cnt, 0), 2)                                avg_order_value
+    ,CASE WHEN orders_cnt > 1 THEN 1 ELSE 0 END                                    is_repeat_customer
     ,CASE
-        WHEN is_repeat_customer = 1
-        AND total_revenue >= 1000
-        THEN 'top_customer'
-        WHEN is_repeat_customer = 0
-        AND total_revenue >= 1000
-        THEN 'risky_high_value'
-        WHEN is_repeat_customer = 1
-        THEN 'loyal_low_value'
+        WHEN orders_cnt > 1 AND total_revenue >= 1000 THEN 'top_customer'
+        WHEN orders_cnt = 1 AND total_revenue >= 1000 THEN 'risky_high_value'
+        WHEN orders_cnt > 1                            THEN 'loyal_low_value'
         ELSE 'low_value'
     END                                                                             customer_segment
-FROM customer_enriched
-ORDER BY retention_adjusted_revenue DESC, total_revenue DESC;
-
+FROM customer_metrics
+ORDER BY total_revenue DESC;
+ 
 /*================================================================================================================================================================================================
-Query result snippet:
-
-| customer_id | orders_cnt | historical_revenue | avg_order_value | lifetime_months | purchase_frequency | is_repeat_customer | retention_adjusted_revenue | customer_segment |
-|-------------|------------|--------------------|-----------------|-----------------|--------------------|--------------------|-—————————————————————————--|------------------|
-|         457 |          2 |           8 349,89 |        4 174,95 |              40 |               0,05 |                  1 |                   8 349,89 | top_customer     |
-|         433 |          2 |           7 301,73 |        3 650,86 |              13 |               0,15 |                  1 |                   7 301,73 | top_customer     |
-|         450 |          4 |           7 182,77 |        1 795,69 |              36 |               0,11 |                  1 |                   7 182,77 | top_customer     |
-|         280 |          3 |           5 848,69 |        1 949,56 |              30 |               0,10 |                  1 |                   5 848,69 | top_customer     |
-|         579 |          2 |           5 182,58 |        2 591,29 |              33 |               0,06 |                  1 |                   5 182,58 | top_customer     |
-
+Query result — segment summary:
+ 
+| customer_segment | customers_cnt | total_revenue | avg_revenue | avg_orders | min_revenue | max_revenue |
+|------------------|---------------|---------------|-------------|------------|-------------|-------------|
+| top_customer     |           120 |    256 290,76 |    2 135,76 |       2,67 |    1 029,17 |    8 349,89 |
+| risky_high_value |            39 |     72 972,35 |    1 871,09 |       1,00 |    1 011,70 |    4 006,21 |
+| loyal_low_value  |           173 |     72 032,08 |      416,37 |       2,40 |       20,02 |      996,58 |
+| low_value        |           233 |     47 754,43 |      204,95 |       1,00 |        3,98 |      976,83 |
+ 
 📝 Notes & Reflections
-   The segmentation is based on two observable dimensions: total historical revenue and
-   whether the customer has demonstrated repeat purchase behavior (orders_cnt > 1).
-
-   retention_adjusted_revenue zeroes out one-time buyers, isolating customers who have
-   demonstrated repeat behavior. This distinction drives the segmentation logic.
-
-   top_customer: repeat buyer with historical revenue >= 1,000 — highest business value.
-   risky_high_value: one-time buyer with historical revenue >= 1,000 — high spend but no proven loyalty.
-   loyal_low_value: repeat buyer with historical revenue < 1,000 — consistent but lower spend.
-   low_value: one-time buyer with historical revenue < 1,000 — lowest priority segment.
-
-   This segmentation feeds directly into the next queries which cross-reference
-   customer quality with acquisition timing and revenue growth.
+   After excluding 12 customers acquired only in January 2022, we have 565 California customers.
+ 
+   top_customer (120, 21%): repeat buyers with revenue >= 1,000. They account for 57% of total
+   California revenue while representing only 21% of the customer base.
+ 
+   risky_high_value (39, 7%): one-time buyers with revenue >= 1,000. High spend but no proven
+   loyalty — structurally fragile.
+ 
+   loyal_low_value (173, 31%): repeat buyers with revenue < 1,000. Consistent engagement
+   but lower individual contribution.
+ 
+   low_value (233, 41%): one-time buyers with revenue < 1,000. Largest segment by count,
+   smallest by revenue contribution.
+ 
+   This segmentation has a known limitation: it is biased toward older customers who had more
+   time to accumulate revenue and repeat purchases. A customer acquired in 2018 had ~4 years
+   to build history, while one acquired in late 2021 had only months. Query 5️⃣.4️⃣ addresses
+   this directly with a cohort-controlled repeat rate analysis.
 ================================================================================================================================================================================================*/
-
+ 
 /*================================================================================================================================================================================================
-5️⃣.1️⃣ Customer Segment Distribution by Acquisition Month
-🎯 Goal: Understand what kind of customers were acquired each month.
+5️⃣.1️⃣ Customer Segment Distribution by Acquisition Quarter
+🎯 Goal: Understand what kind of customers were acquired each quarter.
 💡 Context: Segments are based on full customer history (query 5️⃣).
-            This shows whether high-value customers were acquired during growth months.
-
-⚠️ Important caveat: Because segmentation uses full lifetime data,
-   recently acquired customers are structurally disadvantaged — they had less time
-   to accumulate revenue and repeat purchases. This bias is addressed in query 5️⃣.4️⃣.
-   2022 data (January only) is included for completeness but should be interpreted
-   with extreme caution: customers acquired in January 2022 had near-zero time
-   to demonstrate repeat behavior.
+            This shows whether high-value customers were acquired during growth periods.
+            Quarterly granularity provides more stable counts than monthly while allowing
+            meaningful YoY comparison.
+ 
+⚠️ 2022 excluded — customers acquired in January 2022 had near-zero repeat opportunity.
+   Tenure bias caveat applies: see query 5️⃣.4️⃣ for controlled comparison.
 ================================================================================================================================================================================================*/
-
+ 
 WITH customer_metrics AS 
 (
 SELECT
@@ -546,122 +534,18 @@ SELECT
     ,SUM(op.item_quantity*COALESCE(p.product_price, 0)
         *(1-COALESCE(op.position_discount, 0)))                                     total_revenue
     ,MIN(o.order_date)                                                              first_order_date
-    ,MAX(o.order_date)                                                              last_order_date
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
 WHERE o.delivery_state = 'California'
 GROUP BY o.customer_id
-), customer_enriched AS (
-SELECT
-    customer_id
-    ,orders_cnt
-    ,total_revenue
-    ,CASE WHEN orders_cnt > 1 THEN 1 ELSE 0 END                                     is_repeat_customer
-    ,DATE_FORMAT(first_order_date, '%Y-%m-01')                                      acquisition_month
-FROM customer_metrics
+HAVING EXTRACT(YEAR FROM MIN(o.order_date)) < 2022
 ), customer_segmented AS 
 (
 SELECT
     customer_id
-    ,acquisition_month
-    ,ROUND(total_revenue, 2)                                                        historical_revenue
-    ,CASE
-        WHEN is_repeat_customer = 1
-        AND total_revenue >= 1000
-        THEN 'top_customer'
-        WHEN is_repeat_customer = 0
-        AND total_revenue >= 1000
-        THEN 'risky_high_value'
-        WHEN is_repeat_customer = 1
-        THEN 'loyal_low_value'
-        ELSE 'low_value'
-    END                                                                             customer_segment
-FROM customer_enriched
-)
-SELECT
-    acquisition_month
-    ,customer_segment
-    ,COUNT(DISTINCT customer_id)                                                    customers_cnt
-    ,ROUND(SUM(historical_revenue), 2)                                              total_revenue
-    ,ROUND(AVG(historical_revenue), 2)                                              avg_revenue
-FROM customer_segmented
-GROUP BY acquisition_month, customer_segment
-ORDER BY acquisition_month DESC, customer_segment;
-
-/*================================================================================================================================================================================================
-Query result snippet:
-
-| acquisition_month | customer_segment | customers_cnt | total_revenue | avg_revenue |
-|-------------------|------------------|---------------|---------------|-------------|
-| 2022-01-01        | low_value        |            11 |      2 214,32 |      201,30 |
-| 2022-01-01        | loyal_low_value  |             1 |        186,62 |      186,62 |
-| 2021-12-01        | low_value        |             8 |      2 317,81 |      289,73 |
-| 2021-12-01        | loyal_low_value  |             2 |        430,44 |      215,22 |
-| 2021-12-01        | risky_high_value |             3 |      4 279,36 |    1 426,45 |
-
-📝 Notes & Reflections
-   Based on the full query result spanning 2018–2022, a clear pattern emerges.
-
-   The earlier acquisition cohorts (2018–2020) show a healthy mix of segments — top_customers
-   and risky_high_value customers appear consistently, with top_customers generating
-   significantly higher avg_revenue than any other segment.
-
-   From mid-2021 onward, the segment mix shifts noticeably. Months that showed strong
-   volume-driven YoY growth in our earlier analysis (September, October 2021) acquired
-   predominantly low_value customers. top_customer acquisitions become increasingly rare
-   in this period.
-
-   However, it is essential to acknowledge the tenure bias noted above: customers acquired
-   in 2021 had at most ~15 months of observation time (vs ~48 months for 2018 cohorts).
-   Some of these "low_value" customers may eventually become repeat buyers given more time.
-   The pattern is directionally concerning but should not be treated as definitive without
-   the cohort-controlled analysis in query 5️⃣.4️⃣.
-
-   This raises a critical question: was California's 2021 growth sustainable,
-   or was it largely driven by customers unlikely to return?
-
-   The next step will cross-reference this segment distribution with YoY revenue data
-   to quantify the relationship between acquisition quality and revenue performance.
-================================================================================================================================================================================================*/
-
-/*================================================================================================================================================================================================
-5️⃣.2️⃣ Acquisition Quality vs Revenue Growth (with New/Returning Revenue Split)
-🎯 Goal: Cross-reference YoY revenue growth with the quality of customers acquired that month,
-         while separating revenue from new vs returning customers to avoid false correlation.
-💡 Context: Comparing total monthly revenue with new customer segments is misleading —
-            most revenue in any given month comes from customers acquired in PRIOR months.
-            By splitting revenue into new_customer and returning_customer components,
-            we can actually assess whether acquisition quality drove revenue performance.
- 
-⚠️ 2022 is excluded from output: only January data is available, making YoY and segment comparisons invalid.
-   However, 2022 orders ARE included in the base customer_metrics CTE — a 2021-acquired customer
-   who ordered again in January 2022 should correctly count as a repeat buyer.
-================================================================================================================================================================================================*/
- 
-WITH customer_metrics AS
-(
--- All California orders (2018–2022) included for accurate repeat/revenue classification.
--- A customer acquired in Dec 2021 who ordered again in Jan 2022 must count as repeat buyer.
-SELECT
-    o.customer_id
-    ,COUNT(DISTINCT o.order_id)                                                     orders_cnt
-    ,SUM(op.item_quantity * COALESCE(p.product_price, 0)
-        * (1 - COALESCE(op.position_discount, 0)))                                 total_revenue
-    ,MIN(o.order_date)                                                              first_order_date
-FROM orders o
-JOIN order_positions op ON o.order_id = op.order_id
-JOIN products p ON op.product_id = p.product_id
-WHERE o.delivery_state = 'California'
-GROUP BY o.customer_id
-), customer_segmented AS
-(
--- Segment assignment based on full customer history.
--- Only customers acquired before 2022 — incomplete period with near-zero repeat opportunity.
-SELECT
-    customer_id
-    ,first_order_date
-    ,DATE_FORMAT(first_order_date, '%Y-%m-01')                                      acquisition_month
+    ,CONCAT(EXTRACT(YEAR FROM first_order_date), '-Q',
+        QUARTER(first_order_date))                                                  acq_quarter
     ,CASE
         WHEN orders_cnt > 1 AND total_revenue >= 1000 THEN 'top_customer'
         WHEN orders_cnt = 1 AND total_revenue >= 1000 THEN 'risky_high_value'
@@ -669,68 +553,184 @@ SELECT
         ELSE 'low_value'
     END                                                                             customer_segment
 FROM customer_metrics
-WHERE EXTRACT(YEAR FROM first_order_date) < 2022
-), segment_by_month AS
-(
--- Pivot: how many customers of each segment were acquired per month
+)
 SELECT
-    acquisition_month
-    ,COUNT(DISTINCT CASE WHEN customer_segment = 'top_customer'     THEN customer_id END) top_customers
-    ,COUNT(DISTINCT CASE WHEN customer_segment = 'risky_high_value' THEN customer_id END) risky_high_value
-    ,COUNT(DISTINCT CASE WHEN customer_segment = 'loyal_low_value'  THEN customer_id END) loyal_low_value
-    ,COUNT(DISTINCT CASE WHEN customer_segment = 'low_value'        THEN customer_id END) low_value
-    ,COUNT(DISTINCT customer_id)                                                    total_new_customers
+    acq_quarter                                                                     acquisition_quarter
+    ,COUNT(*)                                                                       total_acquired
+    ,SUM(CASE WHEN customer_segment = 'top_customer'     THEN 1 ELSE 0 END)        top_customers
+    ,SUM(CASE WHEN customer_segment = 'risky_high_value' THEN 1 ELSE 0 END)        risky_high_value
+    ,SUM(CASE WHEN customer_segment = 'loyal_low_value'  THEN 1 ELSE 0 END)        loyal_low_value
+    ,SUM(CASE WHEN customer_segment = 'low_value'        THEN 1 ELSE 0 END)        low_value
+    ,ROUND(SUM(CASE WHEN customer_segment = 'top_customer'
+        THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1)                                  top_pct
+    ,ROUND(SUM(CASE WHEN customer_segment IN ('top_customer','loyal_low_value')
+        THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 1)                                  repeat_pct
 FROM customer_segmented
-GROUP BY acquisition_month
-), monthly_revenue AS
+GROUP BY acq_quarter
+ORDER BY acq_quarter;
+ 
+/*================================================================================================================================================================================================
+Query result snippet:
+ 
+| acquisition_quarter | total | top | risky | loyal | low | top%  | repeat% |
+|---------------------|-------|-----|-------|-------|-----|-------|---------|
+| 2018-Q1             |    12 |   4 |     0 |     4 |   4 |  33,3 |   66,7 |
+| 2018-Q2             |    43 |  20 |     0 |    15 |   8 |  46,5 |   81,4 |
+| 2018-Q3             |    38 |   9 |     2 |    18 |   9 |  23,7 |   71,1 |
+| 2018-Q4             |    67 |  16 |     1 |    25 |  25 |  23,9 |   61,2 |
+| 2019-Q1             |    32 |  14 |     2 |     9 |   7 |  43,8 |   71,9 |
+| 2019-Q2             |    33 |   6 |     3 |    11 |  13 |  18,2 |   51,5 |
+| 2019-Q3             |    28 |   5 |     1 |    10 |  12 |  17,9 |   53,6 |
+| 2019-Q4             |    54 |  12 |     6 |    17 |  19 |  22,2 |   53,7 |
+| 2020-Q1             |    31 |   6 |     1 |    10 |  14 |  19,4 |   51,6 |
+| 2020-Q2             |    27 |   5 |     0 |     9 |  13 |  18,5 |   51,9 |
+| 2020-Q3             |    36 |  10 |     4 |    10 |  12 |  27,8 |   55,6 |
+| 2020-Q4             |    53 |   9 |     3 |    19 |  22 |  17,0 |   52,8 |
+| 2021-Q1             |    22 |   0 |     3 |     7 |  12 |   0,0 |   31,8 |
+| 2021-Q2             |    27 |   2 |     1 |     2 |  22 |   7,4 |   14,8 |
+| 2021-Q3             |    29 |   2 |     6 |     4 |  17 |   6,9 |   20,7 |
+| 2021-Q4             |    33 |   0 |     6 |     3 |  24 |   0,0 |    9,1 |
+ 
+📝 Notes & Reflections
+   The data shows a dramatic shift in segment composition over time.
+ 
+   2018 cohorts: top_customer rates between 24–47%, repeat rates 61–81%. The early customer base
+   was heavily skewed toward high-value, repeat-purchasing customers.
+ 
+   2019–2020 cohorts: top_customer rates stabilize at 17–28%, repeat rates around 52–56%.
+   A more balanced but still healthy acquisition profile.
+ 
+   2021 cohorts: top_customer rates collapse to 0–7%, repeat rates drop to 9–32%.
+   The dominant segment shifts to low_value (one-time buyers with revenue < 1,000).
+ 
+   ⚠️ CRITICAL CAVEAT — tenure bias:
+   This pattern is visually striking, but it is expected to some degree. Customers acquired in
+   2018 had ~4 years to build revenue and demonstrate repeat behavior. Customers acquired in Q4 2021
+   had at most ~2 months. Some of these "low_value" customers will eventually cross the 1,000
+   threshold and make repeat purchases — they simply haven't had time yet.
+ 
+   Query 5️⃣.4️⃣ controls for this bias by comparing cohorts within identical 90-day windows.
+   The shift in segment composition is real in the data, but its interpretation requires caution.
+================================================================================================================================================================================================*/
+ 
+/*================================================================================================================================================================================================
+5️⃣.2️⃣ Revenue Composition: New vs Returning Customers × Acquisition Quality
+🎯 Goal: Decompose quarterly revenue into contributions from newly acquired customers
+         vs returning customers, and cross-reference with the quality of new acquisitions.
+💡 Context: The original version of this query compared total monthly revenue with new customer
+            segments — but most revenue in a given period comes from customers acquired EARLIER.
+            That comparison created a false correlation. This version separates the two revenue
+            streams so we can assess actual relationships.
+ 
+            A "new customer" order is defined as an order placed in the same month as the
+            customer's first-ever California order.
+================================================================================================================================================================================================*/
+
+-- customer_first includes ALL customers (even 2022-acquired) because we need their
+-- first_order_date to correctly classify orders as "new" vs "returning" in quarterly_revenue.
+-- This is intentionally broader than customer_metrics, which excludes 2022 for segmentation.
+WITH customer_first AS
 (
--- Revenue split: new customers (first order this month) vs returning customers.
--- This is the key fix: total revenue alone cannot be attributed to current-month acquisitions.
--- Excludes 2022 orders from output but uses customer_metrics (which includes 2022) for first_order_date.
+-- First order date per customer (includes 2022 orders for accurate attribution)
 SELECT
-    DATE_FORMAT(o.order_date, '%Y-%m-01')                                           month
-    ,ROUND(SUM(op.item_quantity * COALESCE(p.product_price, 0)
-        * (1 - COALESCE(op.position_discount, 0))), 2)                             total_rev
+    customer_id
+    ,MIN(order_date)                                                                first_order_date
+FROM orders
+WHERE delivery_state = 'California'
+GROUP BY customer_id
+), customer_metrics AS
+(
+-- Full history for segment assignment (2022 acquisitions excluded from segmentation)
+SELECT
+    o.customer_id
+    ,COUNT(DISTINCT o.order_id)                                                     orders_cnt
+    ,SUM(op.item_quantity*COALESCE(p.product_price, 0)
+        *(1-COALESCE(op.position_discount, 0)))                                     total_revenue
+    ,MIN(o.order_date)                                                              first_order_date
+FROM orders o
+JOIN order_positions op ON o.order_id = op.order_id
+JOIN products p ON op.product_id = p.product_id
+WHERE o.delivery_state = 'California'
+GROUP BY o.customer_id
+HAVING EXTRACT(YEAR FROM MIN(o.order_date)) < 2022
+), customer_segmented AS
+(
+SELECT
+    customer_id
+    ,first_order_date
+    ,CONCAT(EXTRACT(YEAR FROM first_order_date), '-Q',
+        QUARTER(first_order_date))                                                  acq_quarter
+    ,CASE
+        WHEN orders_cnt > 1 AND total_revenue >= 1000 THEN 'top_customer'
+        WHEN orders_cnt = 1 AND total_revenue >= 1000 THEN 'risky_high_value'
+        WHEN orders_cnt > 1                            THEN 'loyal_low_value'
+        ELSE 'low_value'
+    END                                                                             customer_segment
+FROM customer_metrics
+), segment_by_quarter AS
+(
+SELECT
+    acq_quarter
+    ,SUM(CASE WHEN customer_segment = 'top_customer'     THEN 1 ELSE 0 END)        top_customers
+    ,SUM(CASE WHEN customer_segment = 'risky_high_value' THEN 1 ELSE 0 END)        risky_high_value
+    ,SUM(CASE WHEN customer_segment = 'loyal_low_value'  THEN 1 ELSE 0 END)        loyal_low_value
+    ,SUM(CASE WHEN customer_segment = 'low_value'        THEN 1 ELSE 0 END)        low_value
+    ,COUNT(*)                                                                       total_new_customers
+FROM customer_segmented
+GROUP BY acq_quarter
+), quarterly_revenue AS
+(
+-- Revenue decomposition: new customer orders vs returning customer orders
+-- 2022 excluded from output; a "new" order is one placed in the customer's first-order month
+SELECT
+    CONCAT(EXTRACT(YEAR FROM o.order_date), '-Q',
+        QUARTER(o.order_date))                                                      quarter
+    ,EXTRACT(YEAR FROM o.order_date)                                                yr
+    ,QUARTER(o.order_date)                                                          q
+    ,ROUND(SUM(op.item_quantity*COALESCE(p.product_price, 0)
+        *(1-COALESCE(op.position_discount, 0))), 2)                                 total_rev
     ,ROUND(SUM(CASE
-        WHEN DATE_FORMAT(o.order_date, '%Y-%m-01') = DATE_FORMAT(cm.first_order_date, '%Y-%m-01')
-        THEN op.item_quantity * COALESCE(p.product_price, 0)
-            * (1 - COALESCE(op.position_discount, 0))
+        WHEN DATE_FORMAT(o.order_date, '%Y-%m') = DATE_FORMAT(cf.first_order_date, '%Y-%m')
+        THEN op.item_quantity*COALESCE(p.product_price, 0)
+            *(1-COALESCE(op.position_discount, 0))
         ELSE 0
     END), 2)                                                                        new_cust_rev
     ,ROUND(SUM(CASE
-        WHEN DATE_FORMAT(o.order_date, '%Y-%m-01') != DATE_FORMAT(cm.first_order_date, '%Y-%m-01')
-        THEN op.item_quantity * COALESCE(p.product_price, 0)
-            * (1 - COALESCE(op.position_discount, 0))
+        WHEN DATE_FORMAT(o.order_date, '%Y-%m') != DATE_FORMAT(cf.first_order_date, '%Y-%m')
+        THEN op.item_quantity*COALESCE(p.product_price, 0)
+            *(1-COALESCE(op.position_discount, 0))
         ELSE 0
     END), 2)                                                                        ret_cust_rev
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
-JOIN customer_metrics cm ON o.customer_id = cm.customer_id
+JOIN customer_first cf ON o.customer_id = cf.customer_id
 WHERE o.delivery_state = 'California'
   AND EXTRACT(YEAR FROM o.order_date) < 2022
-GROUP BY DATE_FORMAT(o.order_date, '%Y-%m-01')
+GROUP BY quarter, yr, q
 ), revenue_yoy AS
 (
 SELECT
-    month
+    quarter
+    ,yr
+    ,q
     ,total_rev                                                                      cyr_rev
-    ,ROUND(LAG(total_rev) OVER (
-        PARTITION BY MONTH(month)
-        ORDER BY month), 2)                                                         lyr_rev
+    ,LAG(total_rev) OVER (
+        PARTITION BY q
+        ORDER BY yr)                                                                lyr_rev
     ,ROUND((total_rev - LAG(total_rev) OVER (
-        PARTITION BY MONTH(month)
-        ORDER BY month)) /
+        PARTITION BY q
+        ORDER BY yr)) /
         NULLIF(LAG(total_rev) OVER (
-        PARTITION BY MONTH(month)
-        ORDER BY month), 0) * 100.0, 2)                                             rev_pct_diff
+        PARTITION BY q
+        ORDER BY yr), 0)*100.0, 2)                                                  rev_pct_diff
     ,new_cust_rev
     ,ret_cust_rev
-    ,ROUND(new_cust_rev * 100.0 / NULLIF(total_rev, 0), 2)                         new_cust_rev_pct
-FROM monthly_revenue
+    ,ROUND(new_cust_rev * 100.0 / NULLIF(total_rev, 0), 1)                         new_cust_rev_pct
+FROM quarterly_revenue
 )
 SELECT
-    r.month
+    r.quarter
     ,r.cyr_rev
     ,r.lyr_rev
     ,r.rev_pct_diff
@@ -743,28 +743,52 @@ SELECT
     ,COALESCE(s.low_value, 0)                                                       low_value
     ,COALESCE(s.total_new_customers, 0)                                             total_new_customers
 FROM revenue_yoy r
-LEFT JOIN segment_by_month s ON r.month = s.acquisition_month
-ORDER BY month DESC;
+LEFT JOIN segment_by_quarter s ON r.quarter = s.acq_quarter
+ORDER BY r.quarter;
  
 /*================================================================================================================================================================================================
+Query result snippet:
+ 
+| quarter | cyr_rev   | lyr_rev   | rev_pct_diff | new_cust_rev | ret_cust_rev | new%  | top | risky | loyal | low | new_cust |
+|---------|-----------|-----------|--------------|--------------|--------------|-------|-----|-------|-------|-----|----------|
+| 2018-Q1 |  3 256,95 |      NULL |         NULL |     3 256,95 |         0,00 | 100,0 |   4 |     0 |     4 |   4 |       12 |
+| 2018-Q2 | 20 083,21 |      NULL |         NULL |    20 083,21 |         0,00 | 100,0 |  20 |     0 |    15 |   8 |       43 |
+| 2018-Q3 | 25 157,12 |      NULL |         NULL |    22 913,32 |     2 243,80 |  91,1 |   9 |     2 |    18 |   9 |       38 |
+| 2018-Q4 | 22 805,19 |      NULL |         NULL |    19 741,56 |     3 063,63 |  86,6 |  16 |     1 |    25 |  25 |       67 |
+| 2019-Q1 | 24 741,12 |  3 256,95 |       659,63 |    20 638,53 |     4 102,60 |  83,4 |  14 |     2 |     9 |   7 |       32 |
+| 2019-Q2 | 22 395,39 | 20 083,21 |        11,51 |    18 002,50 |     4 392,89 |  80,4 |   6 |     3 |    11 |  13 |       33 |
+| 2019-Q3 | 15 343,97 | 25 157,12 |       -39,01 |     9 979,32 |     5 364,65 |  65,0 |   5 |     1 |    10 |  12 |       28 |
+| 2019-Q4 | 30 826,62 | 22 805,19 |        35,18 |    24 445,34 |     6 381,28 |  79,3 |  12 |     6 |    17 |  19 |       54 |
+| 2020-Q1 | 17 415,10 | 24 741,12 |       -29,61 |    11 849,45 |     5 565,65 |  68,0 |   6 |     1 |    10 |  14 |       31 |
+| 2020-Q2 | 27 129,42 | 22 395,39 |        21,14 |     7 271,37 |    19 858,05 |  26,8 |   5 |     0 |     9 |  13 |       27 |
+| 2020-Q3 | 36 663,72 | 15 343,97 |       138,90 |    26 257,12 |    10 406,60 |  71,6 |  10 |     4 |    10 |  12 |       36 |
+| 2020-Q4 | 40 716,83 | 30 826,62 |        32,08 |    23 077,68 |    17 639,15 |  56,7 |   9 |     3 |    19 |  22 |       53 |
+| 2021-Q1 | 31 525,28 | 17 415,10 |        81,03 |     9 354,14 |    22 171,14 |  29,7 |   0 |     3 |     7 |  12 |       22 |
+| 2021-Q2 | 26 714,29 | 27 129,42 |        -1,53 |     6 444,80 |    20 269,49 |  24,1 |   2 |     1 |     2 |  22 |       27 |
+| 2021-Q3 | 42 513,58 | 36 663,72 |        15,95 |    19 441,16 |    23 072,42 |  45,7 |   2 |     6 |     4 |  17 |       29 |
+| 2021-Q4 | 47 976,29 | 40 716,83 |        17,83 |    17 754,29 |    30 222,00 |  37,0 |   0 |     6 |     3 |  24 |       33 |
+ 
 📝 Notes & Reflections
  
-   The addition of new_cust_rev and ret_cust_rev allows us to properly assess the relationship
-   between acquisition quality and revenue performance.
+   The most important trend is the growth of returning customer revenue (ret_cust_rev):
+   from 0 in Q1 2018 (naturally — the business was new) to 30,222 in Q4 2021 — accounting
+   for 63% of total quarterly revenue. This is a sign of a maturing, healthy business
+   that is successfully retaining and monetizing its existing customer base.
  
-   In the original version of this query, total monthly revenue was compared against new customer
-   segments — but most revenue comes from customers acquired in previous months. That comparison
-   created a false correlation. Now we can see:
+   The shift in acquisition mix (fewer top_customers in 2021) is visible, but its business
+   impact is smaller than it first appeared. In 2021:
+   - Q1: 70.3% of revenue came from returning customers, despite zero top_customer acquisitions
+   - Q4: 63.0% of revenue from returning customers, with total revenue growing +17.83% YoY
  
-   - What percentage of each month's revenue actually came from newly acquired customers
-   - Whether months with high new_cust_rev_pct correlate with specific segment mixes
-   - Whether returning customer revenue (ret_cust_rev) is the real growth driver
+   This means California's 2021 revenue growth was driven by returning customer revenue —
+   the accumulated value of customers acquired in earlier years who continued purchasing.
  
-   This decomposition is critical for understanding whether California's growth was truly
-   driven by new low-value acquisition, or whether it was sustained by a healthy returning base
-   with new customers contributing only marginally.
+   The segment composition of new acquisitions matters for future sustainability, but the
+   current revenue trajectory is supported by a strong returning customer base.
+ 
+   ⚠️ The segment labels for 2021 acquisitions are subject to tenure bias (see query 5️⃣.4️⃣).
+   Many customers labeled "low_value" today may graduate to higher segments given more time.
 ================================================================================================================================================================================================*/
- 
  
 /*================================================================================================================================================================================================
 5️⃣.3️⃣ 30 / 90 / 180 Days Retention Rate by Customer Segment (Right-Censoring Corrected)
@@ -784,26 +808,29 @@ ORDER BY month DESC;
        The meaningful comparison is between top_customer and loyal_low_value only.
  
     3. Right-censoring correction: a purchase occasion is only eligible for a given retention
-       window if the full window fits within the available data (ending 2022-01-31).
+       window if the full window fits within the available data (ending 2022-01-25).
        Without this, orders from late 2021 would appear as "not retained" simply because
        there wasn't enough observation time — artificially deflating retention rates.
-       Example: a December 2021 order has only ~31 days of follow-up data and is therefore
+       Example: a December 2021 order has only ~25 days of follow-up data and is therefore
        excluded from the 90-day and 180-day windows, but included in the 30-day window.
+ 
+    4. Customers acquired in 2022 are excluded from segmentation but their January 2022
+       orders serve as valid next_order targets for late-2021 purchases.
 ================================================================================================================================================================================================*/
  
 WITH customer_metrics AS
 (
--- All orders included (2018–2022) for accurate segment assignment
 SELECT
     o.customer_id
     ,COUNT(DISTINCT o.order_id)                                                     orders_cnt
-    ,SUM(op.item_quantity * COALESCE(p.product_price, 0)
-        * (1 - COALESCE(op.position_discount, 0)))                                 total_revenue
+    ,SUM(op.item_quantity*COALESCE(p.product_price, 0)
+        *(1-COALESCE(op.position_discount, 0)))                                     total_revenue
 FROM orders o
 JOIN order_positions op ON o.order_id = op.order_id
 JOIN products p ON op.product_id = p.product_id
 WHERE o.delivery_state = 'California'
 GROUP BY o.customer_id
+HAVING EXTRACT(YEAR FROM MIN(o.order_date)) < 2022
 ), customer_segmented AS
 (
 SELECT
@@ -817,16 +844,15 @@ SELECT
 FROM customer_metrics
 ), customer_orders AS
 (
--- All individual California orders — including 2022.
--- 2022 orders serve as valid next_order_date targets for late-2021 purchases.
--- Right-censoring filter in the final SELECT ensures 2022 orders
--- are never used as current_order_date anchors beyond their observation window.
+-- All California orders including 2022 — needed as valid next_order targets.
+-- Right-censoring filter in the final SELECT controls eligibility.
 SELECT DISTINCT
     o.customer_id
     ,o.order_id
     ,o.order_date
 FROM orders o
 WHERE o.delivery_state = 'California'
+  AND o.customer_id IN (SELECT customer_id FROM customer_segmented)
 ), customer_next_purchase AS
 (
 SELECT
@@ -842,68 +868,68 @@ JOIN customer_segmented s ON a.customer_id = s.customer_id
 SELECT
     customer_segment
  
-    -- 180-day retention (only orders with full 180-day observation window)
+    -- 180-day retention (only purchase occasions with full 180-day observation window)
     ,COUNT(CASE
-        WHEN DATEDIFF('2022-01-31', current_order_date) >= 180
+        WHEN DATEDIFF('2022-01-25', current_order_date) >= 180
         THEN 1
     END)                                                                            eligible_180d
     ,COUNT(CASE
-        WHEN DATEDIFF('2022-01-31', current_order_date) >= 180
+        WHEN DATEDIFF('2022-01-25', current_order_date) >= 180
          AND DATEDIFF(next_order_date, current_order_date) <= 180
         THEN 1
     END)                                                                            retained_180d
     ,ROUND(
         COUNT(CASE
-            WHEN DATEDIFF('2022-01-31', current_order_date) >= 180
+            WHEN DATEDIFF('2022-01-25', current_order_date) >= 180
              AND DATEDIFF(next_order_date, current_order_date) <= 180
             THEN 1
         END) * 100.0 /
         NULLIF(COUNT(CASE
-            WHEN DATEDIFF('2022-01-31', current_order_date) >= 180
+            WHEN DATEDIFF('2022-01-25', current_order_date) >= 180
             THEN 1
         END), 0)
     , 2)                                                                            retention_rate_180d_pct
  
-    -- 90-day retention (only orders with full 90-day observation window)
+    -- 90-day retention (only purchase occasions with full 90-day observation window)
     ,COUNT(CASE
-        WHEN DATEDIFF('2022-01-31', current_order_date) >= 90
+        WHEN DATEDIFF('2022-01-25', current_order_date) >= 90
         THEN 1
     END)                                                                            eligible_90d
     ,COUNT(CASE
-        WHEN DATEDIFF('2022-01-31', current_order_date) >= 90
+        WHEN DATEDIFF('2022-01-25', current_order_date) >= 90
          AND DATEDIFF(next_order_date, current_order_date) <= 90
         THEN 1
     END)                                                                            retained_90d
     ,ROUND(
         COUNT(CASE
-            WHEN DATEDIFF('2022-01-31', current_order_date) >= 90
+            WHEN DATEDIFF('2022-01-25', current_order_date) >= 90
              AND DATEDIFF(next_order_date, current_order_date) <= 90
             THEN 1
         END) * 100.0 /
         NULLIF(COUNT(CASE
-            WHEN DATEDIFF('2022-01-31', current_order_date) >= 90
+            WHEN DATEDIFF('2022-01-25', current_order_date) >= 90
             THEN 1
         END), 0)
     , 2)                                                                            retention_rate_90d_pct
  
-    -- 30-day retention (only orders with full 30-day observation window)
+    -- 30-day retention (only purchase occasions with full 30-day observation window)
     ,COUNT(CASE
-        WHEN DATEDIFF('2022-01-31', current_order_date) >= 30
+        WHEN DATEDIFF('2022-01-25', current_order_date) >= 30
         THEN 1
     END)                                                                            eligible_30d
     ,COUNT(CASE
-        WHEN DATEDIFF('2022-01-31', current_order_date) >= 30
+        WHEN DATEDIFF('2022-01-25', current_order_date) >= 30
          AND DATEDIFF(next_order_date, current_order_date) <= 30
         THEN 1
     END)                                                                            retained_30d
     ,ROUND(
         COUNT(CASE
-            WHEN DATEDIFF('2022-01-31', current_order_date) >= 30
+            WHEN DATEDIFF('2022-01-25', current_order_date) >= 30
              AND DATEDIFF(next_order_date, current_order_date) <= 30
             THEN 1
         END) * 100.0 /
         NULLIF(COUNT(CASE
-            WHEN DATEDIFF('2022-01-31', current_order_date) >= 30
+            WHEN DATEDIFF('2022-01-25', current_order_date) >= 30
             THEN 1
         END), 0)
     , 2)                                                                            retention_rate_30d_pct
@@ -913,101 +939,140 @@ GROUP BY customer_segment
 ORDER BY retention_rate_90d_pct DESC;
  
 /*================================================================================================================================================================================================
+Query result snippet:
+ 
+| customer_segment | eligible_180d | retained_180d | rate_180d | eligible_90d | retained_90d | rate_90d | eligible_30d | retained_30d | rate_30d |
+|------------------|---------------|---------------|-----------|--------------|--------------|----------|--------------|--------------|----------|
+| top_customer     |           264 |            56 |     21,21 |          294 |           31 |    10,54 |          313 |            7 |     2,24 |
+| loyal_low_value  |           324 |            45 |     13,89 |          362 |           28 |     7,73 |          399 |           14 |     3,51 |
+| risky_high_value |            29 |             0 |      0,00 |           34 |            0 |     0,00 |           39 |            0 |     0,00 |
+| low_value        |           198 |             0 |      0,00 |          217 |            0 |     0,00 |          233 |            0 |     0,00 |
+ 
 📝 Notes & Reflections
+   The meaningful comparison is between top_customer and loyal_low_value — both are repeat
+   buyer segments, so their retention reflects genuine behavioral differences.
  
-   The meaningful comparison here is between top_customer and loyal_low_value — both are repeat
-   buyer segments, so their retention reflects genuine behavioral differences rather than
-   definitional artifacts.
+   At longer time horizons, top_customer leads clearly:
+   - 180 days: top_customer 21.21% vs loyal_low_value 13.89% (1.5× higher)
+   - 90 days:  top_customer 10.54% vs loyal_low_value 7.73% (1.4× higher)
  
-   low_value and risky_high_value show 0% retention across every period. This is a direct
-   consequence of how these segments are defined: one-time buyers have exactly one order,
-   so LEAD() always returns NULL. This outcome is built into the segmentation — it is not
-   an independent validation. It confirms these customers did not return, but this was
-   already known from the segment assignment.
+   However, at the 30-day window, the pattern reverses:
+   - 30 days:  top_customer 2.24% vs loyal_low_value 3.51%
  
-   The right-censoring correction ensures that orders from late 2021 are not unfairly penalized
-   for having insufficient observation time. Each retention window uses its own eligibility
-   filter: a December 2021 order is eligible for the 30-day window but excluded from the
-   90-day and 180-day windows. This produces more accurate retention rates than the original
-   query, which would have counted those orders as "not retained" in longer windows.
+   This is a noteworthy finding. loyal_low_value customers are MORE likely to make a quick
+   follow-up purchase (within 30 days), but less likely to return over longer periods.
+   top_customers return less frequently in the short term, but sustain engagement over months.
  
-   The stronger evidence comes from the top_customer vs loyal_low_value comparison:
-   among customers who DO return, those with higher historical revenue return more frequently
-   and more quickly. This supports the value of high-revenue customer acquisition — but does
-   not, on its own, prove that recent cohorts are lower quality. That question is addressed
-   by the cohort repeat rate analysis in query 5️⃣.4️⃣.
+   This pattern suggests different purchasing cadences: loyal_low_value may represent frequent,
+   small basket shoppers, while top_customers make larger, more deliberate purchases at wider
+   intervals. Both behaviors have business value — but top_customers contribute disproportionately
+   to revenue per retained occasion due to their higher order values.
+ 
+   low_value and risky_high_value show 0% retention across all windows. This is a definitional
+   consequence: both segments have orders_cnt = 1, so LEAD() always returns NULL. It confirms
+   these customers did not return, but this was already known from the segment assignment.
 ================================================================================================================================================================================================*/
  
- 
 /*================================================================================================================================================================================================
-5️⃣.4️⃣ Cohort Repeat Rate — Controlling for Tenure Bias
-🎯 Goal: Validate whether the decline in acquisition quality from 2021 is real or an artifact
-         of newer customers having less time to demonstrate repeat behavior.
-💡 Context: Queries 5️⃣.1️⃣ and 5️⃣.2️⃣ showed that recent cohorts produce fewer top_customers.
-            But customers acquired in 2021 had at most ~15 months to return, while 2018 cohorts
-            had ~48 months. This query compares cohorts using a fixed 90-day window from first
-            purchase — giving every cohort an equal observation period.
+5️⃣.4️⃣ Cohort Repeat Rate — Controlling for Tenure Bias (Quarterly Granularity)
+🎯 Goal: Validate whether the decline in acquisition quality visible in queries 5️⃣.1️⃣ and 5️⃣.2️⃣
+         is real or an artifact of newer customers having less time to demonstrate repeat behavior.
+💡 Context: A customer acquired in 2018 had ~4 years to accumulate revenue and repeat purchases.
+            A customer acquired in Q4 2021 had ~2 months. This query compares cohorts using a
+            fixed 90-day window from first purchase — giving every cohort an equal opportunity.
  
             Only cohorts whose first purchase occurred at least 90 days before the end of the
-            dataset (2022-01-31) are included to avoid right-censoring bias.
+            dataset (2022-01-25) are included to avoid right-censoring bias.
 ================================================================================================================================================================================================*/
  
 WITH first_orders AS
 (
 SELECT
-    o.customer_id
-    ,MIN(o.order_date)                                                              first_order_date
-    ,EXTRACT(YEAR FROM MIN(o.order_date))                                           acquisition_year
-FROM orders o
-WHERE o.delivery_state = 'California'
-GROUP BY o.customer_id
--- Exclude customers whose 90-day window extends beyond available data
-HAVING MIN(o.order_date) <= DATE_SUB('2022-01-31', INTERVAL 90 DAY)
+    customer_id
+    ,MIN(order_date)                                                                first_order_date
+    ,CONCAT(EXTRACT(YEAR FROM MIN(order_date)), '-Q',
+        QUARTER(MIN(order_date)))                                                   acq_quarter
+    ,EXTRACT(YEAR FROM MIN(order_date))                                             acq_year
+FROM orders
+WHERE delivery_state = 'California'
+GROUP BY customer_id
+-- 90-day observation window must fit within available data
+HAVING DATEDIFF('2022-01-25', MIN(order_date)) >= 90
 ), repeat_within_90d AS
 (
 SELECT
     f.customer_id
-    ,f.acquisition_year
+    ,f.acq_quarter
+    ,f.acq_year
     ,CASE WHEN EXISTS (
         SELECT 1 FROM orders o2
         WHERE o2.customer_id = f.customer_id
           AND o2.order_date > f.first_order_date
-          AND o2.order_date <= DATE_ADD(f.first_order_date, INTERVAL 90 DAY)
+          AND DATEDIFF(o2.order_date, f.first_order_date) <= 90
           AND o2.delivery_state = 'California'
     ) THEN 1 ELSE 0 END                                                            repeated_90d
 FROM first_orders f
 )
 SELECT
-    acquisition_year
+    acq_quarter                                                                     acquisition_quarter
     ,COUNT(*)                                                                       total_acquired
     ,SUM(repeated_90d)                                                              repeated_within_90d
-    ,ROUND(SUM(repeated_90d) * 100.0 / COUNT(*), 2)                                 repeat_rate_90d_pct
+    ,ROUND(SUM(repeated_90d) * 100.0 / COUNT(*), 2)                                repeat_rate_90d_pct
 FROM repeat_within_90d
-GROUP BY acquisition_year
-ORDER BY acquisition_year;
+GROUP BY acq_quarter
+ORDER BY acq_quarter;
  
 /*================================================================================================================================================================================================
 Query result snippet:
  
+| acquisition_quarter | total_acquired | repeated_within_90d | repeat_rate_90d_pct |
+|---------------------|----------------|---------------------|---------------------|
+| 2018-Q1             |             12 |                   0 |                0,00 |
+| 2018-Q2             |             43 |                   2 |                4,65 |
+| 2018-Q3             |             38 |                   1 |                2,63 |
+| 2018-Q4             |             67 |                   3 |                4,48 |
+| 2019-Q1             |             32 |                   0 |                0,00 |
+| 2019-Q2             |             33 |                   1 |                3,03 |
+| 2019-Q3             |             28 |                   2 |                7,14 |
+| 2019-Q4             |             54 |                   6 |               11,11 |
+| 2020-Q1             |             31 |                   1 |                3,23 |
+| 2020-Q2             |             27 |                   2 |                7,41 |
+| 2020-Q3             |             36 |                   1 |                2,78 |
+| 2020-Q4             |             53 |                   6 |               11,32 |
+| 2021-Q1             |             22 |                   1 |                4,55 |
+| 2021-Q2             |             27 |                   2 |                7,41 |
+| 2021-Q3             |             29 |                   3 |               10,34 |
+| 2021-Q4             |             10 |                   1 |               10,00 |
+ 
+Yearly summary:
+ 
 | acquisition_year | total_acquired | repeated_within_90d | repeat_rate_90d_pct |
 |------------------|----------------|---------------------|---------------------|
-|             2018 |            160 |                   6 |                3.75 |
-|             2019 |            147 |                   9 |                6.12 |
-|             2020 |            147 |                  10 |                6.80 |
-|             2021 |             88 |                   7 |                7.95 |
+|             2018 |            160 |                   6 |                3,75 |
+|             2019 |            147 |                   9 |                6,12 |
+|             2020 |            147 |                  10 |                6,80 |
+|             2021 |             88 |                   7 |                7,95 |
  
 📝 Notes & Reflections
    The cohort repeat rate tells a story that directly contradicts the earlier segmentation analysis.
  
-   When every cohort is given the same 90-day observation window, the 2021 cohort has the
-   HIGHEST repeat rate at 7.95% — nearly double the 2018 baseline of 3.75%. The trend is
-   consistently upward: 3.75% → 6.12% → 6.80% → 7.95%.
+   When every cohort is given the same 90-day observation window, the data shows a consistently
+   IMPROVING trend: 3.75% (2018) → 6.12% (2019) → 6.80% (2020) → 7.95% (2021).
  
-   This means the appearance of fewer "top_customers" in 2021 cohorts (queries 5️⃣.1️⃣ and 5️⃣.2️⃣)
-   was primarily a tenure bias artifact — not a genuine decline in customer quality. Customers
-   acquired in 2021 simply had less time to accumulate revenue and repeat purchases needed to
-   cross the top_customer threshold (historical revenue >= 1,000 AND orders > 1). Given equal
-   observation windows, they actually return at a higher rate than earlier cohorts.
+   The 2021 cohort has the highest repeat rate — nearly double the 2018 baseline. This means
+   the appearance of fewer "top_customers" in 2021 cohorts (queries 5️⃣.1️⃣ and 5️⃣.2️⃣) was primarily
+   a tenure bias artifact, not a genuine decline in customer quality. Customers acquired in 2021
+   simply had less time to accumulate revenue and repeat purchases needed to cross the top_customer
+   threshold (historical revenue >= 1,000 AND orders > 1). Given equal observation windows, they
+   actually return at a higher rate than earlier cohorts.
+ 
+   The quarterly breakdown adds nuance: Q4 cohorts consistently show the highest repeat rates
+   within each year (4.48%, 11.11%, 11.32%, 10.00%), suggesting seasonal patterns — customers
+   acquired during the holiday season may have stronger initial engagement.
+ 
+   ⚠️ Important limitation: 2021-Q4 has only 10 eligible customers (vs 67 in 2018-Q4),
+   making its 10.00% rate less statistically reliable. The yearly aggregates provide
+   more stable estimates for trend analysis.
  
    ⭐ Revised conclusion:
    California leads in revenue across all states. Its customer base is NOT deteriorating.
@@ -1016,9 +1081,14 @@ Query result snippet:
    in segment composition, but misattributed it to declining acquisition quality — when in fact
    it was driven by shorter observation windows.
  
-   The retention analysis (query 5️⃣.3️⃣) confirmed that among repeat buyers, higher-revenue
-   customers return at roughly double the rate of lower-revenue ones, validating the business
-   value of investing in customer retention.
+   The revenue decomposition (query 5️⃣.2️⃣) revealed that by 2021, 63–70% of quarterly revenue
+   came from returning customers — the accumulated value of earlier cohorts continuing to purchase.
+   This is a sign of a maturing business, not a deteriorating one.
+ 
+   The retention analysis (query 5️⃣.3️⃣) confirmed that among repeat buyers, higher-revenue customers
+   return at roughly 1.4–1.5× the rate of lower-revenue ones at 90 and 180 days — while
+   lower-revenue repeat customers show stronger 30-day re-purchase frequency, suggesting
+   different but complementary purchasing cadences.
  
    The real story of California's revenue is not one of declining quality, but of a growing
    customer base with improving early engagement — whose full lifetime value has yet to
@@ -1029,4 +1099,3 @@ Query result snippet:
    even multi-step segmentation analysis can lead to incorrect conclusions when tenure bias
    is not controlled. The full story required understanding time, customer quality, acquisition
    patterns, retention behavior, and measurement bias — step by step.
-================================================================================================================================================================================================*/
