@@ -16,16 +16,6 @@
 
 &nbsp;
 
-## 📊 Highlighted Insights (Real Impact)
-
-| Focus | Insight |
-|-------|---------|
-| <p align="center">💰<br>Revenue Performance</p> | Top 10% products generate 59.47% of revenue. | 
-| <p align="center">👥<br>Customer Retention</p> |Customer acquisition phase in 2018, transitioning to dangerous volume-driven revenue in subsequent years. | 
-| <p align="center">🚚<br>Delivery Efficiency</p>  | ~15% of orders delayed | 
-
-&nbsp;
-
 ## 🔧 Tech Stack & Skills
 
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?logo=mysql&logoColor=white)  
