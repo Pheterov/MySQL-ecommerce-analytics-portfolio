@@ -398,7 +398,7 @@ From a business perspective, not all customers are equal. Losing one high-value,
 
 This is exactly the direction we'll explore next.
 
-⭐ On a side note things worth noticing solely from this tiny snippet:
+On a side note things worth noticing solely from this tiny snippet:
 
 - In the case of September, the increase in revenue can be correlated with the growth in the customer base in comparison to the last year.
   +71% revenue, +68% orders, +57% customers, nearly doubled items sold. This suggests that growth was volume-driven rather than changes in pricing or customer behavior.
@@ -406,7 +406,7 @@ This is exactly the direction we'll explore next.
 - However, November 2021 presents a particularly interesting case.
   Equal amount of customers, slightly less orders but revenue is more than doubled +111%, strong candidate for deeper analysis.
 
-💡 While November 2021 presents an interesting anomaly, it does not directly contribute to explaining California's overall performance.
+While November 2021 presents an interesting anomaly, it does not directly contribute to explaining California's overall performance.
    It is therefore intentionally excluded from deeper analysis at this stage and marked as a potential follow-up investigation.
 
    Before moving on, it is worth noting that an anomaly of this magnitude (+111% YoY with fewer orders)
@@ -414,16 +414,16 @@ This is exactly the direction we'll explore next.
    should be checked (min, max, median, standard deviation). If one order accounts for a disproportionate
    share of revenue, the growth figure is misleading. This validation is deferred but recommended.
 
-📝 Notes & Reflections
+Notes & Reflections
    Currently, all our activities are taking place at the state level, but as we move forward, we will begin to analyze them in greater detail.
    The answers are not in plain sight, we have to constantly make decisions which columns to add or delete, adjust, change granularity.
 ================================================================================================================================================================================================*/
 
 /*================================================================================================================================================================================================
 5️⃣ Customer Segmentation by Historical Revenue & Repeat Behavior
-🎯 Goal: Classify each customer into a business segment based on total historical revenue
+Goal: Classify each customer into a business segment based on total historical revenue
          and demonstrated repeat purchase behavior.
-💡 Context: Not all customers are equal. This query identifies who drives real value
+Context: Not all customers are equal. This query identifies who drives real value
             by combining cumulative spend with observed loyalty (repeat vs one-time).
             Segments: top_customer, risky_high_value, loyal_low_value, low_value.
  
@@ -432,7 +432,7 @@ The revenue threshold of 1,000 was derived from the empirical distribution of Ca
 total revenue (n = 565, after excluding 2022-only acquisitions): the median is ~390 and the
 75th percentile is ~1,050, making 1,000 a defensible approximation of the top quartile boundary.
  
-⚠️ Scope decisions:
+Scope decisions:
     1. 2022 is excluded: only January data is available, giving those customers near-zero time
        to demonstrate repeat behavior. Including them would inflate the low_value segment artificially.
        However, 2022 orders ARE included in the base revenue/repeat calculation — a customer acquired
