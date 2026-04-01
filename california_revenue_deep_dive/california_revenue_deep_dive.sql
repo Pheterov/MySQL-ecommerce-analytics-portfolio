@@ -397,6 +397,10 @@ This is exactly the direction we'll explore next.
 💡 Context: Not all customers are equal. This query identifies who drives real value
             by combining purchase frequency, order value, and customer lifetime.
             Segments: top_customer, risky_high_value, loyal_low_value, low_value.
+
+Customers were classified into four segments based on repeat behavior and CLV score.
+The CLV threshold of 1,000 was derived from the empirical distribution of California customer CLV (n = 577):
+the median CLV is 387.72 and the 75th percentile is 1,094.30, making 1,000 a defensible approximation of the top quartile.
 ================================================================================================================================================================================================*/
 
 WITH customer_metrics AS 
