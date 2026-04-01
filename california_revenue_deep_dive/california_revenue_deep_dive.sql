@@ -15,8 +15,7 @@ All SQL is my own, written and verified against the live dataset.
 SQL analysis of 2018–2022 e-commerce data reveals that California leads in total revenue.
 Initial segmentation suggested declining acquisition quality from 2021, but cohort-controlled
 analysis proved this was a tenure bias artifact — recent cohorts actually show improving
-early repeat rates. Revenue growth in 2021 was driven by a maturing returning customer base,
-not fragile one-time purchases.
+early repeat rates. Revenue growth in 2021 was driven by a maturing returning customer base.
 */
 
 /*================================================================================================================================================================================================
@@ -1070,11 +1069,11 @@ Yearly summary:
    within each year (4.48%, 11.11%, 11.32%, 10.00%), suggesting seasonal patterns — customers
    acquired during the holiday season may have stronger initial engagement.
  
-   ⚠️ Important limitation: 2021-Q4 has only 10 eligible customers (vs 67 in 2018-Q4),
+   Important limitation: 2021-Q4 has only 10 eligible customers (vs 67 in 2018-Q4),
    making its 10.00% rate less statistically reliable. The yearly aggregates provide
    more stable estimates for trend analysis.
  
-   ⭐ Revised conclusion:
+   Conclusion:
    California leads in revenue across all states. Its customer base is NOT deteriorating.
    When controlled for observation time, recent cohorts demonstrate improving early repeat
    behavior. The earlier segmentation (queries 5️⃣.1️⃣ and 5️⃣.2️⃣) correctly identified a shift
@@ -1090,9 +1089,8 @@ Yearly summary:
    lower-revenue repeat customers show stronger 30-day re-purchase frequency, suggesting
    different but complementary purchasing cadences.
  
-   The real story of California's revenue is not one of declining quality, but of a growing
-   customer base with improving early engagement — whose full lifetime value has yet to
-   materialize. The strategic implication shifts from "fix acquisition" to "invest in retention
+   The real story of California's revenue is one of a growing customer base with improving early engagement
+   — whose full lifetime value has yet to materialize. Strategic impliaction is "invest in retention
    programs that convert the improving 90-day repeat rate into sustained long-term loyalty."
  
    This analysis has demonstrated that a single revenue metric tells almost nothing — and that
