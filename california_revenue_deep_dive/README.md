@@ -109,7 +109,7 @@ Applying the segmentation model to acquisition cohorts by year reveals what init
 | 2020 | 147 | 46 | 12 | 32 | 57 | 31,29% |
 | 2021 | 111 | 6 | 25 | 14 | 66 | 5,40% | 
 
-The pattern is dramatic: top_customer rates collapse from 45% in 2018 to 5,40% in 2021. The low_value segment dominates in 2021.
+The pattern is dramatic: top_customer rates collapse from 45% in 2018 to 5,40% in 2021. The low_value segment dominates 2021 entirely.
 
 <img width="1029" height="511" alt="image" src="https://github.com/user-attachments/assets/e9a66240-4027-46f2-805b-ec1c90e149e6" />
 
