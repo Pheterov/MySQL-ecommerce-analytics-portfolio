@@ -100,7 +100,7 @@ Top customers — 21% of the customer base — account for 57% of total Californ
 
 ## The Apparent Warning: Segment Composition Over Time
 
-Applying the segmentation model to acquisition cohorts by quarter reveals what initially appears to be the most important finding in this dataset.
+Applying the segmentation model to acquisition cohorts by year reveals what initially appears to be the most important finding in this dataset.
 
 | Period | Total | Top | Risky | Loyal | Low | Top % |
 |--------|-------|-----|-------|-------|-----|-------|
