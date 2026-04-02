@@ -43,7 +43,7 @@ Every analysis begins somewhere. The natural starting point is the most visible 
 
 But this is precisely the **trap of vanity metrics**. A single aggregated figure collapses four years of business history into one number. It cannot tell us whether California is growing or declining, whether customers are returning, or whether the revenue base is structurally sound. It only tells us the final score — not how the game was played.
 
-`[CHART 1: All-Time Revenue per State — horizontal bar chart, California highlighted]`
+<img width="1011" height="408" alt="image" src="https://github.com/user-attachments/assets/873a5cdc-8298-4fdd-b361-92cc181643e7" />
 
 ---
 
@@ -55,7 +55,7 @@ The logical next step is to examine California's performance over time. A year-o
 
 A simple month-level breakdown of 2022 data immediately reveals the truth: **the dataset for 2022 contains only January.** The apparent collapse is not a business failure — it is an incomplete dataset being compared against a full calendar year. One month of revenue will almost always look smaller than twelve.
 
-`[CHART 2: California Annual Revenue & Orders — bar+line combo, 2022 visually separated with "Data ends January 2022" annotation]`
+<img width="1022" height="495" alt="image" src="https://github.com/user-attachments/assets/95790aec-74d3-4c2d-9cd6-950c52c8d48a" />
 
 This moment illustrates a foundational analytical principle: **never draw conclusions from numbers you haven't validated.** A flawed report that reaches the wrong audience can trigger resource misallocation, false urgency, or misplaced confidence. Data completeness is not a technical detail — it is a business risk.
 
@@ -112,9 +112,9 @@ Applying the segmentation model to acquisition cohorts by quarter reveals what i
 
 The pattern is dramatic: top_customer rates collapse from 24–47% in 2018 to 0–7% in 2021. Repeat rates fall from 61–81% to 9–32%. The low_value segment dominates every 2021 quarter.
 
-`[CHART 3: Customers Acquired by Segment (2018–2021) — grouped bar chart by year, segments color-coded]`
+<img width="1068" height="512" alt="image" src="https://github.com/user-attachments/assets/fc64d722-8821-4b0d-9a61-2c3d2ed12330" />
 
-`[CHART 4: Revenue Contribution by Customer Segment (2018–2021) — grouped bar chart showing revenue by segment per year]`
+<img width="1091" height="585" alt="image" src="https://github.com/user-attachments/assets/b5e62f9d-5f50-4e3a-ae7e-d9a438c43e10" />
 
 **The instinctive conclusion:** California's acquisition quality has collapsed. The pipeline of high-value customers is drying up. Revenue is at risk.
 
