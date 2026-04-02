@@ -172,7 +172,7 @@ To understand whether 2021's growth is genuinely fragile, quarterly revenue is d
 | 2021-Q3 | 42 513,58 | 36 663,72 |        15,95 |    19 441,16 |    23 072,42 |  45,7 |
 | 2021-Q4 | 47 976,29 | 40 716,83 |        17,83 |    17 754,29 |    30 222,00 |  37,0 |
 
-`[CHART 5: Revenue Composition — New vs Returning Customers (quarterly stacked area or 100% stacked bar, 2018-Q1 to 2021-Q4)]`
+<img width="1062" height="548" alt="image" src="https://github.com/user-attachments/assets/28172b34-5202-40e1-b44c-4741ec4ead28" />
 
 The trend is unambiguous. In 2018, nearly 100% of revenue comes from new customers — naturally, the business is starting. By 2021-Q1, **70.3% of revenue comes from returning customers.** In Q4 2021, returning customers contribute $30,222 — more than total quarterly revenue in any quarter of 2018.
 
