@@ -113,7 +113,7 @@ The pattern is dramatic: top_customer rates collapse from 45% in 2018 to 5,40% i
 
 <img width="1029" height="511" alt="image" src="https://github.com/user-attachments/assets/e9a66240-4027-46f2-805b-ec1c90e149e6" />
 
-<img width="975" height="576" alt="image" src="https://github.com/user-attachments/assets/35a5219b-a891-49d3-9043-bfb43f2a1635" />
+<img width="1015" height="592" alt="image" src="https://github.com/user-attachments/assets/a27a4f12-3400-41ae-8a3c-ed7479fd5408" />
 
 **The instinctive conclusion:** California's acquisition quality has collapsed. The pipeline of high-value customers is drying up. Revenue is at risk.
 
