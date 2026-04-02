@@ -104,17 +104,16 @@ Applying the segmentation model to acquisition cohorts by quarter reveals what i
 
 | Period | Total | Top | Risky | Loyal | Low | Top % | Repeat % |
 |--------|-------|-----|-------|-------|-----|-------|----------|
-| 2018-Q2 | 43 | 20 | 0 | 15 | 8 | 46.5% | 81.4% |
-| 2019-Q1 | 32 | 14 | 2 | 9 | 7 | 43.8% | 71.9% |
-| 2020-Q3 | 36 | 10 | 4 | 10 | 12 | 27.8% | 55.6% |
-| 2021-Q2 | 27 | 2 | 1 | 2 | 22 | 7.4% | 14.8% |
-| 2021-Q4 | 33 | 0 | 6 | 3 | 24 | 0.0% | 9.1% |
+| 2018 | 160 | 72 | 10 | 39 | 39 | 46.5% | 81.4% |
+| 2019 | 147 | 59 | 17 | 25 | 46 | 43.8% | 71.9% |
+| 2020 | 147 | 46 | 12 | 32 | 57 | 27.8% | 55.6% |
+| 2021 | 111 | 6 | 25 | 14 | 66 | 7.4% | 14.8% |
 
 The pattern is dramatic: top_customer rates collapse from 24–47% in 2018 to 0–7% in 2021. Repeat rates fall from 61–81% to 9–32%. The low_value segment dominates every 2021 quarter.
 
-<img width="1068" height="512" alt="image" src="https://github.com/user-attachments/assets/fc64d722-8821-4b0d-9a61-2c3d2ed12330" />
+<img width="1029" height="511" alt="image" src="https://github.com/user-attachments/assets/e9a66240-4027-46f2-805b-ec1c90e149e6" />
 
-<img width="1091" height="585" alt="image" src="https://github.com/user-attachments/assets/b5e62f9d-5f50-4e3a-ae7e-d9a438c43e10" />
+<img width="1114" height="575" alt="image" src="https://github.com/user-attachments/assets/296262e0-1fbc-414a-8ee5-44f7d163d633" />
 
 **The instinctive conclusion:** California's acquisition quality has collapsed. The pipeline of high-value customers is drying up. Revenue is at risk.
 
