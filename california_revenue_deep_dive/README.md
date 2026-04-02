@@ -11,7 +11,7 @@
 
 | Metric | Value |
 |---|---|
-| California Total Revenue | $451,450 — #1 of all states |
+| California Total Revenue | $451,451 — #1 of all states |
 | Orders Analyzed | 1,021 (2018–2021 complete; 2022 = January only) |
 | Customer Segments | 4 (revenue + repeat behavior) |
 | 90-Day Cohort Repeat Rate | 3.75% (2018) → 7.95% (2021) — improving |
@@ -39,7 +39,7 @@ It is an artifact of tenure bias: customers acquired in 2018 had four years to a
 
 ### Starting Point: Revenue by State
 
-Every analysis begins somewhere. The natural starting point is the most visible metric: total revenue by delivery state. California leads decisively — $451,450 in revenue. New York follows at $312,377, and Texas at $164,948. On a dashboard, this looks like a clear answer to the question "Where should we focus?"
+Every analysis begins somewhere. The natural starting point is the most visible metric: total revenue by delivery state. California leads decisively — $451,451 in revenue. New York follows at $312,377, and Texas at $164,948. On a dashboard, this looks like a clear answer to the question "Where should we focus?"
 
 But this is precisely the **trap of vanity metrics**. A single aggregated figure collapses four years of business history into one number. It cannot tell us whether California is growing or declining, whether customers are returning, or whether the revenue base is structurally sound. It only tells us the final score — not how the game was played.
 
