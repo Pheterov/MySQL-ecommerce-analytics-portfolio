@@ -127,8 +127,8 @@ The pattern is dramatic: top_customer rates collapse from 45% in 2018 to 5,40% i
 
 The segmentation assigns labels based on a customer's *full* purchase history — every order they've ever placed through December 2021. This creates a structural advantage for older customers:
 
-- A customer acquired in **Q2 2018** had **~44 months** to accumulate revenue and demonstrate repeat behavior
-- A customer acquired in beginnning of **Q4 2021** had **~2 months**
+- A customer acquired in **2018** had **~48 months** to accumulate revenue and demonstrate repeat behavior
+- A customer acquired in **Q4 2021** had **~2 months or 0 months**
 
 The top_customer threshold requires both revenue ≥ 1,000 AND orders > 1. A 2021 customer could have made a $500 purchase with every intention of returning — but the data simply doesn't extend far enough to observe it. Labeling this customer "low_value" based on incomplete observation creates a *measurement artifact* that masquerades as a business insight.
 
