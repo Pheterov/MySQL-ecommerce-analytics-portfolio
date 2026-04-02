@@ -102,14 +102,14 @@ Top customers — 21% of the customer base — account for 57% of total Californ
 
 Applying the segmentation model to acquisition cohorts by quarter reveals what initially appears to be the most important finding in this dataset.
 
-| Period | Total | Top | Risky | Loyal | Low | Top % | Repeat % |
-|--------|-------|-----|-------|-------|-----|-------|----------|
-| 2018 | 160 | 72 | 10 | 39 | 39 | 46.5% | 81.4% |
-| 2019 | 147 | 59 | 17 | 25 | 46 | 43.8% | 71.9% |
-| 2020 | 147 | 46 | 12 | 32 | 57 | 27.8% | 55.6% |
-| 2021 | 111 | 6 | 25 | 14 | 66 | 7.4% | 14.8% |
+| Period | Total | Top | Risky | Loyal | Low | Top % |
+|--------|-------|-----|-------|-------|-----|-------|
+| 2018 | 160 | 72 | 10 | 39 | 39 | 45,00% |
+| 2019 | 147 | 59 | 17 | 25 | 46 | 40,14% |
+| 2020 | 147 | 46 | 12 | 32 | 57 | 31,29% |
+| 2021 | 111 | 6 | 25 | 14 | 66 | 5,40% | 
 
-The pattern is dramatic: top_customer rates collapse from 24–47% in 2018 to 0–7% in 2021. Repeat rates fall from 61–81% to 9–32%. The low_value segment dominates every 2021 quarter.
+The pattern is dramatic: top_customer rates collapse from 45% in 2018 to 5,40% in 2021. The low_value segment dominates in 2021.
 
 <img width="1029" height="511" alt="image" src="https://github.com/user-attachments/assets/e9a66240-4027-46f2-805b-ec1c90e149e6" />
 
@@ -125,10 +125,10 @@ The pattern is dramatic: top_customer rates collapse from 24–47% in 2018 to 0�
 
 ### Why the Segmentation Is Misleading
 
-The segmentation assigns labels based on a customer's *full* purchase history — every order they've ever placed through January 2022. This creates a structural advantage for older customers:
+The segmentation assigns labels based on a customer's *full* purchase history — every order they've ever placed through December 2021. This creates a structural advantage for older customers:
 
 - A customer acquired in **Q2 2018** had **~44 months** to accumulate revenue and demonstrate repeat behavior
-- A customer acquired in **Q4 2021** had **~2 months**
+- A customer acquired in beginnning of **Q4 2021** had **~2 months**
 
 The top_customer threshold requires both revenue ≥ 1,000 AND orders > 1. A 2021 customer could have made a $500 purchase with every intention of returning — but the data simply doesn't extend far enough to observe it. Labeling this customer "low_value" based on incomplete observation creates a *measurement artifact* that masquerades as a business insight.
 
@@ -143,7 +143,7 @@ If this bias goes undetected, the analytical cascade is predictable and damaging
 3. **False conclusion** → business redirects resources to "fix" acquisition
 4. **Misallocation** → actual opportunities (retention, nurturing recent customers) are ignored
 
-The path from measurement error to strategic misallocation is short and plausible. This makes tenure bias not just a statistical concern, but a business risk.
+The path from measurement error to strategic misallocation is short and plausible. This makes tenure bias not just a statistical concern, but a real business risk.
 
 ---
 
