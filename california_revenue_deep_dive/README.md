@@ -201,18 +201,18 @@ The 0% retention for low_value and risky_high_value is a definitional tautology,
 
 ### Test 3: Cohort Repeat Rate — The Decisive Test
 
-Instead of labeling customers by their full history, each acquisition cohort is given the same **90-day window** to demonstrate repeat behavior. A customer "repeated" if they placed any subsequent California order within 90 days of their first purchase. Only customers acquired at least 90 days before the dataset boundary (2022-01-25) are included.
+Instead of labeling customers by their full history, each acquisition cohort is given the same **90-day window** to demonstrate repeat behavior. A customer "repeated" if they placed any subsequent California order within 90 days of their first purchase. Only customers acquired at least 90 days before the dataset boundary (2022-01-25) are included and that's exactly why only 85 customers are reported in contrast to 111 customers from chart 4. 
 
-| Acquisition Year | Customers Acquired | Repeated (90d) | Repeat Rate |
+| Acquisition Year | Customers Acquired | Repeated (90d) | Repeat Rate | Excluded Customers |
 |---|---|---|---|
-| 2018 | 160 | 6 | **3.75%** |
-| 2019 | 147 | 9 | **6.12%** |
-| 2020 | 147 | 10 | **6.80%** |
-| 2021 | 88 | 7 | **7.95%** |
+| 2018 | 160 | 6 | **3.75%** | 0 |
+| 2019 | 147 | 9 | **6.12%** | 0 |
+| 2020 | 147 | 10 | **6.80%** | 0 |
+| 2021 | 85 | 7 | **7.06%** | 26 |
 
-`[CHART 6: 90-Day Cohort Repeat Rate by Acquisition Year — bar chart, 4 bars, ascending trend line]`
+`[CHART 6: 180-Day Cohort Repeat Rate by Acquisition Year]`
 
-**The 2021 cohort has the highest repeat rate in the dataset** — nearly double the 2018 baseline. The trend is monotonically increasing: 3.75% → 6.12% → 6.80% → 7.95%.
+**The 2021 cohort has the highest repeat rate in the dataset** — nearly double the 2018 baseline. The trend is monotonically increasing: 3.75% → 6.12% → 6.80% → 7.06%.
 
 This result overturns the apparent finding from the segmentation analysis. The appearance of fewer top_customers in 2021 is not a signal of declining acquisition quality. It is a measurement artifact caused by unequal observation windows. When given equal time, 2021 customers demonstrate *stronger* early engagement than any prior cohort.
 
