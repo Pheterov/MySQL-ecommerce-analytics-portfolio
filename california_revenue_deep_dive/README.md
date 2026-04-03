@@ -203,14 +203,13 @@ The 0% retention for low_value and risky_high_value is a definitional tautology,
 
 Instead of labeling customers by their full history, each acquisition cohort is given the same **90-day window** to demonstrate repeat behavior. A customer "repeated" if they placed any subsequent California order within 90 days of their first purchase. Only customers acquired at least 90 days before the dataset boundary (2022-01-25) are included and that's exactly why only 85 customers are reported in contrast to 111 customers from chart 4. 
 
-| Acquisition Year | Customers Acquired | Repeated (90d) | Repeat Rate | Excluded Customers |
-|---|---|---|---|---|
-| 2018 | 160 | 6 | **3.75%** | 0 |
-| 2019 | 147 | 9 | **6.12%** | 0 |
-| 2020 | 147 | 10 | **6.80%** | 0 |
-| 2021 | 85 | 7 | **7.06%** | 26 |
-
-`[CHART 6: 180-Day Cohort Repeat Rate by Acquisition Year]`
+| Acquisition Year | Customers Acquired | Repeated (180d) | Repeat Rate (180d) | Repeated (90d) |  Repeat Rate (90d) | Excluded Customers |
+|---|---|---|---|---|---|---|
+| 2018 | 160 | 13 | 8,13% | 6 | **3.75%** | 0 |
+| 2019 | 147 | 15 | 10,20% | 9 | **6.12%** | 0 |
+| 2020 | 147 | 26 | 17,69% | 10 | **6.80%** | 0 |
+| 2021 | 85 | | | 6 | **7.06%** | 26 |
+| 2021 | 59 | 7 | 11,86% |  |  | 52 |
 
 **The 2021 cohort has the highest repeat rate in the dataset** — nearly double the 2018 baseline. The trend is monotonically increasing: 3.75% → 6.12% → 6.80% → 7.06%.
 
