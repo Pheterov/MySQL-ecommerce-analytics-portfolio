@@ -211,11 +211,11 @@ Instead of labeling customers by their full history, each acquisition cohort is 
 | 2021 | 85 | | | 6 | **7.06%** | 26 |
 | 2021 | 59 | 7 | 11,86% |  |  | 52 |
 
-**The 2021 cohort has the highest repeat rate in the dataset** — nearly double the 2018 baseline. The trend is monotonically increasing: 3.75% → 6.12% → 6.80% → 7.06%.
+**The 90d 2021 cohort has the highest repeat rate in the dataset** — nearly double the 2018 baseline. The trend is monotonically increasing: 3.75% → 6.12% → 6.80% → 7.06%.
 
 This result overturns the apparent finding from the segmentation analysis. The appearance of fewer top_customers in 2021 is not a signal of declining acquisition quality. It is a measurement artifact caused by unequal observation windows. When given equal time, 2021 customers demonstrate *stronger* early engagement than any prior cohort.
 
-The quarterly breakdown adds seasonal nuance: Q4 cohorts consistently show the highest within-year repeat rates (4.48%, 11.11%, 11.32%, 10.00%), suggesting holiday-acquired customers have stronger initial engagement. However, 2021-Q4 contains only 10 eligible customers — too few for reliable inference. The yearly aggregates provide more stable trend estimates.
+One additional point worth highlighting—representing another analytical pitfall—is that there are two separate rows for 2021. This distinction arises because customers eligible under the 90-day window until the end of the dataset constitute a different cohort than those with a remaining 180-day observation period.
 
 ---
 
