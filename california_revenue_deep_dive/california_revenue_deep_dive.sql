@@ -515,8 +515,8 @@ Query result — segment summary:
  
 /*================================================================================================================================================================================================
 5️⃣.1️⃣ Customer Segment Distribution by Acquisition Quarter
-🎯 Goal: Understand what kind of customers were acquired each quarter.
-💡 Context: Segments are based on full customer history (query 5️⃣).
+Goal: Understand what kind of customers were acquired each quarter.
+Context: Segments are based on full customer history (query 5️⃣).
             This shows whether high-value customers were acquired during growth periods.
             Quarterly granularity provides more stable counts than monthly while allowing
             meaningful YoY comparison.
@@ -602,7 +602,7 @@ Query result snippet:
    2021 cohorts: top_customer rates collapse to 0–7%, repeat rates drop to 9–32%.
    The dominant segment shifts to low_value (one-time buyers with revenue < 1,000).
  
-   ⚠️ CRITICAL CAVEAT — tenure bias:
+CRITICAL CAVEAT — tenure bias:
    This pattern is visually striking, but it is expected to some degree. Customers acquired in
    2018 had ~4 years to build revenue and demonstrate repeat behavior. Customers acquired in Q4 2021
    had at most ~2 months. Some of these "low_value" customers will eventually cross the 1,000
@@ -614,9 +614,9 @@ Query result snippet:
  
 /*================================================================================================================================================================================================
 5️⃣.2️⃣ Revenue Composition: New vs Returning Customers × Acquisition Quality
-🎯 Goal: Decompose quarterly revenue into contributions from newly acquired customers
+Goal: Decompose quarterly revenue into contributions from newly acquired customers
          vs returning customers, and cross-reference with the quality of new acquisitions.
-💡 Context: The original version of this query compared total monthly revenue with new customer
+Context: The original version of this query compared total monthly revenue with new customer
             segments — but most revenue in a given period comes from customers acquired EARLIER.
             That comparison created a false correlation. This version separates the two revenue
             streams so we can assess actual relationships.
@@ -785,17 +785,17 @@ Query result snippet:
    The segment composition of new acquisitions matters for future sustainability, but the
    current revenue trajectory is supported by a strong returning customer base.
  
-   ⚠️ The segment labels for 2021 acquisitions are subject to tenure bias (see query 5️⃣.4️⃣).
+The segment labels for 2021 acquisitions are subject to tenure bias (see query 5️⃣.4️⃣).
    Many customers labeled "low_value" today may graduate to higher segments given more time.
 ================================================================================================================================================================================================*/
  
 /*================================================================================================================================================================================================
 5️⃣.3️⃣ 30 / 90 / 180 Days Retention Rate by Customer Segment (Right-Censoring Corrected)
-🎯 Goal: Examine whether top_customers retain better than loyal_low_value customers.
-💡 Context: If top_customers retain at a higher rate, it validates the revenue-based segmentation
+Goal: Examine whether top_customers retain better than loyal_low_value customers.
+Context: If top_customers retain at a higher rate, it validates the revenue-based segmentation
             and confirms that acquiring high-revenue repeat buyers is worth the investment.
  
-⚠️ Methodological notes:
+Methodological notes:
  
     1. Retention is measured per purchase occasion (each order is a row), not per unique customer.
        A customer with 10 orders contributes 10 rows to the denominator. This measures "what
@@ -974,9 +974,9 @@ Query result snippet:
  
 /*================================================================================================================================================================================================
 5️⃣.4️⃣ Cohort Repeat Rate — Controlling for Tenure Bias (Quarterly Granularity)
-🎯 Goal: Validate whether the decline in acquisition quality visible in queries 5️⃣.1️⃣ and 5️⃣.2️⃣
+Goal: Validate whether the decline in acquisition quality visible in queries 5️⃣.1️⃣ and 5️⃣.2️⃣
          is real or an artifact of newer customers having less time to demonstrate repeat behavior.
-💡 Context: A customer acquired in 2018 had ~4 years to accumulate revenue and repeat purchases.
+Context: A customer acquired in 2018 had ~4 years to accumulate revenue and repeat purchases.
             A customer acquired in Q4 2021 had ~2 months. This query compares cohorts using a
             fixed 90-day window from first purchase — giving every cohort an equal opportunity.
  
